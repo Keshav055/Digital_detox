@@ -293,7 +293,11 @@ function ProgressBar({ progress }) {
 }
 
 // ----------- ACCOUNTABILITY BUDDY PAGE -----------
-// PUBLIC_INTERFACE
+import BuddyStreakSystem from "./BuddyStreakSystem";
+
+import BuddyStreakSystem from "./BuddyStreakSystem";
+
+// (removed duplicate or stray BuddyStreakSystem declaration below)
 function BuddySystemPage() {
   // Toy static state
   const paired = true;
@@ -331,6 +335,18 @@ function BuddySystemPage() {
               </div>
             </div>
           </div>
+          {/* Buddy Streak System: shared streak, boosts, reflection modal */}
+          <BuddyStreakSystem
+            streakDays={buddy.streak}
+            buddyName={buddy.id}
+            buddyStatus={buddy.status}
+            showBuddy={true}
+            // Optionally handle reflection submission (future: analytics, message send, etc.)
+            onBreakReflection={(reflection) => {
+              // Demo: show alert, but in real app send to backend or buddy chat.
+              alert("Reflection sent to buddy!\n\n" + reflection);
+            }}
+          />
           <BuddyMessagePane />
         </>
       ) : (
