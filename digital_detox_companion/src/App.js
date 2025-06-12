@@ -66,8 +66,6 @@ function App() {
     }
   ];
 
-import TimeReallocationTracker from "./TimeReallocationTracker";
-
   // Renders the currently active page/component
   function renderPage() {
     switch (tab) {
@@ -305,7 +303,8 @@ function ProgressBar({ progress }) {
 }
 
 // ----------- ACCOUNTABILITY BUDDY PAGE -----------
-
+// PUBLIC_INTERFACE
+function BuddySystemPage() {
   // Toy static state
   const paired = true;
   const buddy = { id: "anonbuddy14", status: "active", streak: 4 };

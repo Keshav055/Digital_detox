@@ -181,3 +181,22 @@ SyntaxError: /home/kavia/workspace/code-generation/digital-detox-companion-38961
  @ ./src/index.js 5:0-24 11:32-35
 
 webpack 5.99.9 compiled with 1 error in 34 ms
+assets by status 1.92 KiB [cached] 1 asset
+assets by path *.js 1.57 MiB
+  asset bundle.js 1.47 MiB [emitted] (name: main)
+  asset main.bf87697c0e338918cbc6.hot-update.js 103 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.bf87697c0e338918cbc6.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.57 MiB = bundle.js 1.47 MiB main.bf87697c0e338918cbc6.hot-update.js 103 KiB
+cached modules 1.26 MiB [cached] 38 modules
+runtime modules 27.5 KiB 14 modules
+javascript modules 74.8 KiB
+  modules by path ./src/*.js 69.8 KiB
+    ./src/index.js 530 bytes [code generated]
+    ./src/App.js 26.7 KiB [built] [code generated]
+    ./src/DetoxJourneyMap.js 15.2 KiB [built] [code generated]
+    ./src/TimeReallocationTracker.js 16.4 KiB [built] [code generated]
+    ./src/BuddyStreakSystem.js 11 KiB [built] [code generated]
+  modules by path ./src/*.css 4.99 KiB
+    ./src/App.css 2.22 KiB [built] [code generated]
+    ./node_modules/css-loader/dist/cjs.js!./src/App.css 2.77 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 358 ms
