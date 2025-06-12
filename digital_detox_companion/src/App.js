@@ -9,6 +9,7 @@ import MiniDetoxGames from "./MiniDetoxGames";
 import ParentTeenMode from "./ParentTeenMode";
 import DigitalBudgetMode from "./DigitalBudgetMode";
 import CommunityCircles from "./CommunityCircles";
+import IntegrationsHub from "./IntegrationsHub";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -80,6 +81,11 @@ function App() {
       icon: "⏳"
     },
     {
+      id: "integrations",
+      label: "Integrations",
+      icon: "🔗"
+    },
+    {
       id: "buddy",
       label: "Buddy System",
       icon: "🤝"
@@ -122,6 +128,8 @@ function App() {
         return <OfflineEventGenerator />;
       case "reallocation":
         return <TimeReallocationTracker />;
+      case "integrations":
+        return <IntegrationsHub />;
       case "buddy":
         return <BuddySystemPage />;
       case "rewards":
