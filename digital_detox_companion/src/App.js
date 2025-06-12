@@ -191,7 +191,11 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
   );
 }
 
-// ----------- DETOX PLAN PAGE -----------
+/*
+  Note: If you previously had references to 'PUBLIC_URL' in your JSX or code,
+  ensure you use 'process.env.PUBLIC_URL' (the standard in create-react-app),
+  or remove the usage entirely from static URLs if not needed.
+*/
 // PUBLIC_INTERFACE
 function DetoxPlanPage() {
   // Toy demo plan, static for frontend-only version

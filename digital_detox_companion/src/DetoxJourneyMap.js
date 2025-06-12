@@ -2,14 +2,17 @@ import React, { useState } from "react";
 
 /**
  * DetoxJourneyMap Component
- * A modular, branded, minimal timeline of user’s detox journey:
- * - Visualizes goals, milestones, reflections, and emotion check-ins.
- * - Ready to accept props/data for full integration.
- * - Supports reflection add, emotion check-in modals, milestone markers.
- * - Colors/theme pulled from app constants for instant drop-in.
+ * Modular, minimal, and branded timeline for digital detox journey.
+ * - Visual timeline with milestones, reflections, and emotion check-ins (mood, focus, anxiety).
+ * - Story-based, motivational UI.
+ * - Minimal, distraction-free styles that leverage app's CSS variables.
+ * - Ready for navigation/data integration.
+ * 
+ * Props:
+ *   journey: Journey data object (optional, demo data as fallback)
+ * 
+ * PUBLIC_INTERFACE
  */
-
-// PUBLIC_INTERFACE
 function DetoxJourneyMap({ journey = defaultJourney }) {
   const [selectedMilestone, setSelectedMilestone] = useState(null);
   const [showReflection, setShowReflection] = useState(false);
@@ -226,6 +229,7 @@ function DetoxJourneyMap({ journey = defaultJourney }) {
             <h3 style={{ color: COLORS.primary, marginTop: 0 }}>
               Emotion Check-In
             </h3>
+            {/* Mood options */}
             <div style={{ fontSize: 30, marginBottom: 7, marginTop: 7 }}>
               {[ "happy", "calm", "neutral", "anxious", "frustrated" ].map(mood =>
                 <span
@@ -242,6 +246,7 @@ function DetoxJourneyMap({ journey = defaultJourney }) {
                 </span>
               )}
             </div>
+            {/* Simplified: focus/anxiety mood only, can expand */}
             <button
               onClick={saveEmotionCheckIn}
               disabled={!emotionCheckIn}
@@ -325,7 +330,7 @@ const defaultJourney = {
   ]
 };
 
-// Small utility for emoji given mood
+// Utility for emoji given mood
 function emotionEmoji(mood) {
   switch (mood) {
     case "happy": return "😃";
