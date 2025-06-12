@@ -6,6 +6,7 @@ import BuddyStreakSystem from "./BuddyStreakSystem";
 import DetoxModes from "./DetoxModes";
 import OfflineEventGenerator from "./OfflineEventGenerator";
 import MiniDetoxGames from "./MiniDetoxGames";
+import ParentTeenMode from "./ParentTeenMode";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -53,6 +54,11 @@ function App() {
       icon: "🎯"
     },
     {
+      id: "family",
+      label: "Parent-Teen",
+      icon: "🏠"
+    },
+    {
       id: "events",
       label: "Events",
       icon: "🗺️"
@@ -95,6 +101,8 @@ function App() {
         return <MiniDetoxGames />;
       case "modes":
         return <DetoxModes />;
+      case "family":
+        return <ParentTeenMode />;
       case "events":
         return <OfflineEventGenerator />;
       case "reallocation":
@@ -233,8 +241,6 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
   // changed to "process.env.PUBLIC_URL" or remove such usage.
 */
 // No direct usage of PUBLIC_URL variable. If needed, use process.env.PUBLIC_URL.
-// PUBLIC_INTERFACE
-function DetoxPlanPage() {
   // Toy demo plan, static for frontend-only version
   const plan = {
     steps: [
