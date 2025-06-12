@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import DetoxJourneyMap from "./DetoxJourneyMap";
 import TimeReallocationTracker from "./TimeReallocationTracker";
+import BuddyStreakSystem from "./BuddyStreakSystem";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -304,12 +305,7 @@ function ProgressBar({ progress }) {
 }
 
 // ----------- ACCOUNTABILITY BUDDY PAGE -----------
-import BuddyStreakSystem from "./BuddyStreakSystem";
 
-import BuddyStreakSystem from "./BuddyStreakSystem";
-
-// (removed duplicate or stray BuddyStreakSystem declaration below)
-function BuddySystemPage() {
   // Toy static state
   const paired = true;
   const buddy = { id: "anonbuddy14", status: "active", streak: 4 };
