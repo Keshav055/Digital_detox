@@ -195,7 +195,7 @@ export default function DigitalBudgetMode() {
           color: totalUsed > weeklyBudget ? "#b84a3a" : COLORS.primary,
           fontWeight: 500
         }}>
-          Total used: {totalUsed} min &bull; Remaining: {Math.max(0, weeklyBudget - totalUsed)} min
+          Total used: {totalUsed} min • Remaining: {Math.max(0, weeklyBudget - totalUsed)} min
         </div>
         <div style={{
           fontSize: 13.4, color: "#8d8b7d", marginTop: 2
