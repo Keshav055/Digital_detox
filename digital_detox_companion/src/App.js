@@ -4,6 +4,7 @@ import DetoxJourneyMap from "./DetoxJourneyMap";
 import TimeReallocationTracker from "./TimeReallocationTracker";
 import BuddyStreakSystem from "./BuddyStreakSystem";
 import DetoxModes from "./DetoxModes";
+import OfflineEventGenerator from "./OfflineEventGenerator";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -46,6 +47,11 @@ function App() {
       icon: "🎯"
     },
     {
+      id: "events",
+      label: "Events",
+      icon: "🗺️"
+    },
+    {
       id: "reallocation",
       label: "Reallocation",
       icon: "⏳"
@@ -81,6 +87,8 @@ function App() {
         return <DetoxPlanPage />;
       case "modes":
         return <DetoxModes />;
+      case "events":
+        return <OfflineEventGenerator />;
       case "reallocation":
         return <TimeReallocationTracker />;
       case "buddy":
@@ -214,7 +222,7 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
   ensure you use 'process.env.PUBLIC_URL' (the standard in create-react-app),
   or remove the usage entirely from static URLs if not needed.
   // Build error fix: If you see "PUBLIC_URL is not defined", ensure any use is
-  // changed to "process.env.PUBLIC_URL" or removed.
+  // changed to "process.env.PUBLIC_URL" or remove such usage.
 */
 // PUBLIC_INTERFACE
 function DetoxPlanPage() {
