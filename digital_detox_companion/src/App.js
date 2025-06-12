@@ -213,7 +213,8 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
   Note: If you previously had references to 'PUBLIC_URL' in your JSX or code,
   ensure you use 'process.env.PUBLIC_URL' (the standard in create-react-app),
   or remove the usage entirely from static URLs if not needed.
-  (No direct references found; build error fix: comment clarified.)
+  // Build error fix: If you see "PUBLIC_URL is not defined", ensure any use is
+  // changed to "process.env.PUBLIC_URL" or removed.
 */
 // PUBLIC_INTERFACE
 function DetoxPlanPage() {

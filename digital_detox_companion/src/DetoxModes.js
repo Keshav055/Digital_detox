@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import EmergencyBypassModal, { useEmergencyBypassModal } from "./EmergencyBypassModal";
 
 /**
  * DetoxModes Component
@@ -56,6 +57,26 @@ export default function DetoxModes() {
   const [running, setRunning] = useState(false);
   const [countdownDone, setCountdownDone] = useState(false);
   const timerRef = useRef();
+
+  // EmergencyBypassModal (Mindful Pause) state/hook
+  const [bypassModalOpen, openBypassModal, closeBypassModal, renderBypassModal] = useEmergencyBypassModal();
+  // Store last bypass reason for confirmation (could be logged)
+  const [lastBypassReason, setLastBypassReason] = useState(null);
+  // After bypass, briefly show confirmation/encouragement
+  const [showBypassThanks, setShowBypassThanks] = useState(false);
+
+  // Demo: simulate a bypass trigger
+  function handleBypassAttempt() {
+    openBypassModal();
+  }
+
+  // Called when user selects a bypass reason
+  function handleBypassReflection(reason) {
+    setLastBypassReason(reason);
+    setShowBypassThanks(true);
+    setTimeout(() => setShowBypassThanks(false), 2800);
+    // In a real app, proceed to "unlock"/bypass OR cancel based on logic
+  }
 
   // Handle starting a timer (focus burst or retreat)
   function startTimer(durationMinutes) {
@@ -299,6 +320,46 @@ export default function DetoxModes() {
           </button>
         ))}
       </div>
+      {/* Bypass Button: only show if a timer is running, blocked, or in a real app, if blocked */}
+      {running && (
+        <button
+          style={{
+            background: "#FFD600",
+            color: "#2E7D32",
+            border: "none",
+            borderRadius: 8,
+            fontWeight: 700,
+            fontSize: 17,
+            padding: "12px 25px",
+            marginBottom: 15,
+            marginTop: 2,
+            boxShadow: "0 2px 7px #B2DFDB19",
+            cursor: "pointer"
+          }}
+          onClick={handleBypassAttempt}
+        >
+          🚦 Emergency Bypass (Mindful Pause)
+        </button>
+      )}
+      {/* Modal rendering */}
+      {renderBypassModal(handleBypassReflection, closeBypassModal)}
+      {/* Supportive message after bypass */}
+      {showBypassThanks && (
+        <div style={{
+          background: "#FFFDE6",
+          border: "1.5px solid #FFD60077",
+          color: "#A88D1B",
+          fontWeight: 500,
+          fontSize: 15.5,
+          borderRadius: 9,
+          marginTop: 17,
+          marginBottom: 8,
+          padding: "15px 22px",
+          textAlign: "center"
+        }}>
+          It's ok to notice your urge to bypass: <b>{lastBypassReason}</b>. Remember your intentions—you've got this! 🌱
+        </div>
+      )}
       {renderModeConfigPanel()}
       <div style={{ marginTop: 18, color: "#819c7b", fontSize: 14.4 }}>
         The right detox approach can make your offline life more rewarding!
