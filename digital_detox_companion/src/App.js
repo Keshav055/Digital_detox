@@ -5,6 +5,7 @@ import TimeReallocationTracker from "./TimeReallocationTracker";
 import BuddyStreakSystem from "./BuddyStreakSystem";
 import DetoxModes from "./DetoxModes";
 import OfflineEventGenerator from "./OfflineEventGenerator";
+import MiniDetoxGames from "./MiniDetoxGames";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -40,6 +41,11 @@ function App() {
       id: "plan",
       label: "Detox Plan",
       icon: "🗓️"
+    },
+    {
+      id: "games",
+      label: "Mini Games",
+      icon: "🕹️"
     },
     {
       id: "modes",
@@ -85,6 +91,8 @@ function App() {
         return <DetoxJourneyMap />;
       case "plan":
         return <DetoxPlanPage />;
+      case "games":
+        return <MiniDetoxGames />;
       case "modes":
         return <DetoxModes />;
       case "events":
@@ -224,6 +232,7 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
   // Build error fix: If you see "PUBLIC_URL is not defined", ensure any use is
   // changed to "process.env.PUBLIC_URL" or remove such usage.
 */
+// No direct usage of PUBLIC_URL variable. If needed, use process.env.PUBLIC_URL.
 // PUBLIC_INTERFACE
 function DetoxPlanPage() {
   // Toy demo plan, static for frontend-only version
