@@ -25,6 +25,7 @@ function App() {
   const [tab, setTab] = useState("plan");
 
   // Tab navigation for pages
+  // Add new nav tab for "Reallocation" (Time tracker)
   const navTabs = [
     {
       id: "journey",
@@ -35,6 +36,11 @@ function App() {
       id: "plan",
       label: "Detox Plan",
       icon: "🗓️"
+    },
+    {
+      id: "reallocation",
+      label: "Reallocation",
+      icon: "⏳"
     },
     {
       id: "buddy",
@@ -58,25 +64,32 @@ function App() {
     }
   ];
 
-  // Renders the currently active page/component
-  function renderPage() {
-    switch (tab) {
-      case "journey":
-        return <DetoxJourneyMap />;
-      case "plan":
-        return <DetoxPlanPage />;
-      case "buddy":
-        return <BuddySystemPage />;
-      case "rewards":
-        return <RewardsPage />;
-      case "checkin":
-        return <CheckInPage />;
-      case "journal":
-        return <JournalPage />;
-      default:
-        return <DetoxPlanPage />;
-    }
+}
+
+// Import moved to top-level to fix build error
+import TimeReallocationTracker from "./TimeReallocationTracker";
+
+// Renders the currently active page/component
+function renderPage() {
+  switch (tab) {
+    case "journey":
+      return <DetoxJourneyMap />;
+    case "plan":
+      return <DetoxPlanPage />;
+    case "reallocation":
+      return <TimeReallocationTracker />;
+    case "buddy":
+      return <BuddySystemPage />;
+    case "rewards":
+      return <RewardsPage />;
+    case "checkin":
+      return <CheckInPage />;
+    case "journal":
+      return <JournalPage />;
+    default:
+      return <DetoxPlanPage />;
   }
+}
 
   return (
     <div
