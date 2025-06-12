@@ -3,6 +3,7 @@ import "./App.css";
 import DetoxJourneyMap from "./DetoxJourneyMap";
 import TimeReallocationTracker from "./TimeReallocationTracker";
 import BuddyStreakSystem from "./BuddyStreakSystem";
+import DetoxModes from "./DetoxModes";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -27,7 +28,7 @@ function App() {
   const [tab, setTab] = useState("plan");
 
   // Tab navigation for pages
-  // Add new nav tab for "Reallocation" (Time tracker)
+  // Add new nav tab for Detox Modes (with symbol), after Detox Plan
   const navTabs = [
     {
       id: "journey",
@@ -38,6 +39,11 @@ function App() {
       id: "plan",
       label: "Detox Plan",
       icon: "🗓️"
+    },
+    {
+      id: "modes",
+      label: "Detox Modes",
+      icon: "🎯"
     },
     {
       id: "reallocation",
@@ -73,6 +79,8 @@ function App() {
         return <DetoxJourneyMap />;
       case "plan":
         return <DetoxPlanPage />;
+      case "modes":
+        return <DetoxModes />;
       case "reallocation":
         return <TimeReallocationTracker />;
       case "buddy":
@@ -205,6 +213,7 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
   Note: If you previously had references to 'PUBLIC_URL' in your JSX or code,
   ensure you use 'process.env.PUBLIC_URL' (the standard in create-react-app),
   or remove the usage entirely from static URLs if not needed.
+  (No direct references found; build error fix: comment clarified.)
 */
 // PUBLIC_INTERFACE
 function DetoxPlanPage() {
