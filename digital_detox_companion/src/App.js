@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import DetoxJourneyMap from "./DetoxJourneyMap";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -25,6 +26,11 @@ function App() {
 
   // Tab navigation for pages
   const navTabs = [
+    {
+      id: "journey",
+      label: "Journey Map",
+      icon: "🛤️"
+    },
     {
       id: "plan",
       label: "Detox Plan",
@@ -55,6 +61,8 @@ function App() {
   // Renders the currently active page/component
   function renderPage() {
     switch (tab) {
+      case "journey":
+        return <DetoxJourneyMap />;
       case "plan":
         return <DetoxPlanPage />;
       case "buddy":
