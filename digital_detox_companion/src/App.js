@@ -8,6 +8,7 @@ import OfflineEventGenerator from "./OfflineEventGenerator";
 import MiniDetoxGames from "./MiniDetoxGames";
 import ParentTeenMode from "./ParentTeenMode";
 import DigitalBudgetMode from "./DigitalBudgetMode";
+import CommunityCircles from "./CommunityCircles";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -31,7 +32,7 @@ const minimalTheme = {
 function App() {
   const [tab, setTab] = useState("plan");
 
-  // Navigation tabs, now including Digital Budget Mode
+  // Navigation tabs, now including Community Circles and Digital Budget Mode
   const navTabs = [
     {
       id: "journey",
@@ -42,6 +43,11 @@ function App() {
       id: "plan",
       label: "Detox Plan",
       icon: "🗓️"
+    },
+    {
+      id: "circles",
+      label: "Circles",
+      icon: "🫂"
     },
     {
       id: "budget",
@@ -102,6 +108,8 @@ function App() {
         return <DetoxJourneyMap />;
       case "plan":
         return <DetoxPlanPage />;
+      case "circles":
+        return <CommunityCircles />;
       case "budget":
         return <DigitalBudgetMode />;
       case "games":
