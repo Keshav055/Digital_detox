@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import DetoxJourneyMap from "./DetoxJourneyMap";
+import TimeReallocationTracker from "./TimeReallocationTracker";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -64,32 +65,29 @@ function App() {
     }
   ];
 
-}
-
-// Import moved to top-level to fix build error
 import TimeReallocationTracker from "./TimeReallocationTracker";
 
-// Renders the currently active page/component
-function renderPage() {
-  switch (tab) {
-    case "journey":
-      return <DetoxJourneyMap />;
-    case "plan":
-      return <DetoxPlanPage />;
-    case "reallocation":
-      return <TimeReallocationTracker />;
-    case "buddy":
-      return <BuddySystemPage />;
-    case "rewards":
-      return <RewardsPage />;
-    case "checkin":
-      return <CheckInPage />;
-    case "journal":
-      return <JournalPage />;
-    default:
-      return <DetoxPlanPage />;
+  // Renders the currently active page/component
+  function renderPage() {
+    switch (tab) {
+      case "journey":
+        return <DetoxJourneyMap />;
+      case "plan":
+        return <DetoxPlanPage />;
+      case "reallocation":
+        return <TimeReallocationTracker />;
+      case "buddy":
+        return <BuddySystemPage />;
+      case "rewards":
+        return <RewardsPage />;
+      case "checkin":
+        return <CheckInPage />;
+      case "journal":
+        return <JournalPage />;
+      default:
+        return <DetoxPlanPage />;
+    }
   }
-}
 
   return (
     <div
