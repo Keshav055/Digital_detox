@@ -7,6 +7,7 @@ import DetoxModes from "./DetoxModes";
 import OfflineEventGenerator from "./OfflineEventGenerator";
 import MiniDetoxGames from "./MiniDetoxGames";
 import ParentTeenMode from "./ParentTeenMode";
+import DigitalBudgetMode from "./DigitalBudgetMode";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -30,8 +31,7 @@ const minimalTheme = {
 function App() {
   const [tab, setTab] = useState("plan");
 
-  // Tab navigation for pages
-  // Add new nav tab for Detox Modes (with symbol), after Detox Plan
+  // Navigation tabs, now including Digital Budget Mode
   const navTabs = [
     {
       id: "journey",
@@ -42,6 +42,11 @@ function App() {
       id: "plan",
       label: "Detox Plan",
       icon: "🗓️"
+    },
+    {
+      id: "budget",
+      label: "Budget Mode",
+      icon: "🎛️"
     },
     {
       id: "games",
@@ -97,6 +102,8 @@ function App() {
         return <DetoxJourneyMap />;
       case "plan":
         return <DetoxPlanPage />;
+      case "budget":
+        return <DigitalBudgetMode />;
       case "games":
         return <MiniDetoxGames />;
       case "modes":
@@ -163,7 +170,6 @@ function App() {
               Digital Detox Companion
             </div>
             <div style={{ display: "flex", gap: 8 }}>
-              {/* tabs in desktop, hamburger for small screens */}
               {navTabs.map((t) => (
                 <NavTab
                   key={t.id}
@@ -185,7 +191,6 @@ function App() {
           {renderPage()}
         </div>
       </main>
-      {/* Footer: Encouragement to spend time offline */}
       <footer
         style={{
           padding: "24px 0 8px",
@@ -233,15 +238,8 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
   );
 }
 
-/*
-  Note: If you previously had references to 'PUBLIC_URL' in your JSX or code,
-  ensure you use 'process.env.PUBLIC_URL' (the standard in create-react-app),
-  or remove the usage entirely from static URLs if not needed.
-  // Build error fix: If you see "PUBLIC_URL is not defined", ensure any use is
-  // changed to "process.env.PUBLIC_URL" or remove such usage.
-*/
-// No direct usage of PUBLIC_URL variable. If needed, use process.env.PUBLIC_URL.
-  // Toy demo plan, static for frontend-only version
+// ----------- DETOX PLAN PAGE -----------
+function DetoxPlanPage() {
   const plan = {
     steps: [
       { id: 1, text: "Limit social media to 90 min/day (Week 1)", done: true },
@@ -250,7 +248,7 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
       { id: 4, text: "Try 1 'off-grid' block (2 hrs online-free) (Week 2)", done: false },
     ],
     currentGoal: "60 minutes/day • Week 2",
-    progress: 0.5, // 50%
+    progress: 0.5,
   };
 
   return (
@@ -338,7 +336,6 @@ function ProgressBar({ progress }) {
 // ----------- ACCOUNTABILITY BUDDY PAGE -----------
 // PUBLIC_INTERFACE
 function BuddySystemPage() {
-  // Toy static state
   const paired = true;
   const buddy = { id: "anonbuddy14", status: "active", streak: 4 };
 
@@ -374,15 +371,12 @@ function BuddySystemPage() {
               </div>
             </div>
           </div>
-          {/* Buddy Streak System: shared streak, boosts, reflection modal */}
           <BuddyStreakSystem
             streakDays={buddy.streak}
             buddyName={buddy.id}
             buddyStatus={buddy.status}
             showBuddy={true}
-            // Optionally handle reflection submission (future: analytics, message send, etc.)
             onBreakReflection={(reflection) => {
-              // Demo: show alert, but in real app send to backend or buddy chat.
               alert("Reflection sent to buddy!\n\n" + reflection);
             }}
           />
@@ -423,9 +417,8 @@ function BuddySystemPage() {
   );
 }
 
-// Simulated chat/notification
+// Simulated buddy chat pane
 function BuddyMessagePane() {
-  // Simulated last message from buddy
   const lastMessage = {
     fromBuddy: true,
     time: "2h ago",
@@ -476,7 +469,6 @@ function BuddyMessagePane() {
 // ----------- REWARDS PAGE -----------
 // PUBLIC_INTERFACE
 function RewardsPage() {
-  // Toy rewards list
   const rewards = [
     { id: 1, name: "Coffee voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" },
     { id: 2, name: "Gift card", unlocked: false, desc: "7 days offline streak", icon: "🎟️" },
@@ -561,7 +553,6 @@ function RewardsPage() {
 // ----------- CHECK IN PAGE -----------
 // PUBLIC_INTERFACE
 function CheckInPage() {
-  // Simulated last checkin
   const checkinHistory = [
     { id: 1, text: "Nature walk (Central Park)", date: "Yesterday", icon: "🌳" },
     { id: 2, text: "Offline dinner with friends", date: "2 days ago", icon: "🍽️" }
@@ -645,7 +636,6 @@ function CheckInPage() {
 // ----------- JOURNAL PAGE -----------
 // PUBLIC_INTERFACE
 function JournalPage() {
-  // Static simulated AI prompt and saved entries
   const entries = [
     {
       id: 2,
@@ -664,7 +654,6 @@ function JournalPage() {
   const [draft, setDraft] = useState("");
 
   function handleSave() {
-    // For demo, just alert. (No backend.)
     alert("Entry saved! (Demo)");
     setDraft("");
   }
