@@ -1,6 +1,6 @@
 import React from "react";
 
-// Color palette from App.js/App.css
+// Color palette for styling
 const COLORS = {
   primary: "#2E7D32",
   secondary: "#B2DFDB",
@@ -10,200 +10,234 @@ const COLORS = {
 };
 
 // PUBLIC_INTERFACE
+/**
+ * The HomePage component displays user's progress and an "Explore More" sidebar.
+ * @param {function} onNavigate - Callback for navigation.
+ */
 function HomePage({ onNavigate }) {
+  // Sample plan/progress (can be replaced with props/context/state)
+  const plan = {
+    steps: [
+      { id: 1, text: "Limit social media to 90 min/day (Week 1)", done: true },
+      { id: 2, text: "Add 30-min offline activity daily (Week 1)", done: true },
+      { id: 3, text: "Reduce social media to 60 min/day (Week 2)", done: false },
+      { id: 4, text: "Try 1 'off-grid' block (2 hrs online-free) (Week 2)", done: false }
+    ],
+    currentGoal: "60 minutes/day • Week 2",
+    progress: 0.5,
+  };
+
+  // Sidebar links for explore more (navigate by calling onNavigate)
+  const exploreLinks = [
+    { label: "Your Detox Plan", icon: "🗺️", tab: "plan" },
+    { label: "Accountability Buddy", icon: "🤝", tab: "buddy" },
+    { label: "Milestone Rewards", icon: "🎉", tab: "rewards" },
+    { label: "Off-Grid Check-Ins", icon: "✅", tab: "checkin" },
+    { label: "Reflection Journal", icon: "📝", tab: "journal" },
+    { label: "Mini Detox Games", icon: "🎮", tab: "games" }
+  ];
+
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "row",
-        gap: 32,
         alignItems: "flex-start",
-        marginTop: 40,
-        marginBottom: 36,
-        minHeight: 400
+        gap: 32,
+        width: "100%",
+        background: COLORS.bg,
+        color: COLORS.text,
+        minHeight: "480px"
       }}
     >
-      {/* Main Content */}
-      <div style={{ flex: 3, minWidth: 0 }}>
-        <div>
-          <h1
-            style={{
-              color: COLORS.primary,
-              fontSize: "2.2rem",
-              letterSpacing: 0.01,
-              fontWeight: 700,
-              marginBottom: 6,
-            }}
-          >
-            Welcome to your Digital Detox Companion
-          </h1>
-          <p
-            style={{
-              fontSize: "1.1rem",
-              color: COLORS.secondary,
-              marginTop: 0,
-              marginBottom: 18,
-              fontWeight: 500
-            }}
-          >
-            Create healthier habits, win real-life rewards, and rediscover life beyond your screen.
-          </p>
-        </div>
-        <img
-          src={process.env.PUBLIC_URL + "/assets/detox-illustration.svg"}
-          alt="Detox"
-          style={{
-            width: "88%",
-            maxWidth: 360,
-            minWidth: 200,
-            margin: "32px 0"
-          }}
-        />
-        <section style={{marginTop: 15, marginBottom: 0}}>
-          <h2 style={{color: COLORS.primary, fontSize: "1.5rem", marginBottom: 8}}>
-            Your Journey Starts Here
-          </h2>
-          <ul style={{ fontSize: 17, color: COLORS.text, paddingLeft: 18, marginTop: 0 }}>
-            <li>
-              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🏅</span> Personalized detox plans
-            </li>
-            <li>
-              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🤝</span> Buddy for accountability
-            </li>
-            <li>
-              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🎁</span> Milestone rewards
-            </li>
-            <li>
-              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🌳</span> Off-grid check-ins
-            </li>
-            <li>
-              <span style={{ color: COLORS.accent, fontWeight: 700 }}>💡</span> AI reflection prompts
-            </li>
-          </ul>
-        </section>
-      </div>
-
-      {/* Sidebar with Explore More */}
-      <aside
+      {/* MAIN CONTENT */}
+      <section
         style={{
           flex: 1,
-          minWidth: 230,
-          maxWidth: 285,
-          background: COLORS.secondary,
+          background: "#fff",
           borderRadius: 16,
-          boxShadow: "0 3px 8px 0 rgba(46, 125, 50, 0.04)",
-          padding: "26px 20px 18px 20px",
-          color: COLORS.primary,
-          fontWeight: 500,
-          alignSelf: "stretch",
-          display: "flex",
-          flexDirection: "column"
+          boxShadow: "0 2px 7px 0 rgba(46,125,50,0.04)",
+          padding: "36px 30px 34px 30px",
+          marginBottom: 32,
         }}
       >
-        <div
+        <h2
           style={{
-            fontSize: "1.23rem",
             color: COLORS.primary,
-            fontWeight: 600,
+            fontSize: "2.25rem",
             marginBottom: 9,
-            letterSpacing: 0.01
+            fontWeight: 700
           }}
         >
-          Explore More
+          Welcome to Your Digital Detox Journey
+        </h2>
+        <div
+          style={{
+            color: COLORS.secondary,
+            fontWeight: 500,
+            fontSize: "1.2rem",
+            marginBottom: 18
+          }}
+        >
+          Current goal:&nbsp;
+          <span style={{ color: COLORS.primary }}>{plan.currentGoal}</span>
         </div>
-        <ul style={{listStyle: "none", padding: 0, margin: 0}}>
-          <li>
-            <SidebarLink onClick={() => onNavigate && onNavigate('plan')} icon="🗺️" text="Detox Plan" />
-          </li>
-          <li>
-            <SidebarLink onClick={() => onNavigate && onNavigate('buddy')} icon="🤝" text="Accountability Buddy" />
-          </li>
-          <li>
-            <SidebarLink onClick={() => onNavigate && onNavigate('rewards')} icon="🎉" text="Milestone Rewards" />
-          </li>
-          <li>
-            <SidebarLink onClick={() => onNavigate && onNavigate('checkin')} icon="✅" text="Off-Grid Check-Ins" />
-          </li>
-          <li>
-            <SidebarLink onClick={() => onNavigate && onNavigate('journal')} icon="📝" text="Habit Journal" />
-          </li>
+        <ProgressBar progress={plan.progress} />
+        <ul style={{ listStyle: "none", padding: 0, marginTop: 30 }}>
+          {plan.steps.map((step) => (
+            <li
+              key={step.id}
+              style={{
+                marginBottom: 15,
+                padding: "12px 20px",
+                borderRadius: 9,
+                background: step.done ? "#F3FCF9" : "#EFFBFC",
+                color: COLORS.text,
+                display: "flex",
+                alignItems: "center",
+                gap: 13,
+                boxShadow: step.done ? "0 2px 4px 0 rgba(46,125,50,0.04)" : "none"
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 20,
+                  color: step.done ? COLORS.primary : "#bdbdbd"
+                }}
+              >
+                {step.done ? "✔️" : "⏳"}
+              </span>
+              <span style={{ textDecoration: step.done ? "line-through" : "none" }}>
+                {step.text}
+              </span>
+            </li>
+          ))}
         </ul>
         <div
           style={{
-            fontSize: 15,
-            color: "#24553f",
-            opacity: 0.85,
-            marginTop: 24,
-            lineHeight: 1.4
-          }}
-        >
-          Need a break? Try one mini detox game or discover our Community Circles!
-        </div>
-        <button
-          style={{
-            marginTop: 18,
-            padding: "9px 20px",
-            borderRadius: 5,
-            background: COLORS.accent,
-            color: "#313619",
-            border: "none",
-            fontWeight: 600,
-            fontSize: 16,
-            cursor: "pointer",
-            letterSpacing: 0.04,
-            boxShadow: "0 2px 4px 0 rgba(46,125,50,0.08)"
-          }}
-          onClick={() => onNavigate && onNavigate('games')}
-        >
-          🎲 Mini Detox Games
-        </button>
-        <button
-          style={{
-            marginTop: 12,
-            padding: "8px 17px",
-            borderRadius: 5,
-            background: "#fff",
+            marginTop: 32,
+            background: COLORS.secondary,
+            borderRadius: 14,
+            padding: "18px 24px",
             color: COLORS.primary,
-            border: `1.3px solid ${COLORS.primary}`,
-            fontWeight: 550,
-            fontSize: 15,
-            cursor: "pointer"
+            fontWeight: 500,
           }}
-          onClick={() => onNavigate && onNavigate('circles')}
         >
-          🫂 Community Circles
-        </button>
+          Detox Tip: <span style={{ color: COLORS.primary }}>Plan offline fun after your check-in!</span>
+        </div>
+      </section>
+
+      {/* SIDEBAR */}
+      <aside
+        style={{
+          width: 280,
+          minWidth: 240,
+          maxWidth: 320,
+          background: "#fafcfb",
+          border: `2px solid ${COLORS.secondary}`,
+          borderRadius: 16,
+          boxShadow: "0 2px 8px 0 rgba(46,125,50,0.04)",
+          marginLeft: "auto",
+          padding: "29px 24px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 7,
+          position: "relative"
+        }}
+      >
+        <div style={{
+          color: COLORS.primary,
+          fontWeight: 700,
+          fontSize: "1.28rem",
+          marginBottom: 16,
+          letterSpacing: 0.2
+        }}>
+          🌟 Explore More
+        </div>
+        <nav>
+          <ul style={{ listStyle: "none", padding: 0, margin: 0, width: "100%" }}>
+            {exploreLinks.map((item) => (
+              <li key={item.tab} style={{ marginBottom: 9 }}>
+                <button
+                  onClick={() => onNavigate(item.tab)}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    padding: "12px 0 12px 3px",
+                    border: "none",
+                    background: "none",
+                    fontSize: 16,
+                    fontWeight: 500,
+                    color: COLORS.primary,
+                    borderRadius: 7,
+                    cursor: "pointer",
+                    transition: "background 0.17s",
+                  }}
+                  onMouseOver={e => (e.currentTarget.style.background = "#EEF7F6")}
+                  onMouseOut={e => (e.currentTarget.style.background = "none")}
+                >
+                  <span style={{ fontSize: 19, minWidth: 22 }}>{item.icon}</span>
+                  <span>{item.label}</span>
+                  <span style={{ marginLeft: "auto", color: COLORS.accent, fontSize: 16 }}>›</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div
+          style={{
+            marginTop: 23,
+            background: COLORS.accent,
+            color: "#3C4220",
+            borderRadius: 11,
+            fontWeight: 600,
+            fontSize: 14.2,
+            padding: "10px 13px",
+            textAlign: "center",
+            letterSpacing: 0.06
+          }}
+        >
+          New here? Tap an area to start your healthy habits journey!
+        </div>
       </aside>
     </div>
   );
 }
 
-// Sidebar link styled for palette consistency
-function SidebarLink({ onClick, icon, text }) {
+// PROGRESS BAR for showing progress visually
+function ProgressBar({ progress }) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        background: "none",
-        border: "none",
-        color: COLORS.primary,
-        fontWeight: 500,
-        fontSize: "1.05rem",
-        padding: "7px 0",
-        cursor: "pointer",
-        gap: 8,
-        borderRadius: 4,
-        transition: "background 0.14s",
-        marginBottom: 2
-      }}
-      onMouseOver={e => (e.currentTarget.style.background = "#b2dfdb33")}
-      onMouseOut={e => (e.currentTarget.style.background = "none")}
-    >
-      <span style={{ fontSize: 17, marginRight: 5 }}>{icon}</span>
-      {text}
-    </button>
+    <div style={{ marginTop: 8, marginBottom: 0, width: "100%" }}>
+      <div
+        style={{
+          background: "#F2F6F5",
+          borderRadius: 8,
+          overflow: "hidden",
+          height: 15,
+          position: "relative"
+        }}
+      >
+        <div
+          style={{
+            width: `${Math.round(progress * 100)}%`,
+            background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`,
+            height: "100%",
+            transition: "width 0.8s cubic-bezier(.4,0,.2,1)"
+          }}
+        />
+      </div>
+      <div
+        style={{
+          marginTop: 3,
+          fontSize: 13,
+          color: "#789262"
+        }}
+      >
+        {Math.round(progress * 100)}% completed
+      </div>
+    </div>
   );
 }
 
