@@ -160,7 +160,7 @@ function App() {
           }}
         >
           <div style={{ fontSize: 45, marginBottom: 13, color: "#FFD600" }}>
-            <span className={slide.accent ? "feature-wiggle" : ""}>{slide.icon}</span>
+            <span className={slide.accent ? "feature-wiggle animated-icon" : "animated-icon"}>{slide.icon}</span>
           </div>
           <div style={{ fontSize: "1.56rem", fontWeight: 700, marginBottom: 7 }}>
             {slide.title}
