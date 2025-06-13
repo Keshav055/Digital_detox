@@ -8,8 +8,33 @@ This is a simple FastAPI backend that provides an AI chat API endpoint for the D
   ```json
   { "assistant": "<AI reply string>" }
   ```
-- If an [OpenAI API key](https://platform.openai.com/account/api-keys) is provided via environment variable (`OPENAI_API_KEY`), responses will be generated using OpenAI GPT-3.5-turbo.
-- If no API key is set, a mock (randomized generic) assistant reply is returned.
+- If an [OpenAI API key](https://platform.openai.com/account/api-keys) is provided via environment variable (`OPENAI_API_KEY`), responses will be generated using OpenAI GPT-3.5-turbo via the official OpenAI Python SDK.
+- If no API key is set (or the SDK is not installed), a mock (randomized generic) assistant reply is returned.
+- Graceful error handling if the OpenAI API request fails (returns `502` status with suitable error message).
+- CORS enabled for all origins (local frontend compatible).
+
+---
+
+## Environment Variable: `OPENAI_API_KEY`
+
+To use real OpenAI completions, set the `OPENAI_API_KEY` environment variable before starting the backend.  
+If this key is absent (or the SDK is missing), the backend serves mock replies.
+
+**How to set in Unix/macOS/Linux (`bash`):**
+```bash
+export OPENAI_API_KEY=sk-...
+```
+
+**How to set in Windows (cmd):**
+```cmd
+set OPENAI_API_KEY=sk-...
+```
+
+### Where the key is used:
+
+- The backend loads the key at process start.
+- When present, user chat requests are passed to OpenAI's Chat Completions API.
+- The key is never logged or exposed to the frontend.
 
 ---
 
@@ -17,7 +42,8 @@ This is a simple FastAPI backend that provides an AI chat API endpoint for the D
 
 ### 1. Install Dependencies
 
-> Requires Python 3.8+.
+> Requires Python 3.8+.  
+> The OpenAI SDK (`openai`) must be installed (see `requirements.txt`).
 
 ```bash
 cd ai_backend
@@ -26,13 +52,10 @@ pip install -r requirements.txt
 
 ### 2. Set API Key (Optional)
 
-To use the real OpenAI model, set your API key in an environment variable:
+Set `OPENAI_API_KEY` as described above.
 
-```bash
-export OPENAI_API_KEY=sk-...
-```
-
-If omitted, the backend will respond with mock assistant replies.
+If the variable is omitted, the backend will respond with mock assistant replies.  
+If provided but OpenAI SDK is not installed, a warning is logged and mock mode is used.
 
 ### 3. Run the Server
 
@@ -58,6 +81,13 @@ Server will listen on **http://localhost:8000** by default.
 { "assistant": "<AI reply string>" }
 ```
 
+### Error Handling
+
+If the OpenAI API call fails or is unavailable, the endpoint returns a `502 Bad Gateway` error:
+```json
+{ "detail": "AI service unavailable, please try again later." }
+```
+
 ---
 
 ## Example with `curl`
@@ -72,5 +102,8 @@ curl -X POST http://localhost:8000/api/ai-chat \
 
 ## Notes
 
-- To change the OpenAI model or add your logic, edit `main.py`.
+- To change the OpenAI model or handling logic, edit `main.py`.
 - CORS is enabled for all origins, so it is compatible with your React frontend.
+- The backend supports both asynchronous and synchronous OpenAI SDK versions.
+
+- **Security:** Never commit your OpenAI API key to public code or share it with clients/frontends. The key is used server-side only.
