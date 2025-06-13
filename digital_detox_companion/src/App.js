@@ -321,6 +321,9 @@ function BuddySystemPage() {
   const paired = true;
   const buddy = { id: "anonbuddy14", status: "active", streak: 4 };
 
+  // Feedback state for contextual notifications (reflection sent, encouragement, etc.)
+  const [buddyFeedback, setBuddyFeedback] = useState(null);
+
   return (
     <section style={{ marginTop: 24 }}>
       <h2 style={{ color: COLORS.primary, fontSize: '2.1rem', marginBottom: 7 }}>
@@ -359,10 +362,44 @@ function BuddySystemPage() {
             buddyStatus={buddy.status}
             showBuddy={true}
             onBreakReflection={(reflection) => {
-              alert("Reflection sent to buddy!\n\n" + reflection);
+              setBuddyFeedback({ type: "reflection", message: `Reflection sent to buddy!\n\n${reflection}` });
             }}
           />
-          <BuddyMessagePane />
+          {/* Inline feedback after buddy actions */}
+          {buddyFeedback && (
+            <div
+              style={{
+                background: "#f9ffec",
+                color: "#487e41",
+                border: "1px solid #cce3c1",
+                borderRadius: 7,
+                padding: "12px 16px",
+                margin: "14px 0 0 0",
+                fontSize: 15,
+                whiteSpace: "pre-line",
+                fontWeight: 500,
+              }}
+              data-testid="buddy-feedback"
+            >
+              {buddyFeedback.message}
+              <button
+                style={{
+                  marginLeft: 14,
+                  background: "none",
+                  color: "#888",
+                  border: "none",
+                  fontSize: 13,
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+                aria-label="Dismiss notification"
+                onClick={() => setBuddyFeedback(null)}
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+          <BuddyMessagePane setBuddyFeedback={setBuddyFeedback} />
         </>
       ) : (
         <div>
@@ -400,12 +437,27 @@ function BuddySystemPage() {
 }
 
 // Simulated buddy chat pane
-function BuddyMessagePane() {
+function BuddyMessagePane({ setBuddyFeedback }) {
   const lastMessage = {
     fromBuddy: true,
     time: "2h ago",
     text: "How did your check-in go today? Stay strong! 💪"
   };
+
+  // State to show feedback inline instead of popup for sending encouragement
+  const [showEncouragementMsg, setShowEncouragementMsg] = useState(false);
+
+  const handleSendEncouragement = () => {
+    setShowEncouragementMsg(true);
+    if (setBuddyFeedback) {
+      setBuddyFeedback({
+        type: "encouragement",
+        message: "Your encouragement was sent to your buddy! 💬",
+      });
+    }
+    setTimeout(() => setShowEncouragementMsg(false), 2200);
+  };
+
   return (
     <div style={{
       padding: "18px 20px",
@@ -440,10 +492,27 @@ function BuddyMessagePane() {
           fontSize: 15,
           cursor: "pointer"
         }}
-        onClick={() => alert("Message your buddy! (Demo only)")}
+        onClick={handleSendEncouragement}
+        data-testid="encourage-btn"
       >
         Send Encouragement
       </button>
+      {showEncouragementMsg && (
+        <div
+          style={{
+            background: "#f0ffe0",
+            color: "#397536",
+            borderRadius: 6,
+            marginTop: 12,
+            padding: "7px 14px",
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+          data-testid="encouragement-feedback"
+        >
+          Sent! Your buddy will see your encouragement.
+        </div>
+      )}
     </div>
   );
 }
@@ -535,10 +604,29 @@ function RewardsPage() {
 // ----------- CHECK IN PAGE -----------
 // PUBLIC_INTERFACE
 function CheckInPage() {
-  const checkinHistory = [
+  const [checkinHistory, setCheckinHistory] = useState([
     { id: 1, text: "Nature walk (Central Park)", date: "Yesterday", icon: "🌳" },
     { id: 2, text: "Offline dinner with friends", date: "2 days ago", icon: "🍽️" }
-  ];
+  ]);
+  const [showCheckinFeedback, setShowCheckinFeedback] = useState(false);
+
+  // For demo, auto-generate new check-in
+  function handleNewCheckIn() {
+    setTimeout(() => {
+      setCheckinHistory(prev =>
+        [
+          {
+            id: prev.length + 1,
+            text: "Quiet reading break at coffee shop",
+            date: "Today",
+            icon: "📚"
+          },
+          ...prev,
+        ]
+      );
+      setShowCheckinFeedback(true);
+    }, 200);
+  }
 
   return (
     <section style={{ marginTop: 24 }}>
@@ -566,12 +654,41 @@ function CheckInPage() {
           marginBottom: 18,
           cursor: "pointer"
         }}
-        onClick={() =>
-          alert("Demo: Check-in! In a full app, log activities here.")
-        }
+        onClick={handleNewCheckIn}
       >
         New Check-In
       </button>
+      {showCheckinFeedback && (
+        <div
+          style={{
+            margin: "0 0 15px 0",
+            background: "#eaffea",
+            color: "#2A631B",
+            padding: "10px 18px",
+            borderRadius: 7,
+            fontWeight: 500,
+            fontSize: 15,
+          }}
+          data-testid="checkin-feedback"
+        >
+          🎉 Activity checked in successfully!
+          <button
+            onClick={() => setShowCheckinFeedback(false)}
+            style={{
+              marginLeft: 16,
+              background: "none",
+              color: "#79a55d",
+              border: "none",
+              fontSize: 13,
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+            aria-label="Dismiss"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <div style={{ marginTop: 8 }}>
         <div style={{
           color: COLORS.primary,
@@ -615,11 +732,10 @@ function CheckInPage() {
   );
 }
 
- 
 // ----------- JOURNAL PAGE -----------
 // PUBLIC_INTERFACE
 function JournalPage() {
-  const entries = [
+  const [entries, setEntries] = useState([
     {
       id: 2,
       text: "Felt refreshed after spending two hours reading in the park.",
@@ -630,15 +746,26 @@ function JournalPage() {
       text: "Managed to reduce screen time. Noticed feeling less distracted.",
       date: "2024-06-07"
     }
-  ];
+  ]);
 
   const aiPrompt = "Reflect on your experience: How did going offline today impact your mood or focus?";
 
   const [draft, setDraft] = useState("");
+  const [saveFeedback, setSaveFeedback] = useState(false);
 
   function handleSave() {
-    alert("Entry saved! (Demo)");
+    // Add entry to the top, fake current date
+    setEntries(prev => [
+      {
+        id: prev[0]?.id ? prev[0].id + 1 : 1,
+        text: draft,
+        date: (new Date()).toISOString().split('T')[0]
+      },
+      ...prev
+    ]);
     setDraft("");
+    setSaveFeedback(true);
+    setTimeout(() => setSaveFeedback(false), 2000);
   }
 
   return (
@@ -694,6 +821,22 @@ function JournalPage() {
         >
           Save Entry
         </button>
+        {saveFeedback && (
+          <span
+            style={{
+              marginLeft: 16,
+              background: "#f3ffe3",
+              color: "#799E25",
+              borderRadius: 6,
+              fontWeight: 500,
+              padding: "7px 12px",
+              fontSize: 15,
+            }}
+            data-testid="journal-save-feedback"
+          >
+            Entry saved!
+          </span>
+        )}
       </div>
       {/* AI Live Chat UI */}
       <AIChat theme={{
