@@ -11,6 +11,7 @@ import DigitalBudgetMode from "./DigitalBudgetMode";
 import CommunityCircles from "./CommunityCircles";
 import IntegrationsHub from "./IntegrationsHub";
 import HomePage from "./HomePage";
+import AIChat from "./AIChat";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -614,6 +615,7 @@ function CheckInPage() {
   );
 }
 
+ 
 // ----------- JOURNAL PAGE -----------
 // PUBLIC_INTERFACE
 function JournalPage() {
@@ -693,6 +695,12 @@ function JournalPage() {
           Save Entry
         </button>
       </div>
+      {/* AI Live Chat UI */}
+      <AIChat theme={{
+        primary: COLORS.primary,
+        secondary: COLORS.secondary,
+        accent: COLORS.accent
+      }} />
       <div style={{
         marginTop: 25,
         color: COLORS.primary,
