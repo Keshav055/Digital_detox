@@ -646,10 +646,13 @@ function BuddyMessagePane({ setBuddyFeedback, buddy }) {
   );
 }
 
-// ----------- REWARDS PAGE -----------
-// PUBLIC_INTERFACE
+/*
+ * ------------- REWARDS PAGE -------------
+ * PUBLIC_INTERFACE
+ * Adds: animated 'pop' when a reward is unlocked, playful hover on reward cards
+ */
 function RewardsPage() {
-  // Expanded rewards data
+  // Expanded rewards data (simulate new unlock for animation effect)
   const rewards = [
     {
       id: 1,
@@ -723,6 +726,15 @@ function RewardsPage() {
     return <span style={{ color: "#aaa" }}>Locked</span>;
   }
 
+  // Animate the most recently unlocked reward with a pop
+  const [justUnlocked, setJustUnlocked] = React.useState(null);
+  React.useEffect(() => {
+    // For demo: Animate first unlocked card on load
+    setJustUnlocked(1);
+    const timeout = setTimeout(() => setJustUnlocked(null), 1100);
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <section style={{ marginTop: 24 }}>
       <h2 style={{ color: COLORS.primary, fontSize: "2.1rem", marginBottom: 7 }}>
@@ -737,6 +749,11 @@ function RewardsPage() {
         {rewards.map((r, idx) => (
           <div
             key={r.id}
+            className={
+              "reward-card playful-card" +
+              (r.unlocked ? " reward-card-unlocked" : "") +
+              (justUnlocked === r.id && r.unlocked ? " reward-unlocked-pop" : "")
+            }
             style={{
               background: r.unlocked ? "#fafbe4" : "#f2f6f5",
               border: r.unlocked
