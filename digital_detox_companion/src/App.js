@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 import DetoxJourneyMap from "./DetoxJourneyMap";
 import TimeReallocationTracker from "./TimeReallocationTracker";
@@ -31,49 +31,71 @@ const minimalTheme = {
   "--text": COLORS.text,
 };
 
-// PUBLIC_INTERFACE
+/*
+ * PUBLIC_INTERFACE
+ * App main component with playful onboarding and global UI effects
+ */
 function App() {
   const [tab, setTab] = useState("home");
+  const [showOnboard, setShowOnboard] = useState(() => {
+    // If onboarding has not been seen before, show it
+    return window.localStorage.getItem("ddc-onboard") !== "true";
+  });
+  const [onboardStep, setOnboardStep] = useState(0);
 
-  // Top nav: Home + 5 most important core features
-  const navTabs = [
+  // Fun onboarding steps content
+  const onboardingSlides = [
     {
-      id: "home",
-      label: "Home",
-      icon: "🏠"
+      title: "Welcome to Digital Detox Companion!",
+      icon: "🧘‍♂️",
+      desc: "Break the habit. Discover real-world joy! Ready for healthy digital balance?",
+      accent: true
     },
     {
-      id: "plan",
-      label: "Detox Plan",
-      icon: "🗺️"
+      title: "Get Your Personalized Detox Plan",
+      icon: "🗺️",
+      desc: "Follow practical steps each week to spend less time online — and more time living.",
     },
     {
-      id: "buddy",
-      label: "Buddy System",
-      icon: "🤝"
+      title: "Buddy System",
+      icon: "🤝",
+      desc: "Be anonymously matched with an accountability buddy for motivation, encouragement, and streak goals.",
     },
     {
-      id: "rewards",
-      label: "Rewards",
-      icon: "🎉"
+      title: "Earn Real Rewards",
+      icon: "🎉",
+      desc: "Enjoy real-world perks for hitting milestones. Coffee vouchers, outdoor adventures, and more are up for grabs!",
     },
     {
-      id: "checkin",
-      label: "Check-In",
-      icon: "✅"
-    },
-    {
-      id: "journal",
-      label: "Journal",
-      icon: "📝"
+      title: "Reflect & Grow",
+      icon: "📝",
+      desc: "Jot down your journey, get AI-powered prompts, and celebrate your progress.",
     }
   ];
 
-  // Renders the currently active page/component
+  function handleOnboardNext() {
+    if (onboardStep < onboardingSlides.length - 1) {
+      setOnboardStep(onboardStep + 1);
+    } else {
+      setShowOnboard(false);
+      window.localStorage.setItem("ddc-onboard", "true");
+    }
+  }
+
+  // Nav Tabs (unchanged)
+  const navTabs = [
+    { id: "home", label: "Home", icon: "🏠" },
+    { id: "plan", label: "Detox Plan", icon: "🗺️" },
+    { id: "buddy", label: "Buddy System", icon: "🤝" },
+    { id: "rewards", label: "Rewards", icon: "🎉" },
+    { id: "checkin", label: "Check-In", icon: "✅" },
+    { id: "journal", label: "Journal", icon: "📝" }
+  ];
+
+  // Render main sections
   function renderPage() {
     switch (tab) {
       case "home":
-        // Pass an onNavigate to HomePage so that it can trigger tab changes.
         return <HomePage onNavigate={setTab} />;
       case "journey":
         return <DetoxJourneyMap />;
@@ -108,6 +130,89 @@ function App() {
     }
   }
 
+  // Onboarding overlay rendering
+  if (showOnboard) {
+    const slide = onboardingSlides[onboardStep];
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#FAFFF6",
+          color: COLORS.primary,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <div
+          className={`onboard-slide-in fade-in`}
+          style={{
+            background: "#fffdfa",
+            boxShadow: "0 7px 40px 0 rgba(46,125,50,0.06)",
+            padding: "34px 40px 28px 40px",
+            borderRadius: 20,
+            maxWidth: 380,
+            width: "92%",
+            textAlign: "center",
+            position: "relative",
+            marginBottom: 24
+          }}
+        >
+          <div style={{ fontSize: 45, marginBottom: 13, color: "#FFD600" }}>
+            <span className={slide.accent ? "feature-wiggle" : ""}>{slide.icon}</span>
+          </div>
+          <div style={{ fontSize: "1.56rem", fontWeight: 700, marginBottom: 7 }}>
+            {slide.title}
+          </div>
+          <div
+            style={{
+              color: "#7a8875",
+              fontSize: 16,
+              fontWeight: 500,
+              marginBottom: 7,
+            }}
+          >
+            {slide.desc}
+          </div>
+          <div style={{ marginTop: 19, marginBottom: 17 }}>
+            {onboardingSlides.map((s, idx) => (
+              <span
+                key={idx}
+                className={"onboard-dot" + (idx === onboardStep ? " active" : "")}
+              />
+            ))}
+          </div>
+          <button
+            className="onboard-action-btn playful-btn"
+            style={{
+              marginTop: 7,
+              padding: "11px 2.1em",
+              borderRadius: 8,
+              background: "#FFD600",
+              color: "#313619",
+              border: "none",
+              fontWeight: 700,
+              fontSize: 17,
+              cursor: "pointer",
+              boxShadow: "0 2.5px 16px 0 #ffd60022"
+            }}
+            onClick={handleOnboardNext}
+          >
+            {onboardStep === onboardingSlides.length - 1
+              ? "Let's Go!"
+              : "Next"}
+          </button>
+        </div>
+        <div style={{ color: "#A5B97C", fontWeight: 500 }}>
+          <span style={{ fontSize: 21, marginRight: 6 }}>🌳</span>
+          Digital Detox Companion
+        </div>
+      </div>
+    );
+  }
+
+  // App main UI
   return (
     <div
       className="app"
@@ -151,7 +256,6 @@ function App() {
               Digital Detox Companion
             </div>
             <div style={{ display: "flex", gap: 8 }}>
-              {/* Only show Home in nav bar */}
               {navTabs.map((t) => (
                 <NavTab
                   key={t.id}
@@ -321,8 +425,9 @@ function BuddySystemPage() {
   const paired = true;
   const buddy = { id: "anonbuddy14", status: "active", streak: 4 };
 
-  // Feedback state for contextual notifications (reflection sent, encouragement, etc.)
+  // Animated feedback after buddy action state
   const [buddyFeedback, setBuddyFeedback] = useState(null);
+  const feedbackRef = useRef();
 
   return (
     <section style={{ marginTop: 24 }}>
@@ -331,20 +436,26 @@ function BuddySystemPage() {
       </h2>
       {paired ? (
         <>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 18,
-            background: "#EFFBFC",
-            padding: "18px 18px 15px",
-            borderRadius: 14,
-            marginBottom: 16
-          }}>
-            <span style={{
-              fontSize: 36,
-              color: COLORS.primary,
-              marginRight: 9
+          <div
+            className="buddy-card playful-card"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 18,
+              background: "#EFFBFC",
+              padding: "18px 18px 15px",
+              borderRadius: 14,
+              marginBottom: 16,
+              position: "relative"
             }}>
+            <span
+              style={{
+                fontSize: 36,
+                color: COLORS.primary,
+                marginRight: 9
+              }}
+              className="animated-icon"
+            >
               🤝
             </span>
             <div>
@@ -352,7 +463,7 @@ function BuddySystemPage() {
                 Paired with: {buddy.id} &bull; <span style={{ fontWeight: 400, color: "#7a8875" }}>anonymous</span>
               </div>
               <div style={{ color: "#82B571", fontWeight: 500, fontSize: "1.06rem" }}>
-                Streak: {buddy.streak} days
+                Streak: <span className="animated-icon">{buddy.streak}</span> days
               </div>
             </div>
           </div>
@@ -368,6 +479,7 @@ function BuddySystemPage() {
           {/* Inline feedback after buddy actions */}
           {buddyFeedback && (
             <div
+              ref={feedbackRef}
               style={{
                 background: "#f9ffec",
                 color: "#487e41",
@@ -378,11 +490,18 @@ function BuddySystemPage() {
                 fontSize: 15,
                 whiteSpace: "pre-line",
                 fontWeight: 500,
+                position: "relative",
+                boxShadow: "0 4px 24px 0 rgba(150,200,122,0.05)"
               }}
               data-testid="buddy-feedback"
+              className="fade-in"
             >
+              <span className="animated-icon">
+                {buddyFeedback.type === "encouragement" ? "💬" : "✨"}
+              </span>{" "}
               {buddyFeedback.message}
               <button
+                className="playful-btn"
                 style={{
                   marginLeft: 14,
                   background: "none",
@@ -403,7 +522,7 @@ function BuddySystemPage() {
         </>
       ) : (
         <div>
-          <div style={{
+          <div className="buddy-card playful-card" style={{
             padding: 18,
             background: "#f8fbe9",
             borderRadius: 12,
@@ -412,6 +531,7 @@ function BuddySystemPage() {
           }}>
             You are currently not paired.<br />
             <button
+              className="playful-btn"
               style={{
                 marginTop: 8,
                 padding: "9px 20px",
@@ -459,16 +579,18 @@ function BuddyMessagePane({ setBuddyFeedback, buddy }) {
   };
 
   return (
-    <div style={{
-      padding: "18px 22px",
-      background: "#fff",
-      border: "1.5px solid #B2DFDB",
-      borderRadius: 10,
-      marginBottom: 8,
-      minHeight: 50,
-      boxShadow: "0 2.5px 6px rgba(44,127,67,0.02)",
-      maxWidth: 420
-    }}>
+    <div
+      className="playful-card"
+      style={{
+        padding: "18px 22px",
+        background: "#fff",
+        border: "1.5px solid #B2DFDB",
+        borderRadius: 10,
+        marginBottom: 8,
+        minHeight: 50,
+        boxShadow: "0 2.5px 6px rgba(44,127,67,0.02)",
+        maxWidth: 420
+      }}>
       <div style={{
         marginBottom: 6,
         color: "#4e8171",
@@ -485,6 +607,7 @@ function BuddyMessagePane({ setBuddyFeedback, buddy }) {
         {lastMessage.time}
       </div>
       <button
+        className="playful-btn"
         style={{
           marginTop: 10,
           background: COLORS.accent,
@@ -503,6 +626,7 @@ function BuddyMessagePane({ setBuddyFeedback, buddy }) {
       </button>
       {showEncouragementMsg && (
         <div
+          className="fade-in"
           style={{
             background: "#f0ffe0",
             color: "#397536",
@@ -514,6 +638,7 @@ function BuddyMessagePane({ setBuddyFeedback, buddy }) {
           }}
           data-testid="encouragement-feedback"
         >
+          <span className="animated-icon" style={{ marginRight: 6 }}>🎉</span>
           Sent! Your buddy will see your encouragement.
         </div>
       )}
