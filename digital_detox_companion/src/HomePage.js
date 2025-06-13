@@ -1,172 +1,169 @@
 import React from "react";
 
-/**
- * HomePage component for the Digital Detox Companion app.
- * Displays a welcoming description, app use case, and the five main features.
- * Clean layout, light theme, and uses brand colors: primary (#2E7D32), secondary (#B2DFDB), accent (#FFD600).
- * PUBLIC_INTERFACE
- */
-function HomePage() {
-  const COLORS = {
-    primary: "#2E7D32",
-    secondary: "#B2DFDB",
-    accent: "#FFD600",
-    lightbg: "#fff",
-    darktext: "#1A1A1A"
-  };
+// Dummy icons for feature cards
+const featureIcons = {
+  plan: "🗓️",
+  buddy: "🤝",
+  rewards: "🎁",
+  checkin: "📍",
+  journal: "📖"
+};
 
-  const features = [
-    {
-      name: "Personalized Digital Detox Plans",
-      desc: "Receive tailored strategies to help you ease into healthier digital habits.",
-      icon: "📆",
-    },
-    {
-      name: "Accountability Buddy System",
-      desc: "Pair anonymously with a buddy for mutual motivation and support.",
-      icon: "🤝",
-    },
-    {
-      name: "Real-World Milestone Rewards",
-      desc: "Earn rewards for meeting your offline goals and celebrating progress.",
-      icon: "🎁",
-    },
-    {
-      name: "Off-Grid Check-In System",
-      desc: "Log real-world activities to reinforce time spent away from screens.",
-      icon: "📍",
-    },
-    {
-      name: "AI-Powered Reflection & Habit Journal",
-      desc: "Use AI-guided prompts to reflect and track your journey.",
-      icon: "📝",
-    },
-  ];
+// PUBLIC_INTERFACE
+function HomePage({ onNavigate }) {
+  // If onNavigate is not passed, fallback so direct access works (storybook/test)
+  const withNavigate = (cb) => (onNavigate ? cb : () => {});
 
   return (
-    <section
+    <div>
+      <h1 style={{ color: "#2E7D32", fontWeight: 800, fontSize: "2.3rem", marginBottom: 8 }}>
+        Welcome to Your Digital Detox Journey
+      </h1>
+      <p style={{ fontSize: 17, color: "#45604A", marginBottom: 26 }}>
+        Take small steps every day. Discover your plan, check progress, and access essential features from here.<br />
+        <span style={{ color: "#AF9B27" }}>
+          Real progress happens offline. We're with you for the essentials.
+        </span>
+      </p>
+      <div style={{
+        display: "flex", flexWrap: "wrap",
+        gap: 26, marginTop: 10, marginBottom: 24
+      }}>
+        {/* Detox Plan Card */}
+        <FeatureCard
+          icon={featureIcons.plan}
+          title="Your Detox Plan"
+          description="View and customize your personal digital detox plan. Track your step-by-step progress."
+          onClick={withNavigate(() => onNavigate && onNavigate("plan"))}
+          cta="View Plan"
+        />
+
+        {/* Buddy System */}
+        <FeatureCard
+          icon={featureIcons.buddy}
+          title="Accountability Buddy"
+          description="Check in with your anonymous buddy for motivation and support."
+          onClick={withNavigate(() => onNavigate && onNavigate("buddy"))}
+          cta="Open Buddy"
+        />
+
+        {/* Rewards */}
+        <FeatureCard
+          icon={featureIcons.rewards}
+          title="Milestone Rewards"
+          description="Unlock real-world rewards as you hit your digital detox goals."
+          onClick={withNavigate(() => onNavigate && onNavigate("rewards"))}
+          cta="See Rewards"
+        />
+
+        {/* Off-Grid Check-In */}
+        <FeatureCard
+          icon={featureIcons.checkin}
+          title="Off-Grid Check-In"
+          description="Log offline activities to boost your progress each week."
+          onClick={withNavigate(() => onNavigate && onNavigate("checkin"))}
+          cta="Check In"
+        />
+
+        {/* Reflection & Journal */}
+        <FeatureCard
+          icon={featureIcons.journal}
+          title="Reflection Journal"
+          description="Reflect on your experience and keep a habit journal, powered by AI prompts."
+          onClick={withNavigate(() => onNavigate && onNavigate("journal"))}
+          cta="Journal"
+        />
+      </div>
+
+      {/* Quick Links for additional features */}
+      <div style={{ marginTop: 10, fontSize: 15, color: "#789262" }}>
+        <span style={{ fontWeight: 700, color: "#2E7D32" }}>Explore More:&nbsp;</span>
+        <FeatureQuickLink label="Journey Map" onClick={withNavigate(() => onNavigate && onNavigate("journey"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Detox Modes" onClick={withNavigate(() => onNavigate && onNavigate("modes"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Community Circles" onClick={withNavigate(() => onNavigate && onNavigate("circles"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Parent-Teen" onClick={withNavigate(() => onNavigate && onNavigate("family"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Digital Budget" onClick={withNavigate(() => onNavigate && onNavigate("budget"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Mini Games" onClick={withNavigate(() => onNavigate && onNavigate("games"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Integrations" onClick={withNavigate(() => onNavigate && onNavigate("integrations"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Reallocation Tracker" onClick={withNavigate(() => onNavigate && onNavigate("reallocation"))} />
+        <span> | </span>
+        <FeatureQuickLink label="Offline Events" onClick={withNavigate(() => onNavigate && onNavigate("events"))} />
+      </div>
+    </div>
+  );
+}
+
+// PUBLIC_INTERFACE
+function FeatureCard({ icon, title, description, onClick, cta }) {
+  return (
+    <div
       style={{
-        marginTop: 40,
-        marginBottom: 32,
-        background: COLORS.lightbg,
-        borderRadius: 16,
-        boxShadow: "0 1.5px 19px #B2DFDB14",
-        padding: "38px 26px 34px 26px",
-        maxWidth: 780,
-        minHeight: 420,
-        marginLeft: "auto",
-        marginRight: "auto",
+        minWidth: 220, maxWidth: 260,
+        flex: "1 1 220px",
+        borderRadius: 13,
+        background: "#fafdfb",
+        border: "1px solid #E7F6EC",
+        boxShadow: "0 4px 13px 0 rgba(46,125,50,0.04)",
+        padding: "22px 18px 18px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        alignItems: "flex-start"
       }}
     >
-      <h1
+      <span style={{ fontSize: 32, marginBottom: 6 }}>{icon}</span>
+      <div style={{ fontWeight: 700, fontSize: "1.22rem", color: "#2E7D32" }}>{title}</div>
+      <div style={{
+        fontSize: 15,
+        color: "#555",
+        marginBottom: 7,
+        minHeight: 46
+      }}>{description}</div>
+      <button
         style={{
-          color: COLORS.primary,
-          fontSize: "2.35rem",
-          fontWeight: 700,
-          marginBottom: 7,
-        }}
-      >
-        Welcome to Digital Detox Companion
-      </h1>
-      <div
-        style={{
-          color: COLORS.secondary,
-          fontWeight: 600,
-          fontSize: "1.2rem",
-          marginBottom: 16,
-          letterSpacing: 0.01,
-        }}
-      >
-        Mindful digital habits start here. Reclaim your time, boost real-world connections, and thrive beyond the screen.
-      </div>
-      <div
-        style={{
-          color: COLORS.darktext,
-          fontSize: "1.09rem",
-          marginBottom: 26,
+          background: "#2E7D32",
+          color: "#fff",
+          border: "none",
+          borderRadius: 6,
+          padding: "8px 20px",
           fontWeight: 500,
-          maxWidth: 590,
+          fontSize: 15,
+          marginTop: "auto",
+          cursor: "pointer"
         }}
+        onClick={onClick}
       >
-        <span style={{ color: COLORS.primary, fontWeight: 600 }}>Use case:</span>{" "}
-        This app helps you reduce social media use through personalized plans
-        and real-life rewards – all while encouraging you to spend less time in
-        the app itself and more time engaged with the world around you.
-      </div>
-      <hr
-        style={{
-          border: `1.5px solid ${COLORS.secondary}`,
-          background: COLORS.secondary,
-          margin: "18px 0 28px 0",
-          opacity: 0.4,
-        }}
-      />
-      <div>
-        <h2
-          style={{
-            color: COLORS.primary,
-            fontSize: "1.43rem",
-            fontWeight: 700,
-            marginBottom: 19,
-            letterSpacing: 0.002,
-          }}
-        >
-          Key Features
-        </h2>
-        <ul style={{
-            listStyle: "none",
-            margin: 0,
-            padding: 0,
-            display: "grid",
-            gridTemplateColumns: "1fr",
-            gap: 23,
-          }}>
-          {features.map((f, idx) => (
-            <li
-              key={f.name}
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                background: idx % 2 === 0 ? "#F8FBF8" : "#FFFDE6",
-                borderLeft: `6px solid ${idx % 2 === 0 ? COLORS.primary : COLORS.accent}`,
-                borderRadius: 10,
-                padding: "19px 19px 15px 19px",
-                boxShadow: "0 2px 6px #b2dfdb16",
-                gap: 17,
-                minHeight: 84
-              }}
-            >
-              <span
-                style={{
-                  fontSize: 29,
-                  marginRight: 6,
-                  marginTop: 2
-                }}
-                aria-hidden="true"
-              >{f.icon}</span>
-              <div>
-                <div style={{ fontWeight: 600, color: COLORS.primary, fontSize: 16.2, marginBottom: 6 }}>
-                  {f.name}
-                </div>
-                <div style={{ color: "#669388", fontWeight: 400, fontSize: 14.5 }}>{f.desc}</div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div
-        style={{
-          marginTop: 36,
-          textAlign: "center",
-          color: COLORS.accent,
-          fontSize: 15.6,
-          fontWeight: 700,
-          letterSpacing: 0.03,
-        }}
-      >
-        Ready to begin your digital detox journey? Explore the tabs above to get started!
-      </div>
-    </section>
+        {cta}
+      </button>
+    </div>
+  );
+}
+
+// PUBLIC_INTERFACE
+function FeatureQuickLink({ label, onClick }) {
+  return (
+    <button
+      style={{
+        background: "none",
+        color: "#255b33",
+        border: "none",
+        fontWeight: 600,
+        fontSize: 15,
+        cursor: "pointer",
+        textDecoration: "underline",
+        margin: "0 1px"
+      }}
+      onClick={onClick}
+    >
+      {label}
+    </button>
   );
 }
 

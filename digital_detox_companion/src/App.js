@@ -34,82 +34,12 @@ const minimalTheme = {
 function App() {
   const [tab, setTab] = useState("home");
 
-  // Navigation tabs, now including Home as the first tab
+  // Only 'Home' (can expand if e.g. Profile is added in future)
   const navTabs = [
     {
       id: "home",
       label: "Home",
       icon: "🏠"
-    },
-    {
-      id: "journey",
-      label: "Journey Map",
-      icon: "🛤️"
-    },
-    {
-      id: "plan",
-      label: "Detox Plan",
-      icon: "🗓️"
-    },
-    {
-      id: "circles",
-      label: "Circles",
-      icon: "🫂"
-    },
-    {
-      id: "budget",
-      label: "Budget Mode",
-      icon: "🎛️"
-    },
-    {
-      id: "games",
-      label: "Mini Games",
-      icon: "🕹️"
-    },
-    {
-      id: "modes",
-      label: "Detox Modes",
-      icon: "🎯"
-    },
-    {
-      id: "family",
-      label: "Parent-Teen",
-      icon: "🏠"
-    },
-    {
-      id: "events",
-      label: "Events",
-      icon: "🗺️"
-    },
-    {
-      id: "reallocation",
-      label: "Reallocation",
-      icon: "⏳"
-    },
-    {
-      id: "integrations",
-      label: "Integrations",
-      icon: "🔗"
-    },
-    {
-      id: "buddy",
-      label: "Buddy System",
-      icon: "🤝"
-    },
-    {
-      id: "rewards",
-      label: "Rewards",
-      icon: "🎁"
-    },
-    {
-      id: "checkin",
-      label: "Check-In",
-      icon: "📍"
-    },
-    {
-      id: "journal",
-      label: "Journal",
-      icon: "📖"
     }
   ];
 
@@ -117,7 +47,8 @@ function App() {
   function renderPage() {
     switch (tab) {
       case "home":
-        return <HomePage />;
+        // Pass an onNavigate to HomePage so that it can trigger tab changes.
+        return <HomePage onNavigate={setTab} />;
       case "journey":
         return <DetoxJourneyMap />;
       case "plan":
@@ -147,7 +78,7 @@ function App() {
       case "journal":
         return <JournalPage />;
       default:
-        return <HomePage />;
+        return <HomePage onNavigate={setTab} />;
     }
   }
 
@@ -194,6 +125,7 @@ function App() {
               Digital Detox Companion
             </div>
             <div style={{ display: "flex", gap: 8 }}>
+              {/* Only show Home in nav bar */}
               {navTabs.map((t) => (
                 <NavTab
                   key={t.id}
