@@ -436,12 +436,12 @@ function BuddySystemPage() {
   );
 }
 
-// Simulated buddy chat pane
-function BuddyMessagePane({ setBuddyFeedback }) {
+// Simulated buddy chat pane (now with buddy prop for display)
+function BuddyMessagePane({ setBuddyFeedback, buddy }) {
   const lastMessage = {
     fromBuddy: true,
     time: "2h ago",
-    text: "How did your check-in go today? Stay strong! 💪"
+    text: buddy?.motivationalMsg || "How did your check-in go today? Stay strong! 💪"
   };
 
   // State to show feedback inline instead of popup for sending encouragement
@@ -460,24 +460,28 @@ function BuddyMessagePane({ setBuddyFeedback }) {
 
   return (
     <div style={{
-      padding: "18px 20px",
+      padding: "18px 22px",
       background: "#fff",
-      border: "1px solid #E0EFE4",
-      borderRadius: 9,
+      border: "1.5px solid #B2DFDB",
+      borderRadius: 10,
       marginBottom: 8,
-      minHeight: 50
+      minHeight: 50,
+      boxShadow: "0 2.5px 6px rgba(44,127,67,0.02)",
+      maxWidth: 420
     }}>
       <div style={{
-        marginBottom: 8,
-        color: "#A1ACAE",
-        fontSize: 13
+        marginBottom: 6,
+        color: "#4e8171",
+        fontSize: 13,
+        fontWeight: 500,
+        letterSpacing: "0.02em"
       }}>
-        Latest from your buddy:
+        Latest from your buddy {buddy?.username ? <span style={{color:COLORS.primary}}>@{buddy.username}</span> : ""}:
       </div>
-      <div style={{ color: COLORS.primary, fontWeight: 500, fontSize: "1.04rem" }}>
-        "{lastMessage.text}"
+      <div style={{ color: COLORS.primary, fontWeight: 500, fontSize: "1.08rem", marginBottom: 3 }}>
+        “{lastMessage.text}”
       </div>
-      <div style={{ textAlign: "right", color: "#9abcb9", fontSize: 11 }}>
+      <div style={{ textAlign: "right", color: "#9abcb9", fontSize: 11, marginBottom: 2 }}>
         {lastMessage.time}
       </div>
       <button
@@ -520,11 +524,79 @@ function BuddyMessagePane({ setBuddyFeedback }) {
 // ----------- REWARDS PAGE -----------
 // PUBLIC_INTERFACE
 function RewardsPage() {
+  // Expanded rewards data
   const rewards = [
-    { id: 1, name: "Coffee voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" },
-    { id: 2, name: "Gift card", unlocked: false, desc: "7 days offline streak", icon: "🎟️" },
-    { id: 3, name: "Outdoor Yoga Pass", unlocked: false, desc: "Try 2 off-grid activities", icon: "🧘" },
+    {
+      id: 1,
+      name: "Coffee voucher",
+      unlocked: true,
+      desc: "Earned at 3-day streak! Redeem for any coffee or tea at a partner café.",
+      icon: "☕",
+      tier: "Bronze",
+      dateEarned: "2024-06-07",
+      level: 1,
+      status: "Unlocked",
+      code: "COFFEE-023",
+      expires: "2024-06-30",
+    },
+    {
+      id: 2,
+      name: "Gift card",
+      unlocked: false,
+      desc: "Stay offline for 7 days to earn this.",
+      icon: "🎟️",
+      tier: "Silver",
+      dateEarned: null,
+      level: 2,
+      status: "Locked",
+      code: null,
+      expires: null,
+    },
+    {
+      id: 3,
+      name: "Outdoor Yoga Pass",
+      unlocked: false,
+      desc: "Try two off-grid activities to unlock a free yoga session.",
+      icon: "🧘",
+      tier: "Silver",
+      dateEarned: null,
+      level: 2,
+      status: "Locked",
+      code: null,
+      expires: null,
+    },
+    {
+      id: 4,
+      name: "Adventure Day Trip",
+      unlocked: false,
+      desc: "Complete a 21-day streak: enjoy a guided outdoor adventure for two.",
+      icon: "🚣",
+      tier: "Gold",
+      dateEarned: null,
+      level: 3,
+      status: "Locked",
+      code: null,
+      expires: null,
+    }
   ];
+
+  // Color palette for tiers/levels
+  const tierColors = {
+    Bronze: "#A06C3B",
+    Silver: "#AEB3B2",
+    Gold: "#FFD600"
+  };
+
+  // Helper to show status
+  function rewardStatus(r) {
+    if (r.unlocked) {
+      return <span style={{
+        color: COLORS.accent,
+        fontWeight: 700,
+      }}>Unlocked!</span>;
+    }
+    return <span style={{ color: "#aaa" }}>Locked</span>;
+  }
 
   return (
     <section style={{ marginTop: 24 }}>
@@ -534,63 +606,120 @@ function RewardsPage() {
       <div style={{
         display: "flex",
         flexWrap: "wrap",
-        gap: 18,
+        gap: 22,
         marginTop: 12
       }}>
         {rewards.map((r, idx) => (
           <div
             key={r.id}
             style={{
-              background: r.unlocked ? "#fafbe4" : "#F2F6F5",
-              border: r.unlocked ? `2px solid ${COLORS.accent}` : "1px solid #e2efe6",
-              borderRadius: 14,
-              padding: "22px 26px",
+              background: r.unlocked ? "#fafbe4" : "#f2f6f5",
+              border: r.unlocked
+                ? `2.5px solid ${COLORS.accent}`
+                : `1.2px solid #e2efe6`,
+              borderRadius: 16,
+              padding: "24px 28px 17px 28px",
               fontWeight: 500,
               fontSize: 16,
-              minWidth: 180,
-              boxShadow: "0 2px 4px 0 rgba(46,125,50,0.02)",
-              opacity: r.unlocked ? 1 : 0.65,
-              color: r.unlocked ? COLORS.primary : "#888"
+              minWidth: 220,
+              maxWidth: 290,
+              boxShadow: r.unlocked ? "0 3px 12px 0 rgba(255,214,0,0.06)" : "0 2px 4px 0 rgba(46,125,50,0.02)",
+              opacity: r.unlocked ? 1 : 0.73,
+              color: r.unlocked ? COLORS.primary : "#6d757a",
+              display: "flex",
+              flexDirection: "column",
+              position: "relative"
             }}
           >
             <div style={{
-              fontSize: 32,
-              marginBottom: 6,
-              filter: r.unlocked ? "none" : "grayscale(0.7)"
+              fontSize: 42,
+              marginBottom: 10,
+              filter: r.unlocked ? "none" : "grayscale(0.5)"
             }}>
               {r.icon}
             </div>
-            <div>{r.name}</div>
             <div style={{
-              color: r.unlocked ? COLORS.accent : "#A7C5B1",
-              marginTop: 4,
-              fontWeight: 400,
-              fontSize: 14
+              fontWeight: 700,
+              fontSize: "1.13rem",
+              color: r.unlocked ? COLORS.primary : "#aaa"
+            }}>{r.name}</div>
+            <div style={{
+              marginTop: 3,
+              marginBottom: 6,
+              color: "#82B571",
+              fontWeight: 500,
+              fontSize: 12.7,
+              letterSpacing: "0.03em"
+            }}>
+              Tier: <span style={{ color: tierColors[r.tier], fontWeight: 700 }}>{r.tier}</span>{" "}
+              &bull; Level {r.level}
+            </div>
+            <div style={{
+              color: "#849478",
+              fontWeight: 500,
+              fontSize: 13.5,
+              marginBottom: 6
             }}>
               {r.desc}
             </div>
-            {r.unlocked && (
-              <span style={{
-                color: COLORS.accent,
-                background: "#fcfded",
-                borderRadius: 6,
+            <div style={{
+              color: "#B4BAAD",
+              fontWeight: 400,
+              fontSize: 12.6
+            }}>
+              {r.unlocked && r.dateEarned ? (
+                <>
+                  <span role="img" aria-label="calendar">📅</span> Earned: {r.dateEarned}
+                  {r.expires && (
+                    <> &bull; <span style={{ color: "#C49000" }}>Use by {r.expires}</span></>
+                  )}
+                </>
+              ) : (
+                "Complete requirements to unlock."
+              )}
+            </div>
+            <div style={{
+              marginTop: 8,
+              color: r.unlocked ? COLORS.primary : "#A7C5B1",
+              fontWeight: 600,
+              fontSize: 13.5
+            }}>
+              Status: {rewardStatus(r)}
+            </div>
+            {r.code && (
+              <div style={{
+                marginTop: 7,
+                fontSize: 12.3,
+                color: "#d18a0b",
                 fontWeight: 700,
-                padding: "2px 9px",
-                marginTop: 5,
-                fontSize: 12,
-                display: "inline-block"
+                letterSpacing: "0.02em"
               }}>
-                Unlocked!
-              </span>
+                Voucher Code: {r.code}
+              </div>
+            )}
+            {r.unlocked && (
+              <div style={{
+                position: "absolute",
+                top: 11,
+                right: 14,
+                color: COLORS.accent,
+                fontWeight: 700,
+                fontSize: 12,
+                background: "#fcfded",
+                borderRadius: 8,
+                padding: "2.5px 11px"
+              }}>
+                Unlocked
+              </div>
             )}
           </div>
         ))}
       </div>
       <div style={{
-        marginTop: 30,
+        marginTop: 34,
         textAlign: "center",
         color: "#999D86",
-        fontSize: 15
+        fontSize: 15.5
       }}>
         <span>
           Rewards promote real-life experiences. <br />
