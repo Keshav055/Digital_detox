@@ -1,337 +1,290 @@
 import React, { useState, useRef } from "react";
 
-/*
- * PUBLIC_INTERFACE
- * AIChat - Real-time AI chat component for Journal page.
- * Features:
- * - User messages appear instantly in the chat log
- * - Simulates real-time/streaming AI response (typing effect)
- * - In-chat error handling
- * - Styled to match Digital Detox Companion's theme/journal
- * - Works with mock or real backend endpoint (default: mock)
+// PUBLIC_INTERFACE
+/**
+ * AIChat
+ * Live AI-powered chat component with streaming response support.
+ *
+ * Props:
+ * - theme: Object containing color overrides (e.g., {primary, secondary, accent}).
+ *
+ * Usage: Place this component inside your journaling or reflection workflow.
  */
-export default function AIChat({ theme = {} }) {
+function AIChat({ theme }) {
   const [messages, setMessages] = useState([
     {
-      id: 0,
       sender: "ai",
-      content: "Hello! Need a reflection prompt or want to discuss your digital detox journey? Ask away. 🌱"
-    }
+      text: "Hi! I'm your Digital Detox AI Coach. Ask me anything or share your struggles—for quick detox tips, habit hacks, or motivation! 🌱",
+    },
   ]);
   const [input, setInput] = useState("");
-  const [fetching, setFetching] = useState(false);
-  const [streamingMsg, setStreamingMsg] = useState(""); // current streaming AI message
+  const [loading, setLoading] = useState(false);
+  const [streamingReply, setStreamingReply] = useState("");
   const [error, setError] = useState(null);
-  const chatEndRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
-  // Scroll chat to latest message
+  const apiEndpoint = "<YOUR_AI_API_ENDPOINT>"; // TODO: Replace with real API endpoint
+  const apiKey = "<YOUR_API_KEY, if required>"; // TODO: Optionally inject via environment/config
+
+  // Auto-scroll to bottom for new messages.
   React.useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, streamingMsg]);
-
-  // Simulate streaming/typing for AI
-  async function streamAIResponse(userMessage) {
-    setFetching(true);
-    setError(null);
-
-    // Example endpoint; replace with your real endpoint:
-    // const endpoint = "/api/ai/chat";
-    // For demonstration, we'll mock with a random message & typing effect.
-    // To enable real backends, use fetch() below (see commented code).
-
-    // Mock "AI typing" with a slightly random delay per chunk
-    function getRandomDelay() {
-      return 25 + Math.round(Math.random() * 35); // 25-60ms per char
-    }
-
-    // Mock AI response logic (could fetch from backend for real)
-    function mockAI(userText) {
-      const mockReplies = [
-        "That's a fantastic insight! Can you describe how you felt during this experience?",
-        "Taking time offline often boosts creativity. Did you notice any changes in your focus or mood today?",
-        "It sounds like you’re making great progress! How did disconnecting help you reflect on your habits?"
-      ];
-      // Choose based on input, but random for realism:
-      return (
-        mockReplies[Math.floor(Math.abs(userText.length + userText.charCodeAt(0)) % mockReplies.length)]
-      );
-    }
-
-    // For real backend:
-    // let aiText = "";
-    // try {
-    //   const res = await fetch(endpoint, {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ message: userMessage }),
-    //   });
-    //   if (!res.ok) throw new Error("AI backend error");
-    //   const data = await res.json();
-    //   aiText = data.reply || "";
-    // } catch (e) {
-    //   setError("AI assistant is not available at the moment. Please try again later.");
-    //   setFetching(false);
-    //   setStreamingMsg("");
-    //   return;
-    // }
-
-    // Mocking for demo: simulate "streaming"
-    const aiText = mockAI(userMessage);
-
-    // Show AI message as it "types"
-    setStreamingMsg("");
-    for (let i = 0; i <= aiText.length; i++) {
-      await new Promise((r) => setTimeout(r, getRandomDelay()));
-      setStreamingMsg(aiText.substring(0, i));
-    }
-
-    // Finalize AI message
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        sender: "ai",
-        content: aiText,
-      },
-    ]);
-    setStreamingMsg("");
-    setFetching(false);
-  }
+  }, [messages, streamingReply]);
 
   // PUBLIC_INTERFACE
-  function handleUserSend(e) {
+  async function handleSend(e) {
     e.preventDefault();
-    const trimmed = input.trim();
-    if (!trimmed) return;
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        sender: "user",
-        content: trimmed,
-      },
-    ]);
+    if (!input.trim() || loading) return;
+    setError(null);
+    // Display user message instantly.
+    const userMessage = { sender: "user", text: input };
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
-    streamAIResponse(trimmed);
+    setLoading(true);
+    setStreamingReply("");
+    try {
+      // Stream AI reply using fetch + ReadableStream (assume OpenAI-style API or similar)
+      const controller = new AbortController();
+      const response = await fetch(apiEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+        },
+        body: JSON.stringify({
+          prompt: input,
+          stream: true, // If the backend supports stream responses (if not, adapt below)
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error(`AI API error: ${response.status} ${response.statusText}`);
+      }
+
+      // Stream handling (text or JSONL chunks)
+      const reader = response.body.getReader();
+      let fullAssistantReply = "";
+      const decoder = new TextDecoder("utf-8");
+
+      // Read stream chunk by chunk
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        // Assume backend streams raw text, or you can adapt to OpenAI JSON-lines if needed
+        fullAssistantReply += chunk;
+        setStreamingReply(fullAssistantReply);
+      }
+      // Append AI message to chat log
+      setMessages((prev) => [
+        ...prev,
+        { sender: "ai", text: fullAssistantReply.trim() },
+      ]);
+      setStreamingReply("");
+    } catch (err) {
+      // Handle streaming or network error
+      const errMsg = (err && err.message) || "AI is currently unavailable.";
+      setError(errMsg);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: "error",
+          text: "Oops, AI failed: " + errMsg,
+        },
+      ]);
+      setStreamingReply("");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  // Styles are aligned with journal/app (yellow accent, rounded cards, etc.)
-  const colorP = theme.primary || "#2E7D32";
-  const colorS = theme.secondary || "#B2DFDB";
-  const colorA = theme.accent || "#FFD600";
-  const chatBg = "#fffefa";
-  const userBubble = "#EFFBFC";
-  const aiBubble = "#fffde7";
+  // Message bubble style helpers
+  const themeColors = {
+    primary: theme?.primary || "#2E7D32",
+    secondary: theme?.secondary || "#B2DFDB",
+    accent: theme?.accent || "#FFD600",
+    userBg: "#EFFBFC",
+    aiBg: "#F9F6FF",
+    aiText: "#4d5c4b",
+    userText: "#224F5A",
+    error: "#d23b44",
+  };
 
   return (
     <div
+      className="ai-chat-container"
       style={{
-        margin: "28px 0 6px",
-        background: chatBg,
-        borderRadius: 17,
-        boxShadow: "0 1.5px 12px rgba(209,209,165,0.05)",
-        border: `1.2px solid ${colorA}33`,
-        maxWidth: 700,
-        marginLeft: "auto",
-        marginRight: "auto",
-        padding: "0px 0 14px",
+        marginTop: 30,
+        background: "#fff",
+        borderRadius: 11,
+        border: `1.7px solid ${themeColors.secondary}`,
+        padding: "16px 13px 13px",
+        minHeight: 140,
+        maxWidth: 530,
+        fontFamily: "inherit",
+        marginBottom: 16,
+        boxShadow: "0 2px 12px 0 rgba(186,204,200,0.07)",
       }}
     >
-      <div
-        style={{
-          color: "#7D7B5E",
-          fontSize: "1.13rem",
-          fontWeight: 600,
-          padding: "19px 20px 4px 20px",
-          display: "flex",
-          alignItems: "center",
-          gap: 9,
-        }}
-      >
-        <span role="img" aria-label="ai" style={{ fontSize: 23 }}>🤖</span>
-        AI Live Chat – Reflection Assistant
+      <div style={{ marginBottom: 13, fontWeight: 700, color: themeColors.primary, fontSize: 17 }}>
+        <span role="img" aria-label="ai">🤖</span> AI Live Chat
       </div>
       <div
+        className="ai-chat-log"
         style={{
-          background: chatBg,
-          minHeight: 120,
-          maxHeight: 240,
+          minHeight: 86,
+          maxHeight: 205,
           overflowY: "auto",
-          padding: "10px 18px 0 18px",
-          margin: "-4px 0 12px",
-          fontSize: 15,
+          marginBottom: 9,
+          paddingRight: 4,
         }}
       >
-        {messages.map((msg, i) => (
+        {messages.map((msg, idx) => (
           <div
-            key={msg.id + "-" + i}
+            key={idx}
             style={{
-              marginBottom: 10,
-              display: "flex",
-              justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
+              background:
+                msg.sender === "ai"
+                  ? themeColors.aiBg
+                  : msg.sender === "user"
+                  ? themeColors.userBg
+                  : "#FFE7EA",
+              color:
+                msg.sender === "ai"
+                  ? themeColors.aiText
+                  : msg.sender === "user"
+                  ? themeColors.userText
+                  : themeColors.error,
+              borderRadius: 9,
+              padding: "7px 11px",
+              marginBottom: 7,
+              alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
+              fontWeight: msg.sender === "ai" ? 500 : 400,
+              fontSize: 15.1,
+              border:
+                msg.sender === "error"
+                  ? `1.6px solid ${themeColors.error}88`
+                  : "none",
+              whiteSpace: "pre-line",
+              boxShadow:
+                msg.sender === "ai"
+                  ? "0 1.5px 9px 0 rgba(210,228,215,0.08)"
+                  : "none",
+              maxWidth: "95%",
             }}
+            data-testid={
+              msg.sender === "ai"
+                ? "ai-msg"
+                : msg.sender === "user"
+                ? "user-msg"
+                : "ai-error-msg"
+            }
           >
-            <div
-              style={{
-                background:
-                  msg.sender === "user"
-                    ? userBubble
-                    : aiBubble,
-                color: msg.sender === "user" ? colorP : "#AF9B27",
-                borderRadius: 9,
-                padding: "8px 15px",
-                whiteSpace: "pre-line",
-                maxWidth: "70%",
-                boxShadow:
-                  msg.sender === "user"
-                    ? "0 1.5px 6px rgba(38,91,66,0.02)"
-                    : "0 1px 7px rgba(209, 209, 165,0.07)",
-                fontWeight: 500,
-                border:
-                  msg.sender === "user"
-                    ? `1px solid ${colorS}99`
-                    : `1px solid ${colorA}44`,
-                fontSize: 15.6,
-                alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-              }}
-            >
-              {msg.sender === "ai" && (
-                <span role="img" aria-label="ai" style={{ marginRight: 6 }}>
-                  🤖
-                </span>
-              )}
-              {msg.content}
-            </div>
+            {msg.sender === "ai" && (
+              <span style={{ color: themeColors.accent, marginRight: 4 }}>🤖 </span>
+            )}
+            {msg.sender === "user" && (
+              <span style={{ color: "#08A6B6", marginRight: 4 }}>🙋‍♂️ </span>
+            )}
+            {msg.text}
           </div>
         ))}
 
-        {/* Streaming AI message */}
-        {streamingMsg && (
+        {/* Live streaming reply as user waits */}
+        {loading && streamingReply && (
           <div
             style={{
-              marginBottom: 10,
-              display: "flex",
-              justifyContent: "flex-start",
+              background: themeColors.aiBg,
+              color: themeColors.aiText,
+              borderRadius: 9,
+              padding: "7px 11px",
+              marginBottom: 7,
+              fontWeight: 500,
+              fontSize: 15.1,
+              whiteSpace: "pre-line",
+              boxShadow: "0 1.5px 9px 0 rgba(210,228,215,0.08)",
+              opacity: 0.96,
+              border: "1px dashed #DFDFDA",
+              maxWidth: "97%",
             }}
+            data-testid="ai-streaming-msg"
           >
-            <div
-              style={{
-                background: aiBubble,
-                color: "#AF9B27",
-                borderRadius: 9,
-                padding: "8px 15px",
-                maxWidth: "70%",
-                fontWeight: 500,
-                border: `1px solid ${colorA}44`,
-                fontSize: 15.6,
-                boxShadow: "0 1px 7px rgba(209, 209, 165,0.07)",
-                alignSelf: "flex-start",
-                fontStyle: "italic",
-                opacity: 0.95,
-              }}
-            >
-              <span role="img" aria-label="ai" style={{ marginRight: 6 }}>
-                🤖
-              </span>
-              {streamingMsg}
-              <span
-                style={{
-                  opacity: 0.5,
-                  marginLeft: 4,
-                  fontSize: 12,
-                  verticalAlign: "middle",
-                }}
-              >
-                ▋
-              </span>
-            </div>
+            <span style={{ color: themeColors.accent, marginRight: 4 }}>🤖 </span>
+            {streamingReply}
+            <span className="ai-cursor" style={{ opacity: 0.4, marginLeft: 1 }}>|</span>
           </div>
         )}
-
-        {/* Error display in chat */}
-        {error && (
-          <div
-            style={{
-              marginBottom: 10,
-              display: "flex",
-              justifyContent: "flex-start",
-            }}
-          >
-            <div
-              style={{
-                background: "#fff0ee",
-                color: "#c0392b",
-                borderRadius: 9,
-                padding: "8px 13px",
-                maxWidth: "70%",
-                border: "1px solid #EDB4AD",
-                fontSize: 15.3,
-                alignSelf: "flex-start",
-                fontWeight: 500,
-              }}
-              aria-live="polite"
-              tabIndex={0}
-            >
-              ⚠️ {error}
-            </div>
-          </div>
-        )}
-        <div ref={chatEndRef}></div>
+        <div ref={messagesEndRef} />
       </div>
+
       <form
-        onSubmit={handleUserSend}
-        style={{
-          display: "flex",
-          gap: 7,
-          alignItems: "center",
-          padding: "0 16px",
-        }}
-        autoComplete="off"
+        onSubmit={handleSend}
+        style={{ display: "flex", gap: 7, alignItems: "center", marginTop: 1 }}
       >
         <input
           type="text"
-          placeholder="Type your reflection or question..."
+          placeholder={
+            loading
+              ? "AI is replying..."
+              : "Ask for a tip, advice, or share your challenge…"
+          }
           value={input}
-          disabled={fetching || !!streamingMsg}
+          disabled={loading}
           onChange={(e) => setInput(e.target.value)}
+          className="chat-input"
           style={{
             flex: 1,
-            borderRadius: 8,
-            border: `1.2px solid ${colorS}88`,
-            fontSize: 15.2,
-            padding: "10px 12px",
-            outlineColor: colorP,
-            background: "#fff",
-            color: "#737956",
-            marginRight: 0,
-            boxShadow: "none",
+            borderRadius: 6,
+            border: "1.4px solid #DFDFDA",
+            padding: "8px 12px",
+            fontSize: 15,
+            outlineColor: themeColors.primary,
+            background: loading ? "#F6F8F9" : "#fff",
           }}
-          aria-label="Message"
         />
         <button
           type="submit"
-          disabled={input.trim().length === 0 || fetching || !!streamingMsg}
+          disabled={!input.trim() || loading}
+          className="ai-send-btn"
           style={{
-            marginLeft: 0,
-            padding: "9px 20px",
-            borderRadius: 7,
-            background: colorP,
+            background: themeColors.primary,
             color: "#fff",
             border: "none",
+            borderRadius: 6,
+            padding: "8px 17px",
             fontWeight: 600,
-            fontSize: 15,
-            opacity: input.trim().length === 0 || fetching || !!streamingMsg ? 0.43 : 1,
-            cursor: input.trim().length === 0 || fetching || !!streamingMsg ? "not-allowed" : "pointer",
-            boxShadow: "0 2.5px 8px 0 #2e7d320b",
-            transition: "background 0.2s",
+            fontSize: 15.3,
+            opacity: !input.trim() || loading ? 0.47 : 1,
+            cursor: !input.trim() || loading ? "not-allowed" : "pointer",
+            transition: "all 0.2s cubic-bezier(.42,0,.37,1.03)",
+            boxShadow: loading ? "0 2px 12px #E2F1EA" : "",
           }}
-          aria-label="Send"
         >
-          {fetching || streamingMsg ? "..." : "Send"}
+          {loading ? "…" : "Send"}
         </button>
       </form>
+      {!loading && error && (
+        <div
+          style={{
+            marginTop: 8,
+            color: themeColors.error,
+            fontSize: 14.6,
+            background: "#FFF3F3",
+            borderRadius: 6,
+            padding: "8px 11px",
+            fontWeight: 500,
+            border: `1px solid ${themeColors.error}22`,
+          }}
+        >
+          <span style={{ marginRight: 5 }}>⚠️</span>
+          {error}
+        </div>
+      )}
     </div>
   );
 }
+
+export default AIChat;
