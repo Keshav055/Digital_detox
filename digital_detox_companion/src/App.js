@@ -34,12 +34,37 @@ const minimalTheme = {
 function App() {
   const [tab, setTab] = useState("home");
 
-  // Only 'Home' (can expand if e.g. Profile is added in future)
+  // Top nav: Home + 5 most important core features
   const navTabs = [
     {
       id: "home",
       label: "Home",
       icon: "🏠"
+    },
+    {
+      id: "plan",
+      label: "Detox Plan",
+      icon: "🗺️"
+    },
+    {
+      id: "buddy",
+      label: "Buddy System",
+      icon: "🤝"
+    },
+    {
+      id: "rewards",
+      label: "Rewards",
+      icon: "🎉"
+    },
+    {
+      id: "checkin",
+      label: "Check-In",
+      icon: "✅"
+    },
+    {
+      id: "journal",
+      label: "Journal",
+      icon: "📝"
     }
   ];
 
