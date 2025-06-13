@@ -1,168 +1,208 @@
 import React from "react";
 
-// Dummy icons for feature cards
-const featureIcons = {
-  plan: "🗓️",
-  buddy: "🤝",
-  rewards: "🎁",
-  checkin: "📍",
-  journal: "📖"
+// Color palette from App.js/App.css
+const COLORS = {
+  primary: "#2E7D32",
+  secondary: "#B2DFDB",
+  accent: "#FFD600",
+  bg: "#fff",
+  text: "#1A1A1A"
 };
 
 // PUBLIC_INTERFACE
 function HomePage({ onNavigate }) {
-  // If onNavigate is not passed, fallback so direct access works (storybook/test)
-  const withNavigate = (cb) => (onNavigate ? cb : () => {});
-
-  return (
-    <div>
-      <h1 style={{ color: "#2E7D32", fontWeight: 800, fontSize: "2.3rem", marginBottom: 8 }}>
-        Welcome to Your Digital Detox Journey
-      </h1>
-      <p style={{ fontSize: 17, color: "#45604A", marginBottom: 26 }}>
-        Take small steps every day. Discover your plan, check progress, and access essential features from here.<br />
-        <span style={{ color: "#AF9B27" }}>
-          Real progress happens offline. We're with you for the essentials.
-        </span>
-      </p>
-      <div style={{
-        display: "flex", flexWrap: "wrap",
-        gap: 26, marginTop: 10, marginBottom: 24
-      }}>
-        {/* Detox Plan Card */}
-        <FeatureCard
-          icon={featureIcons.plan}
-          title="Your Detox Plan"
-          description="View and customize your personal digital detox plan. Track your step-by-step progress."
-          onClick={withNavigate(() => onNavigate && onNavigate("plan"))}
-          cta="View Plan"
-        />
-
-        {/* Buddy System */}
-        <FeatureCard
-          icon={featureIcons.buddy}
-          title="Accountability Buddy"
-          description="Check in with your anonymous buddy for motivation and support."
-          onClick={withNavigate(() => onNavigate && onNavigate("buddy"))}
-          cta="Open Buddy"
-        />
-
-        {/* Rewards */}
-        <FeatureCard
-          icon={featureIcons.rewards}
-          title="Milestone Rewards"
-          description="Unlock real-world rewards as you hit your digital detox goals."
-          onClick={withNavigate(() => onNavigate && onNavigate("rewards"))}
-          cta="See Rewards"
-        />
-
-        {/* Off-Grid Check-In */}
-        <FeatureCard
-          icon={featureIcons.checkin}
-          title="Off-Grid Check-In"
-          description="Log offline activities to boost your progress each week."
-          onClick={withNavigate(() => onNavigate && onNavigate("checkin"))}
-          cta="Check In"
-        />
-
-        {/* Reflection & Journal */}
-        <FeatureCard
-          icon={featureIcons.journal}
-          title="Reflection Journal"
-          description="Reflect on your experience and keep a habit journal, powered by AI prompts."
-          onClick={withNavigate(() => onNavigate && onNavigate("journal"))}
-          cta="Journal"
-        />
-      </div>
-
-      {/* Quick Links for additional features */}
-      <div style={{ marginTop: 10, fontSize: 15, color: "#789262" }}>
-        <span style={{ fontWeight: 700, color: "#2E7D32" }}>Explore More:&nbsp;</span>
-        <FeatureQuickLink label="Journey Map" onClick={withNavigate(() => onNavigate && onNavigate("journey"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Detox Modes" onClick={withNavigate(() => onNavigate && onNavigate("modes"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Community Circles" onClick={withNavigate(() => onNavigate && onNavigate("circles"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Parent-Teen" onClick={withNavigate(() => onNavigate && onNavigate("family"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Digital Budget" onClick={withNavigate(() => onNavigate && onNavigate("budget"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Mini Games" onClick={withNavigate(() => onNavigate && onNavigate("games"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Integrations" onClick={withNavigate(() => onNavigate && onNavigate("integrations"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Reallocation Tracker" onClick={withNavigate(() => onNavigate && onNavigate("reallocation"))} />
-        <span> | </span>
-        <FeatureQuickLink label="Offline Events" onClick={withNavigate(() => onNavigate && onNavigate("events"))} />
-      </div>
-    </div>
-  );
-}
-
-// PUBLIC_INTERFACE
-function FeatureCard({ icon, title, description, onClick, cta }) {
   return (
     <div
       style={{
-        minWidth: 220, maxWidth: 260,
-        flex: "1 1 220px",
-        borderRadius: 13,
-        background: "#fafdfb",
-        border: "1px solid #E7F6EC",
-        boxShadow: "0 4px 13px 0 rgba(46,125,50,0.04)",
-        padding: "22px 18px 18px",
         display: "flex",
-        flexDirection: "column",
-        gap: 8,
-        alignItems: "flex-start"
+        flexDirection: "row",
+        gap: 32,
+        alignItems: "flex-start",
+        marginTop: 40,
+        marginBottom: 36,
+        minHeight: 400
       }}
     >
-      <span style={{ fontSize: 32, marginBottom: 6 }}>{icon}</span>
-      <div style={{ fontWeight: 700, fontSize: "1.22rem", color: "#2E7D32" }}>{title}</div>
-      <div style={{
-        fontSize: 15,
-        color: "#555",
-        marginBottom: 7,
-        minHeight: 46
-      }}>{description}</div>
-      <button
+      {/* Main Content */}
+      <div style={{ flex: 3, minWidth: 0 }}>
+        <div>
+          <h1
+            style={{
+              color: COLORS.primary,
+              fontSize: "2.2rem",
+              letterSpacing: 0.01,
+              fontWeight: 700,
+              marginBottom: 6,
+            }}
+          >
+            Welcome to your Digital Detox Companion
+          </h1>
+          <p
+            style={{
+              fontSize: "1.1rem",
+              color: COLORS.secondary,
+              marginTop: 0,
+              marginBottom: 18,
+              fontWeight: 500
+            }}
+          >
+            Create healthier habits, win real-life rewards, and rediscover life beyond your screen.
+          </p>
+        </div>
+        <img
+          src={process.env.PUBLIC_URL + "/assets/detox-illustration.svg"}
+          alt="Detox"
+          style={{
+            width: "88%",
+            maxWidth: 360,
+            minWidth: 200,
+            margin: "32px 0"
+          }}
+        />
+        <section style={{marginTop: 15, marginBottom: 0}}>
+          <h2 style={{color: COLORS.primary, fontSize: "1.5rem", marginBottom: 8}}>
+            Your Journey Starts Here
+          </h2>
+          <ul style={{ fontSize: 17, color: COLORS.text, paddingLeft: 18, marginTop: 0 }}>
+            <li>
+              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🏅</span> Personalized detox plans
+            </li>
+            <li>
+              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🤝</span> Buddy for accountability
+            </li>
+            <li>
+              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🎁</span> Milestone rewards
+            </li>
+            <li>
+              <span style={{ color: COLORS.accent, fontWeight: 700 }}>🌳</span> Off-grid check-ins
+            </li>
+            <li>
+              <span style={{ color: COLORS.accent, fontWeight: 700 }}>💡</span> AI reflection prompts
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      {/* Sidebar with Explore More */}
+      <aside
         style={{
-          background: "#2E7D32",
-          color: "#fff",
-          border: "none",
-          borderRadius: 6,
-          padding: "8px 20px",
+          flex: 1,
+          minWidth: 230,
+          maxWidth: 285,
+          background: COLORS.secondary,
+          borderRadius: 16,
+          boxShadow: "0 3px 8px 0 rgba(46, 125, 50, 0.04)",
+          padding: "26px 20px 18px 20px",
+          color: COLORS.primary,
           fontWeight: 500,
-          fontSize: 15,
-          marginTop: "auto",
-          cursor: "pointer"
+          alignSelf: "stretch",
+          display: "flex",
+          flexDirection: "column"
         }}
-        onClick={onClick}
       >
-        {cta}
-      </button>
+        <div
+          style={{
+            fontSize: "1.23rem",
+            color: COLORS.primary,
+            fontWeight: 600,
+            marginBottom: 9,
+            letterSpacing: 0.01
+          }}
+        >
+          Explore More
+        </div>
+        <ul style={{listStyle: "none", padding: 0, margin: 0}}>
+          <li>
+            <SidebarLink onClick={() => onNavigate && onNavigate('plan')} icon="🗺️" text="Detox Plan" />
+          </li>
+          <li>
+            <SidebarLink onClick={() => onNavigate && onNavigate('buddy')} icon="🤝" text="Accountability Buddy" />
+          </li>
+          <li>
+            <SidebarLink onClick={() => onNavigate && onNavigate('rewards')} icon="🎉" text="Milestone Rewards" />
+          </li>
+          <li>
+            <SidebarLink onClick={() => onNavigate && onNavigate('checkin')} icon="✅" text="Off-Grid Check-Ins" />
+          </li>
+          <li>
+            <SidebarLink onClick={() => onNavigate && onNavigate('journal')} icon="📝" text="Habit Journal" />
+          </li>
+        </ul>
+        <div
+          style={{
+            fontSize: 15,
+            color: "#24553f",
+            opacity: 0.85,
+            marginTop: 24,
+            lineHeight: 1.4
+          }}
+        >
+          Need a break? Try one mini detox game or discover our Community Circles!
+        </div>
+        <button
+          style={{
+            marginTop: 18,
+            padding: "9px 20px",
+            borderRadius: 5,
+            background: COLORS.accent,
+            color: "#313619",
+            border: "none",
+            fontWeight: 600,
+            fontSize: 16,
+            cursor: "pointer",
+            letterSpacing: 0.04,
+            boxShadow: "0 2px 4px 0 rgba(46,125,50,0.08)"
+          }}
+          onClick={() => onNavigate && onNavigate('games')}
+        >
+          🎲 Mini Detox Games
+        </button>
+        <button
+          style={{
+            marginTop: 12,
+            padding: "8px 17px",
+            borderRadius: 5,
+            background: "#fff",
+            color: COLORS.primary,
+            border: `1.3px solid ${COLORS.primary}`,
+            fontWeight: 550,
+            fontSize: 15,
+            cursor: "pointer"
+          }}
+          onClick={() => onNavigate && onNavigate('circles')}
+        >
+          🫂 Community Circles
+        </button>
+      </aside>
     </div>
   );
 }
 
-// PUBLIC_INTERFACE
-function FeatureQuickLink({ label, onClick }) {
+// Sidebar link styled for palette consistency
+function SidebarLink({ onClick, icon, text }) {
   return (
     <button
-      style={{
-        background: "none",
-        color: "#255b33",
-        border: "none",
-        fontWeight: 600,
-        fontSize: 15,
-        cursor: "pointer",
-        textDecoration: "underline",
-        margin: "0 1px"
-      }}
       onClick={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        background: "none",
+        border: "none",
+        color: COLORS.primary,
+        fontWeight: 500,
+        fontSize: "1.05rem",
+        padding: "7px 0",
+        cursor: "pointer",
+        gap: 8,
+        borderRadius: 4,
+        transition: "background 0.14s",
+        marginBottom: 2
+      }}
+      onMouseOver={e => (e.currentTarget.style.background = "#b2dfdb33")}
+      onMouseOut={e => (e.currentTarget.style.background = "none")}
     >
-      {label}
+      <span style={{ fontSize: 17, marginRight: 5 }}>{icon}</span>
+      {text}
     </button>
   );
 }
