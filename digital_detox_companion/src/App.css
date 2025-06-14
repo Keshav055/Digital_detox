@@ -1,142 +1,133 @@
 :root {
-  --primary: #2E7D32;
-  --secondary: #B2DFDB;
-  --accent: #FFD600;
-  --text: #1A1A1A;
-  --bg: #fff;
+  --kavia-orange: #E87A41;
+  --kavia-dark: #1A1A1A;
+  --text-color: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --border-color: rgba(255, 255, 255, 0.1);
 }
 
-body {
+/* General resets and container */
+body, html {
   margin: 0;
-  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  background-color: var(--bg, #fff);
-  color: var(--text, #1A1A1A);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  background: #fff;
+  color: #1A1A1A;
+  font-family: Inter, Roboto, Arial, sans-serif;
 }
 
-.app {
-  min-height: 100vh;
+/* Sidebar styles - minimal, light, branded */
+.sidebar {
+  background: #fff;
+  border-right: 1px solid #E6F3EA;
+  min-width: 83px;
+  width: 88px;
+  box-sizing: border-box;
+  box-shadow: 2px 0 10px 0 rgba(44,125,67,0.03);
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
-  color: var(--text);
+  align-items: center;
+  padding-top: 16px;
+  z-index: 40;
 }
 
-.navbar {
-  background: #fff;
-  padding: 0;
-  border-bottom: 1px solid #eee;
-  position: fixed;
-  top: 0;
+.sidebar-link {
+  transition: background 0.19s, color 0.13s, border-right 0.1s;
+  outline: none;
+  background: none;
+  border: none;
   width: 100%;
-  z-index: 100;
-  box-shadow: 0 2px 6px rgba(44,127,67,0.03);
+  text-align: center;
+  font-size: 17px;
+  cursor: pointer;
+  padding: 15px 8px;
+  border-radius: 0 12px 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #789262;
+  font-weight: 500;
+}
+
+.sidebar-link:focus {
+  background: #fffde7;
+  color: #2E7D32;
+}
+
+.sidebar-link[aria-current="page"] {
+  font-weight: 700;
+  color: #2E7D32;
+  border-right: 6px solid #2E7D32;
+  background: linear-gradient(98deg, #FFD600 0%, #fffbe7 100%);
 }
 
 .logo {
-  font-size: 1.25rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-weight: 700;
+  font-size: 28px;
+  margin-bottom: 9px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #FFD600;
 }
 
-.logo-symbol {
-  color: var(--accent);
+@media (max-width: 700px) {
+  .sidebar {
+    width: 56px;
+    min-width: 46px;
+    padding: 6px 0 0 0;
+  }
 }
 
 .container {
   max-width: 900px;
   margin: 0 auto;
   padding: 0 24px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
-  .navbar .container { padding: 0 4px; }
-  .container { padding: 0 5px; }
+/* Navbar refinement */
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  color: #2E7D32;
+  padding: 0;
+  box-shadow: 0 2px 6px rgba(44,127,67,0.03);
+  z-index: 20;
+  margin-left: 0;
+  width: 100%;
+  left: 0;
 }
 
 .tab-btn {
   background: none;
   border: none;
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 400;
   color: #789262;
   border-bottom: 3px solid transparent;
+  font-size: 16px;
+  font-weight: 400;
   padding: 12px 10px 7px;
   margin: 0 2px;
   cursor: pointer;
   outline: none;
-  transition: border-color 0.16s cubic-bezier(.4,0,.2,1), color 0.14s;
   position: relative;
+  transition: color 0.12s, border-bottom-color 0.12s;
 }
 .tab-btn[aria-current="page"] {
-  color: var(--primary);
+  color: #2E7D32;
   font-weight: 600;
-  border-bottom: 3px solid var(--accent);
+  border-bottom: 3px solid #FFD600;
 }
 
 footer {
-  letter-spacing: .02em;
-  font-size: 1.05rem;
-  font-weight: 500;
-  text-align: center;
-  border-top: 1px solid #E7F6EC;
-  background: #fafcfb;
-  color: var(--primary);
-  margin-top: 32px;
   padding: 24px 0 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f7fdf5;
-}
-::-webkit-scrollbar-thumb {
-  background: #b2dfdb33;
-}
-
-textarea:focus {
-  outline: 2px solid var(--primary);
-}
-
-/* Utility classes for clean look */
-ul {
-  margin: 0 0 1em 0;
-  padding: 0;
-}
-
-h2 {
-  margin-top: 0;
-  font-family: inherit;
-}
-
-/* Remove focus outline except for keyboard navigation */
-button:focus:not(:focus-visible) {
-  outline: none;
-}
-
-button {
-  font-family: inherit;
-}
-
-@media (max-width: 600px) {
-  .navbar {
-    font-size: 15px;
-    padding: 0 0 0 4px;
-  }
-  .logo {
-    font-size: 1.1rem;
-  }
-  .tab-btn {
-    font-size: 13.5px;
-    padding: 10px 5px 5px;
-  }
-  .container {
-    padding: 0 3.5vw;
-  }
+  color: #2E7D32;
+  background: #fafcfb;
+  border-top: 1px solid #E7F6EC;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.05rem;
+  margin-top: 32px;
+  letter-spacing: 0.1px;
+  margin-left: 0;
 }

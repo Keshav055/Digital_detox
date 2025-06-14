@@ -51,7 +51,7 @@ function App() {
       ({ ...prev, open: false })), 3300);
   };
 
-  // Main navigation tabs: REMOVE Detox Plan, Parent Teen, Events, Rewards, Check-In (now in sidebar)
+  // Main navigation tabs - Detox Plan, Parent Teen, Events, Rewards, Check-In moved to sidebar (removed here)
   const navTabs = [
     { id: "home", label: "Home", icon: "🏠" },
     { id: "journey", label: "Journey Map", icon: "🛤️" },
@@ -63,6 +63,7 @@ function App() {
     { id: "integrations", label: "Integrations", icon: "🔗" },
     { id: "buddy", label: "Buddy System", icon: "🤝" },
     { id: "journal", label: "Journal", icon: "📖" }
+    // No Detox Plan, Parent Teen, Events, Rewards, Check-in here
   ];
 
   // Renders the currently active page/component
@@ -91,7 +92,6 @@ function App() {
       case "integrations":
         return <IntegrationsHub />;
       case "buddy":
-        // Pass showToast down for all required feedback actions
         return <BuddySystemPage showToast={showToast} />;
       case "rewards":
         return <RewardsPage />;
