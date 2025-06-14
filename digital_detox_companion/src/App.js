@@ -648,12 +648,18 @@ function BuddyMessagePane({ showToast }) {
  * - Playful, real-life, habit, and social rewards 
  * - Motivational and tailored to digital detox progress
  */
+/*
+ * Expanded rewards list with a wider range of playful, experiential, and milestone-themed rewards.
+ * Includes a mix of physical, experiential, personal, social, just-for-fun, and motivational digital detox rewards.
+ * Confetti animation is shown when a reward is first unlocked (playful/minimal).
+ */
 // ----------- REWARDS PAGE -----------
 // PUBLIC_INTERFACE
 function RewardsPage() {
+  // Expanded digital detox motivational reward options!
   const rewards = [
-    // Existing base rewards (with tweaks for variety)
-    { id: 1, name: "Coffee Voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" }, // unlocked example
+    // Baseline rewards (existing + improved names/criteria)
+    { id: 1, name: "Coffee Voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" },
     { id: 2, name: "Gift Card", unlocked: false, desc: "7 days offline streak", icon: "🎟️" },
     { id: 3, name: "Outdoor Yoga Pass", unlocked: false, desc: "Try 2 off-grid activities", icon: "🧘" },
     { id: 4, name: "Sunset Picnic Kit", unlocked: false, desc: "Complete 10 check-ins before sunset", icon: "🧺" },
@@ -668,37 +674,69 @@ function RewardsPage() {
     { id: 13, name: "Personalized Playlist", unlocked: false, desc: "Try 3 new offline activities", icon: "🎶" },
     { id: 14, name: '"Offline Chef" Apron', unlocked: false, desc: "Cook a meal with friends", icon: "👩‍🍳" },
     { id: 15, name: "Confetti Celebration!", unlocked: true, desc: "Complete any journey map milestone", icon: "🎊" },
-    // Additional digital detox achievements
+
+    // Motivational, playful and unique digital detox-themed rewards
     { id: 16, name: "Screen-Free Sunrise", unlocked: false, desc: "Start your day device-free 5 times", icon: "🌅" },
     { id: 17, name: "90 Minutes for Nature", unlocked: false, desc: "Spend 90 min outside, phone off", icon: "🌻" },
     { id: 18, name: "Detox Legend Trophy", unlocked: false, desc: "Complete all plan milestones for a month", icon: "🏆" },
     { id: 19, name: "Offline Game Night", unlocked: false, desc: "Organize a board game night", icon: "🎲" },
     { id: 20, name: "Photo Scavenger Hunt", unlocked: false, desc: "Capture 7 real-world moments, no filters", icon: "📷" },
     { id: 21, name: "Gratitude Shout-out", unlocked: false, desc: "Thank 3 people in person", icon: "🙏" },
-    { id: 22, name: "Zen Master Badge", unlocked: false, desc: "Meditate for 5 days in a row, screen-free", icon: "🧘‍♂️" },
-    { id: 23, name: "Analog Artist", unlocked: false, desc: "Complete a drawing or painting offline", icon: "🎨" },
+    { id: 22, name: "Zen Master Badge", unlocked: false, desc: "Meditate 5 days in a row, screen-free", icon: "🧘‍♂️" },
+    { id: 23, name: "Analog Artist", unlocked: false, desc: "Complete a painting or sketch offline", icon: "🎨" },
     { id: 24, name: "Buddy Uplifter Award", unlocked: false, desc: "Send 3 encouragements to your buddy", icon: "🥇" },
     { id: 25, name: "Sleep Champion", unlocked: false, desc: "No screens 1 hr before bed for a week", icon: "😴" },
     { id: 26, name: "Backyard Explorer", unlocked: false, desc: "Try a new activity in your neighborhood", icon: "🧭" },
-    { id: 27, name: "Tech-Free Adventure", unlocked: false, desc: "Spend a full day offline", icon: "🚴" },
+    { id: 27, name: "Tech-Free Adventure", unlocked: false, desc: "Spend a full day offline!", icon: "🚴" },
     { id: 28, name: "Thank Yourself Badge", unlocked: false, desc: "Reflect on your progress in your journal", icon: "🎖️" },
     { id: 29, name: "Offline Socialite", unlocked: false, desc: "Host a meetup with no devices", icon: "🤗" },
-    { id: 30, name: "Streak Starter", unlocked: false, desc: "First day without social media", icon: "🌱" }
+    { id: 30, name: "Streak Starter", unlocked: false, desc: "First day without social media", icon: "🌱" },
+
+    // New playful, creative, digital minimalism/healthy-habit rewards
+    { id: 31, name: "Joyful Juggler", unlocked: false, desc: "Try a new hands-on skill (juggle, sculpt, fold)", icon: "🤹" },
+    { id: 32, name: "Tea Time", unlocked: false, desc: "Host an unplugged tea (or coffee) break", icon: "🫖" },
+    { id: 33, name: "Boardwalk Walker", unlocked: false, desc: "Take a walk in silence (leave phone at home)", icon: "🚶" },
+    { id: 34, name: "Offline Explorer Patch", unlocked: false, desc: "Visit a local place for the first time", icon: "🗺️" },
+    { id: 35, name: "Stargazing Night", unlocked: false, desc: "Spend 15m outdoors after dark, phone away", icon: "🌠" },
+    { id: 36, name: "Pen Pal", unlocked: false, desc: "Write and mail a real letter", icon: "✉️" },
+    { id: 37, name: "Puzzle Pro", unlocked: false, desc: "Complete a 50+ piece puzzle, device-free", icon: "🧩" },
+    { id: 38, name: "Mindful Breather", unlocked: false, desc: "Do breathing exercise (screen-free)", icon: "🫁" },
+    { id: 39, name: "Sun Salutation", unlocked: false, desc: "Wake up & stretch, no screens first 20 min", icon: "☀️" },
+    { id: 40, name: "Detox Duo", unlocked: false, desc: "Complete a challenge with a buddy", icon: "👯" },
+    { id: 41, name: "Offline Chef Star", unlocked: false, desc: "Prepare an entire meal, recipe offline", icon: "🍜" },
+    { id: 42, name: "Kindness Champion", unlocked: false, desc: "Do 5 random acts of kindness unplugged", icon: "💝" },
+    { id: 43, name: "Detox Mentor", unlocked: false, desc: "Share your journey tips with someone", icon: "🤓" },
+    { id: 44, name: "Confetti Spark!", unlocked: true, desc: "Unlock any 10 rewards", icon: "✨" },
+    { id: 45, name: "Memory Maker", unlocked: false, desc: "Create a scrapbook or photo album offline", icon: "📔" },
+    { id: 46, name: "Cloud Watcher", unlocked: false, desc: "Spend time cloud gazing, device-free", icon: "☁️" },
+    { id: 47, name: "Urban Hiker", unlocked: false, desc: "Log 10,000+ steps in a day—offline!", icon: "🥾" },
+    { id: 48, name: "Offline Plant Parent", unlocked: false, desc: "Plant & care for something living", icon: "🪴" },
+    { id: 49, name: "Silent Observer", unlocked: false, desc: "Be in nature for 15+ min, no devices", icon: "🦋" },
+    { id: 50, name: "Celebration Parade!", unlocked: true, desc: "Reach a major milestone! 🎉", icon: "🥳" }
   ];
 
+  // Confetti or sparkles on the Rewards page for unlocked rewards
+  // One simple confetti/sparkle animation overlay if any new reward is unlocked
+  // (Minimal: for demo, shows if any reward is unlocked.)
+  const confetti = rewards.some(r => r.unlocked);
+
   return (
-    <section style={{ marginTop: 24 }}>
+    <section style={{ marginTop: 24, position: "relative" }}>
       <h2 style={{ color: COLORS.primary, fontSize: "2.1rem", marginBottom: 7 }}>
         Milestone Rewards
       </h2>
-      <div style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 18,
-        marginTop: 12
-      }}>
+      {/* Confetti/sparkle animation overlay if any unlocked reward (for playful/celebratory effect) */}
+      {confetti && (
+        <ConfettiSparkle />
+      )}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 18,
+          marginTop: 12
+        }}>
         {rewards.map((r, idx) => {
-          // unlock flash only when unlocked for first render (would animate on next features)
           const blockClass = r.unlocked ? "animate-flash" : "";
           return (
             <div
@@ -721,8 +759,11 @@ function RewardsPage() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                transition: "transform 0.18s cubic-bezier(.4,0,.2,1)"
+                transition: "transform 0.18s cubic-bezier(.4,0,.2,1)",
+                cursor: r.unlocked ? "pointer" : "default"
               }}
+              tabIndex={0}
+              aria-label={r.name + (r.unlocked ? " (unlocked)" : " (locked)")}
             >
               <div style={{
                 fontSize: 32,
@@ -786,6 +827,72 @@ function RewardsPage() {
         </span>
       </div>
     </section>
+  );
+}
+
+// Minimal celebratory confetti/sparkle overlay for RewardsPage
+function ConfettiSparkle() {
+  // Simple playful/confetti particles, light/minimal so as not to disrupt minimal UI
+  // Position: absolute, covers top area of section
+  // Animates sparkles/confetti for a few seconds
+  return (
+    <div style={{
+      pointerEvents: "none",
+      position: "absolute",
+      top: -9,
+      left: 0,
+      width: "100%",
+      height: 0,
+      zIndex: 3,
+      display: "flex",
+      justifyContent: "center"
+    }}>
+      {/* Example sparkles and confetti shapes */}
+      <svg width="330" height="48" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }}>
+        {/* Playful shapes: stars, circles, lines, for a subtle animated feel */}
+        <g>
+          <circle cx="31" cy="29" r="4" fill="#FFD600" opacity="0.68">
+            <animate attributeName="cy" values="29;7;29" dur="2.2s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.7;1;0.7" dur="1.2s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="62" cy="10" r="3" fill="#B2DFDB" opacity="0.78">
+            <animate attributeName="cy" values="10;32;10" dur="2.3s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="1;0.5;1" dur="2.1s" repeatCount="indefinite" />
+          </circle>
+          <rect x="98" y="14" width="3" height="12" fill="#E87A41" opacity="0.73" rx="2">
+            <animate attributeName="y" values="14;33;14" dur="1.5s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.7;1;0.7" dur="1.2s" repeatCount="indefinite" />
+          </rect>
+          <polygon points="136,18 140,26 144,18" fill="#FFD600" opacity="0.6">
+            <animate attributeName="points" values="136,18 140,34 144,18;136,18 140,26 144,18" dur="2.5s" repeatCount="indefinite" />
+          </polygon>
+          <rect x="173" y="6" width="2.3" height="13" fill="#2E7D32" opacity="0.78" rx="1.2">
+            <animate attributeName="y" values="6;19;6" dur="1.6s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.5;1;0.5" dur="1.4s" repeatCount="indefinite" />
+          </rect>
+          <circle cx="184" cy="19" r="2.7" fill="#fc3" opacity="0.75">
+            <animate attributeName="cy" values="19;33;19" dur="2.9s" repeatCount="indefinite" />
+          </circle>
+          <circle cx="205" cy="11" r="4" fill="#E87A41" opacity="0.74">
+            <animate attributeName="cy" values="11;35;11" dur="2.0s" repeatCount="indefinite" />
+          </circle>
+          <rect x="230" y="20" width="2.5" height="11" fill="#FFD600" opacity="0.73" rx="1.2">
+            <animate attributeName="y" values="20;37;20" dur="1.9s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.7;1;0.7" dur="2.3s" repeatCount="indefinite" />
+          </rect>
+          <circle cx="260" cy="11" r="2.5" fill="#2E7D32" opacity="0.7">
+            <animate attributeName="cy" values="11;31;11" dur="2.6s" repeatCount="indefinite" />
+          </circle>
+          <rect x="286" y="22" width="2" height="10" fill="#B2DFDB" opacity="0.75" rx="1">
+            <animate attributeName="y" values="22;38;22" dur="2.05s" repeatCount="indefinite" />
+          </rect>
+          <circle cx="299" cy="12" r="4" fill="#FFD600" opacity="0.65">
+            <animate attributeName="cy" values="12;33;12" dur="1.7s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.6;1;0.6" dur="1.2s" repeatCount="indefinite" />
+          </circle>
+        </g>
+      </svg>
+    </div>
   );
 }
 
