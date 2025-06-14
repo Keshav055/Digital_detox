@@ -1,274 +1,305 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
-// Color, icon, and playful animation cues for light/minimal onboarding.
-// Accent/brand colors (sync with App.js)
+/**
+ * OnboardingSlides - playful, minimal, animated onboarding for first-app visit.
+ * - Uses accent colors and whimsical SVG/emoji icons
+ * - Smooth slide transitions (CSS transform + fade)
+ * - Only shows on first visit (localStorage 'onboarded' key)
+ * - Calls onComplete prop when finished or skipped
+ *
+ * Integration: Place <OnboardingSlides onComplete={...} /> in your root.
+ *
+ * Props:
+ *   - onComplete(): called when onboarding completes or is skipped
+ */
+
+// Accent palette
 const COLORS = {
   primary: "#2E7D32",
   secondary: "#B2DFDB",
   accent: "#FFD600",
-  bg: "#fff",
+  bg: "#FFFDE7",
   text: "#1A1A1A",
+  slideBg: "#FEFFE4",
 };
 
-// Whimsical, positive icons for playful onboarding
-const ICONS = ["🌱", "🤝", "🎁", "🚶‍♂️", "📝"];
+// Whimsical SVG icons for slides
+const Icons = [
+  // Light bulb - for discovery
+  <svg width="48" height="48" viewBox="0 0 64 64" key="bulb">
+    <circle cx="32" cy="32" r="28" fill={COLORS.accent} />
+    <ellipse cx="32" cy="30" rx="14" ry="16" fill="#fffde7" />
+    <rect x="27" y="41" width="10" height="13" rx="5" fill="#EDEDED" />
+    <rect x="28" y="46" width="8" height="6" rx="3" fill={COLORS.accent} />
+    <circle cx="32" cy="33" r="3.7" fill={COLORS.accent} />
+    <ellipse cx="32" cy="22" rx="6.2" ry="5" fill="#fffde7" opacity="0.7"/>
+  </svg>,
+  // Friendly handshake (buddy system)
+  <svg width="48" height="48" viewBox="0 0 64 64" key="buddy">
+    <circle cx="32" cy="32" r="28" fill={COLORS.secondary} />
+    <ellipse cx="23" cy="28" rx="6" ry="8" fill="#fff" />
+    <ellipse cx="41" cy="28" rx="6" ry="8" fill="#fff" />
+    <rect x="20" y="36" width="24" height="8" rx="4" fill="#DBF5DF" />
+    <path d="M27 32 Q28 36 32 36 Q36 36 37 32" stroke={COLORS.primary} strokeWidth="2" fill="none" />
+    <circle cx="23" cy="25" r="1.5" fill={COLORS.primary}/>
+    <circle cx="41" cy="25" r="1.5" fill={COLORS.primary}/>
+    {/* Whimsical smile */}
+    <path d="M24 32 Q23 34 28 35" stroke="#aaa" strokeWidth="1.2" fill="none"/>
+    <path d="M40 32 Q41 34 36 35" stroke="#aaa" strokeWidth="1.2" fill="none"/>
+  </svg>,
+  // Trophy - rewards
+  <svg width="48" height="48" viewBox="0 0 64 64" key="trophy">
+    <circle cx="32" cy="32" r="28" fill={COLORS.accent} />
+    <ellipse cx="32" cy="28" rx="12" ry="10" fill="#fffde7" />
+    <rect x="24" y="38" width="16" height="6" rx="3" fill="#FFD60099" />
+    <rect x="29" y="42" width="6" height="9" rx="3" fill="#dac116" />
+    <ellipse cx="23" cy="29" rx="3" ry="4" fill="#FFE98080" />
+    <ellipse cx="41" cy="29" rx="3" ry="4" fill="#FFE98080" />
+    <path d="M20 25 Q16 35 28 37" stroke="#d5bc19" strokeWidth="2" fill="none"/>
+    <path d="M44 25 Q48 35 36 37" stroke="#d5bc19" strokeWidth="2" fill="none"/>
+    <circle cx="32" cy="29" r="2.3" fill="#FFD600" />
+  </svg>,
+  // Hiking boot/tree - real life & outdoor
+  <svg width="48" height="48" viewBox="0 0 64 64" key="tree">
+    <circle cx="32" cy="32" r="28" fill={COLORS.secondary} />
+    <ellipse cx="32" cy="24" rx="11" ry="10" fill="#A4D861" />
+    <ellipse cx="38" cy="32" rx="8" ry="8" fill="#C5EC8B" />
+    <ellipse cx="26" cy="30" rx="8" ry="7" fill="#FFE980" opacity="0.33"/>
+    <rect x="29" y="35" width="6" height="10" rx="2" fill="#7A5632" />
+    <ellipse cx="32" cy="44" rx="4" ry="2.2" fill="#DEC792" />
+  </svg>,
+];
 
-// Four slides (can be expanded) for onboarding journey
-const SLIDES = [
+// Playful onboarding slide content
+const slides = [
   {
-    icon: ICONS[0],
     title: "Welcome!",
-    desc: "Ready to rediscover life beyond your device? Digital Detox Companion will guide you towards fresh habits and more offline joy.",
-    bg: "#fffbe7",
+    desc: "Meet your Digital Detox Companion. We’ll help you find more fun, offline moments.",
+    icon: Icons[0],
+    bg: "#fffbe8",
   },
   {
-    icon: ICONS[1],
-    title: "Find Your Buddy",
-    desc: "Pair anonymously with a supportive buddy. Cheer each other on. You’re never alone in your digital detox journey!",
-    bg: "#f5fdfe",
+    title: "Find A Buddy",
+    desc: "Pair up anonymously for motivation and support. Cheering you on is fun!",
+    icon: Icons[1],
+    bg: "#e8fcf8",
   },
   {
-    icon: ICONS[2],
-    title: "Unlock Milestones",
-    desc: "Earn playful real-world rewards for reaching new offline goals and streaks. Celebrate yourself, not your screen.",
-    bg: "#fafff6",
+    title: "Earn Real Rewards",
+    desc: "Unlock coffee vouchers, activity passes, and more as you reach milestones.",
+    icon: Icons[2],
+    bg: "#fffbe8",
   },
   {
-    icon: ICONS[4],
-    title: "Reflect & Grow",
-    desc: "Quickly jot thoughts in your habit journal or try an AI reflection prompt. Small reflections help build lasting change.",
-    bg: "#f7fff8",
+    title: "Go Off-Grid",
+    desc: "Check-in to real-world activities — your journey is about enjoying life offline.",
+    icon: Icons[3],
+    bg: "#f4ffe8",
   },
 ];
 
 // PUBLIC_INTERFACE
 function OnboardingSlides({ onComplete }) {
-  /**
-   * Renders a playful slide UI with progress and animated transitions.
-   * Uses localStorage ("onboarded") to display only on first load.
-   * Invokes onComplete on exit/finish.
-   */
-  const [curr, setCurr] = useState(0);
-  const [exiting, setExiting] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const slideRef = useRef(null);
 
-  // Handle escape key (exit onboarding)
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.key === "Escape") {
-        handleDone();
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-    // eslint-disable-next-line
-  }, []);
-
-  // Set onboarding done in localStorage and inform App via callback
-  const handleDone = useCallback(() => {
-    try {
-      localStorage.setItem("onboarded", "yes");
-    } catch {}
+  // Dismiss onboarding: set flag and callback
+  function finishOnboarding() {
+    try { localStorage.setItem("onboarded", "yes"); } catch {}
     if (onComplete) onComplete();
-  }, [onComplete]);
+  }
 
-  // Slide navigation (with slide-out transition)
+  // Next slide with animation
   function handleNext() {
-    if (curr < SLIDES.length - 1) {
-      setExiting(true);
+    if (index < slides.length - 1) {
+      setAnimating(true);
+      // Animate out, then increment
       setTimeout(() => {
-        setCurr(curr + 1);
-        setExiting(false);
-      }, 330);
+        setAnimating(false);
+        setIndex((i) => i + 1);
+      }, 350);
     } else {
-      // Last slide done!
-      setExiting(true);
-      setTimeout(() => {
-        handleDone();
-      }, 330);
+      finishOnboarding();
     }
   }
 
-  // Animated playful transition for each slide (slide/scale from right)
+  // Skip onboarding
+  function handleSkip() {
+    finishOnboarding();
+  }
+
+  // Keyboard: allow right-arrow/space/enter to advance; esc to skip
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (["ArrowRight", "Enter", " "].includes(e.key)) {
+        handleNext();
+      } else if (e.key === "Escape") {
+        handleSkip();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line
+  }, [index]);
+
+  // While showing, prevent background scroll/tabs
+  useEffect(() => {
+    const orig = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = orig; };
+  }, []);
+
+  // Only show if onboarding is not yet complete
+  try {
+    if (typeof window !== "undefined" && localStorage.getItem("onboarded") === "yes") {
+      return null;
+    }
+  } catch {}
+
+  const slide = slides[index];
+
   return (
     <div
       className="onboarding-overlay"
       style={{
         position: "fixed",
-        inset: 0,
-        zIndex: 150,
-        background: "rgba(255,255,255,0.97)",
+        top: 0, left: 0, right: 0, bottom: 0,
+        zIndex: 9999,
+        background: "rgba(250, 255, 245, 0.9)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        transition: "opacity 0.36s cubic-bezier(.85,.45,.12,1)",
-        opacity: exiting ? 0 : 1,
-        pointerEvents: exiting ? "none" : "auto"
       }}
       aria-modal="true"
+      role="dialog"
       tabIndex={-1}
     >
       <div
-        className="onboard-card"
+        ref={slideRef}
+        className={`onboarding-slide${animating ? " slide-out" : ""}`}
         style={{
-          minWidth: 320,
-          maxWidth: 400,
-          width: "90vw",
-          boxShadow: "0 8px 32px rgba(44,127,67,0.07)",
-          border: `2px solid ${COLORS.accent}40`,
-          borderRadius: 18,
-          padding: "38px 32px 30px",
-          background: SLIDES[curr].bg,
-          transform: exiting
-            ? "translateY(30px) scale(0.97)"
-            : "translateY(0) scale(1)",
-          transition:
-            "transform 0.36s cubic-bezier(.8,.18,.12,1), background 0.26s",
+          width: 340,
+          maxWidth: "94vw",
+          background: slide.bg,
+          borderRadius: 22,
+          padding: "38px 25px 22px",
+          boxShadow: "0 7px 38px 0 rgba(24,60,20,0.11)",
+          textAlign: "center",
+          color: COLORS.text,
+          userSelect: "none",
           position: "relative",
-          overflow: "hidden",
+          transition: "box-shadow .18s",
+          outline: "none",
         }}
+        tabIndex={0}
       >
-        <span
-          className="onboard-icon"
-          aria-hidden="true"
-          style={{
-            fontSize: 44,
-            display: "block",
-            textAlign: "center",
-            marginBottom: 18,
-            transform: exiting ? "scale(0.8) rotate(-12deg)" : "scale(1) rotate(0)",
-            transition: "transform 0.34s cubic-bezier(.7,.05,.2,.97)"
-          }}
-        >
-          {SLIDES[curr].icon}
-        </span>
-        <div
-          className="onboard-title"
-          style={{
-            color: COLORS.primary,
-            fontWeight: 800,
-            fontSize: 23,
-            marginBottom: 7,
-            letterSpacing: "0.01em",
-            textAlign: "center",
-            userSelect: "none"
-          }}
-        >
-          {SLIDES[curr].title}
+        <div style={{
+          width: 58, height: 58, borderRadius: "50%",
+          background: "#fff",
+          margin: "0 auto 18px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: `0 2px 8px 0 ${COLORS.accent}22`,
+        }}>
+          {slide.icon}
         </div>
-        <div
-          className="onboard-desc"
-          style={{
-            color: "#6C917B",
-            fontSize: 16,
-            textAlign: "center",
-            marginBottom: 20,
-            fontWeight: 500
-          }}
-        >
-          {SLIDES[curr].desc}
+        <h2 style={{ fontSize: "2rem", marginBottom: 9, color: COLORS.primary, fontWeight: 700, letterSpacing: 0.01 }}>
+          {slide.title}
+        </h2>
+        <div style={{ fontSize: "1.16rem", color: "#6B7C5A", marginBottom: 14, fontWeight: 500, minHeight: 48 }}>
+          {slide.desc}
         </div>
-        {/* Progress dots */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 6,
-            marginBottom: 22
-          }}
-          aria-label="Onboarding progress"
-        >
-          {SLIDES.map((_, idx) => (
-            <span
-              key={idx}
+
+        {/* Slide indicators */}
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 9,
+          marginBottom: 16,
+          marginTop: 13
+        }}>
+          {slides.map((_, i) => (
+            <span key={i}
               style={{
-                width: 14,
-                height: 14,
-                borderRadius: "50%",
-                display: "inline-block",
-                background:
-                  idx === curr
-                    ? COLORS.accent
-                    : COLORS.secondary + (idx < curr ? "70" : "55"),
-                border: idx === curr ? `2.5px solid ${COLORS.primary}` : "none",
-                transition: "background 0.2s, border 0.2s"
+                display: "block",
+                width: i === index ? 18 : 8,
+                height: 8,
+                borderRadius: 8,
+                transition: "width 0.3s, background 0.17s",
+                background: i === index ? COLORS.accent : "#E6E6DB",
+                opacity: i === index ? 1 : 0.5,
               }}
+              aria-label={i === index ? "Active slide" : undefined}
             />
           ))}
         </div>
-        {/* Next/finish button */}
-        <button
-          className="onboard-btn"
-          onClick={handleNext}
-          style={{
-            background: COLORS.primary,
-            color: "#fff",
-            fontWeight: 600,
-            fontSize: 18,
-            border: "none",
-            borderRadius: 9,
-            padding: "14px 0",
-            width: "100%",
-            boxShadow:
-              "0 2px 8px 0 rgba(44,127,67,0.05),0 1px 0 rgba(255,214,0,0.04)",
-            cursor: "pointer",
-            outline: "none",
-            marginTop: 5,
-            transition: "background 0.23s"
-          }}
-          aria-label={curr === SLIDES.length - 1 ? "Finish onboarding" : "Next onboarding step"}
-        >
-          {curr < SLIDES.length - 1 ? (
-            <>
-              Next <span style={{ fontSize: 19, marginLeft: 8 }}>→</span>
-            </>
-          ) : (
-            <>
-              Let’s Start! <span style={{ fontSize: 19, marginLeft: 7 }}>🌳</span>
-            </>
-          )}
-        </button>
-        {/* Skip or exit: only on first slide, shown minimally */}
-        <div style={{ textAlign: "center", marginTop: 19 }}>
-          {curr === 0 ? (
-            <button
-              className="onboard-skip"
-              onClick={handleDone}
-              style={{
-                background: "none",
-                border: "none",
-                color: COLORS.primary,
-                fontWeight: 500,
-                fontSize: 15.5,
-                cursor: "pointer",
-                textDecoration: "underline dotted #B2DFDB 1px",
-                opacity: 0.7,
-              }}
-              tabIndex={0}
-              aria-label="Skip onboarding"
-            >
-              Skip for now
-            </button>
-          ) : null}
-        </div>
-        {/* ESC hint */}
-        <div
-          style={{
-            position: "absolute",
-            right: 13,
-            top: 10,
-            fontSize: 15,
-            color: "#b7b7aa",
-            fontWeight: 500,
-            opacity: 0.34,
-            pointerEvents: "none"
-          }}
-        >
-          Esc
+
+        {/* Navigation controls */}
+        <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+          <button
+            onClick={handleSkip}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#BDA506",
+              fontSize: 15,
+              padding: "6px 13px",
+              fontWeight: 500,
+              borderRadius: 7,
+              cursor: "pointer",
+              outline: "none",
+              transition: "color .17s",
+              textDecoration: "underline",
+            }}
+            aria-label="Skip onboarding"
+            tabIndex={0}
+          >Skip</button>
+          <button
+            onClick={handleNext}
+            style={{
+              background: COLORS.primary,
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              fontWeight: 600,
+              fontSize: 15,
+              padding: "8px 24px",
+              boxShadow: `0 1px 6px 0 ${COLORS.primary}24`,
+              marginLeft: 4,
+              cursor: "pointer",
+              transition: "background .18s",
+              outline: "none",
+              letterSpacing: 0.01,
+            }}
+            tabIndex={0}
+            aria-label={index === slides.length - 1 ? "Finish onboarding" : "Next slide"}
+            autoFocus
+          >
+            {index === slides.length - 1 ? "Start" : "Next"}
+          </button>
         </div>
       </div>
+      {/* CSS: slide transition */}
+      <style>
+        {`
+        .onboarding-slide {
+          transition: transform 0.43s cubic-bezier(.67,0,.33,1), opacity 0.37s cubic-bezier(.5,0,.5,1);
+          transform: translateY(0px) scale(1) rotate(-1deg);
+          opacity: 1;
+        }
+        .onboarding-slide.slide-out {
+          transform: translateY(90px) scale(0.96) rotate(2deg);
+          opacity: 0;
+        }
+        .onboarding-slide:focus {
+          box-shadow: 0 0 0 3px ${COLORS.accent}55;
+        }
+        `}
+      </style>
     </div>
   );
 }
 
-// PUBLIC_INTERFACE
 export default OnboardingSlides;
