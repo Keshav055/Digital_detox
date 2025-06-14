@@ -396,7 +396,22 @@ function DetoxPlanPage({ showToast }) {
             <span style={{ textDecoration: step.done ? "line-through" : "none", flex: 1 }}>
               {step.text}
             </span>
+// ADD: utility hook for flash animation on feedback
+function useFlash(on=true, ms=390) {
+  const [flash, setFlash] = React.useState(false);
+  React.useEffect(() => {
+    if (on) {
+      setFlash(true);
+      const timer = setTimeout(()=>setFlash(false), ms);
+      return ()=>clearTimeout(timer);
+    }
+  }, [on, ms]);
+  return flash ? "animate-flash" : "";
+}
+
+...
             <button
+              className={`btn ripple`}
               style={{
                 background: step.done ? "#FFD600" : COLORS.primary,
                 color: step.done ? "#1A1A1A" : "#fff",
@@ -405,11 +420,19 @@ function DetoxPlanPage({ showToast }) {
                 fontWeight: 500,
                 fontSize: 14,
                 padding: "6px 14px",
-                cursor: "pointer"
+                cursor: "pointer",
+                boxShadow: step.done ? "0 1.5px 10px 0 #FFD60038" : "",
+                transition: "background 0.24s, color 0.21s"
               }}
-              onClick={() => handleToggleDone(step.id)}
+              onClick={e=> {
+                e.currentTarget.classList.add("animate-flash");
+                setTimeout(()=>e.currentTarget.classList.remove("animate-flash"),380);
+                handleToggleDone(step.id);
+              }}
             >
-              {step.done ? "Mark Incomplete" : "Mark as Done"}
+              <span style={{verticalAlign:"middle"}}>
+                {step.done ? "Mark Incomplete" : "Mark as Done"}
+              </span>
             </button>
           </li>
         ))}
@@ -579,6 +602,7 @@ function BuddyMessagePane({ showToast }) {
         {lastMessage.time}
       </div>
       <button
+        className="btn ripple"
         style={{
           marginTop: 10,
           background: COLORS.accent,
@@ -590,7 +614,9 @@ function BuddyMessagePane({ showToast }) {
           fontSize: 15,
           cursor: "pointer"
         }}
-        onClick={() => {
+        onClick={e => {
+          e.currentTarget.classList.add("animate-flash");
+          setTimeout(()=>e.currentTarget.classList.remove("animate-flash"),360);
           if (showToast) {
             showToast("Message sent to buddy! 👍", "success");
           }
@@ -622,54 +648,73 @@ function RewardsPage() {
         gap: 18,
         marginTop: 12
       }}>
-        {rewards.map((r, idx) => (
-          <div
-            key={r.id}
-            style={{
-              background: r.unlocked ? "#fafbe4" : "#F2F6F5",
-              border: r.unlocked ? `2px solid ${COLORS.accent}` : "1px solid #e2efe6",
-              borderRadius: 14,
-              padding: "22px 26px",
-              fontWeight: 500,
-              fontSize: 16,
-              minWidth: 180,
-              boxShadow: "0 2px 4px 0 rgba(46,125,50,0.02)",
-              opacity: r.unlocked ? 1 : 0.65,
-              color: r.unlocked ? COLORS.primary : "#888"
-            }}
-          >
-            <div style={{
-              fontSize: 32,
-              marginBottom: 6,
-              filter: r.unlocked ? "none" : "grayscale(0.7)"
-            }}>
-              {r.icon}
-            </div>
-            <div>{r.name}</div>
-            <div style={{
-              color: r.unlocked ? COLORS.accent : "#A7C5B1",
-              marginTop: 4,
-              fontWeight: 400,
-              fontSize: 14
-            }}>
-              {r.desc}
-            </div>
-            {r.unlocked && (
-              <span style={{
-                color: COLORS.accent,
-                background: "#fcfded",
-                borderRadius: 6,
-                fontWeight: 700,
-                padding: "2px 9px",
-                marginTop: 5,
-                fontSize: 12,
-                display: "inline-block"
+        {rewards.map((r, idx) => {
+          // unlock flash only when unlocked for first render (would animate on next features)
+          const blockClass = r.unlocked ? "animate-flash" : "";
+          return (
+            <div
+              key={r.id}
+              className={blockClass}
+              style={{
+                background: r.unlocked ? "#fafbe4" : "#F2F6F5",
+                border: r.unlocked ? `2px solid ${COLORS.accent}` : "1px solid #e2efe6",
+                borderRadius: 14,
+                padding: "22px 26px",
+                fontWeight: 500,
+                fontSize: 16,
+                minWidth: 180,
+                boxShadow: "0 2px 12px 0 rgba(249,241,119,0.09)",
+                opacity: r.unlocked ? 1 : 0.65,
+                color: r.unlocked ? COLORS.primary : "#888",
+                position: "relative"
+              }}
+            >
+              <div style={{
+                fontSize: 32,
+                marginBottom: 6,
+                filter: r.unlocked ? "none" : "grayscale(0.7)"
               }}>
-                Unlocked!
-              </span>
-            )}
-          </div>
-        ))}
+                {r.icon}
+                {r.unlocked && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      left: 12,
+                      top: 9,
+                      fontSize: 15,
+                      opacity: 0.18,
+                      transition: "opacity 0.2s"
+                    }}
+                    aria-hidden="true"
+                  >★</span>
+                )}
+              </div>
+              <div>{r.name}</div>
+              <div style={{
+                color: r.unlocked ? COLORS.accent : "#A7C5B1",
+                marginTop: 4,
+                fontWeight: 400,
+                fontSize: 14
+              }}>
+                {r.desc}
+              </div>
+              {r.unlocked && (
+                <span style={{
+                  color: COLORS.accent,
+                  background: "#fcfded",
+                  borderRadius: 6,
+                  fontWeight: 700,
+                  padding: "2px 9px",
+                  marginTop: 5,
+                  fontSize: 12,
+                  display: "inline-block"
+                }}>
+                  Unlocked!
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
       <div style={{
         marginTop: 30,
@@ -712,6 +757,7 @@ function CheckInPage({ showToast }) {
         Log an offline activity to boost your progress!
       </div>
       <button
+        className="btn ripple"
         style={{
           background: COLORS.primary,
           color: "#fff",
@@ -723,7 +769,9 @@ function CheckInPage({ showToast }) {
           marginBottom: 18,
           cursor: "pointer"
         }}
-        onClick={() => {
+        onClick={e => {
+          e.currentTarget.classList.add("animate-flash");
+          setTimeout(()=>e.currentTarget.classList.remove("animate-flash"),360);
           if (showToast) {
             showToast("Check-in logged! Nice job focusing offline. 🌳", "success");
           }
@@ -841,7 +889,12 @@ function JournalPage({ showToast }) {
       />
       <div>
         <button
-          onClick={handleSave}
+          className="btn ripple"
+          onClick={e=> {
+            e.currentTarget.classList.add("animate-flash");
+            setTimeout(()=>e.currentTarget.classList.remove("animate-flash"),340);
+            handleSave();
+          }}
           disabled={draft.length === 0}
           style={{
             background: COLORS.primary,

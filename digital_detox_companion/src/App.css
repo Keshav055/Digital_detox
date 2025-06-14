@@ -6,128 +6,181 @@
   --border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* General resets and container */
-body, html {
+/* ------------- GLOBAL RESETS & LAYOUT --------- */
+body {
   margin: 0;
   padding: 0;
   background: #fff;
-  color: #1A1A1A;
-  font-family: Inter, Roboto, Arial, sans-serif;
+  color: var(--kavia-dark);
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Sidebar styles - minimal, light, branded */
-.sidebar {
-  background: #fff;
-  border-right: 1px solid #E6F3EA;
-  min-width: 83px;
-  width: 88px;
+.playful,
+.playful *,
+.playful-toast {
+  /* minimal bouncy holistic feel for success, info, warning etc. */
+  animation-fill-mode: both;
+}
+.toast.playful-toast {
+  opacity: 0;
+  transform: translateY(-32px) scale(0.97);
+  animation: toastshow 0.64s cubic-bezier(.185,1.55,.5,1.15) forwards;
+  will-change: opacity,transform;
+}
+.toast-show {
+  opacity: 1 !important;
+  transform: none !important;
+}
+.toast-icon.pop {
+  animation: toastpop 0.47s cubic-bezier(.185,1.6,.5,1.02);
+}
+@keyframes toastshow {
+  0% { opacity: 0; transform: translateY(-32px) scale(0.97);}
+  70% { opacity: 1; transform: translateY(6px) scale(1.045);}
+  85% { opacity: 1; transform: translateY(-2px) scale(0.97);}
+  100% { opacity: 1; transform: none;}
+}
+@keyframes toastpop {
+  0% { transform: scale(0.6) rotate(-9deg);}
+  65% { transform: scale(1.18) rotate(10deg);}
+  92% { transform: scale(0.98) rotate(-3deg);}
+  100% { transform: none;}
+}
+.toast-close-btn.ripple:active {
+  color: #E87A41;
+  background: #FBEEDB;
+  border-radius: 50%;
+}
+
+/* -------- BUTTONS: Playful & animated ------ */
+.btn,
+button,
+.tab-btn {
   box-sizing: border-box;
-  box-shadow: 2px 0 10px 0 rgba(44,125,67,0.03);
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 16px;
-  z-index: 40;
-}
-
-.sidebar-link {
-  transition: background 0.19s, color 0.13s, border-right 0.1s;
-  outline: none;
-  background: none;
+  border-radius: 7px;
   border: none;
-  width: 100%;
-  text-align: center;
-  font-size: 17px;
-  cursor: pointer;
-  padding: 15px 8px;
-  border-radius: 0 12px 12px 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #789262;
+  padding: 9px 20px;
   font-weight: 500;
+  font-size: 1rem;
+  transition: 
+    background 0.19s cubic-bezier(.38,1.4,.48,1.08),
+    color 0.15s,
+    box-shadow 0.2s cubic-bezier(.3,1.1,.48,1.08),
+    transform 0.10s cubic-bezier(.4,1.2,.88,.83);
+  cursor: pointer;
+  outline: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
+.btn:active,
+button:active,
+.tab-btn:active {
+  transform: scale(0.97) translateY(2px);
+  background: #f4ecdb !important;
+  box-shadow: 0 0 0 0 transparent;
+}
+.btn-large {
+  font-size: 1.21rem;
+  padding: 13px 34px;
+}
+.btn[disabled],
+button[disabled],
+.tab-btn[disabled] {
+  opacity: 0.51;
+  filter: grayscale(0.1);
+  cursor: not-allowed;
 }
 
-.sidebar-link:focus {
-  background: #fffde7;
-  color: #2E7D32;
+/* Ripple effect for .ripple buttons */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+.ripple:after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  border-radius: 100vw;
+  transform: translate(-50%,-50%) scale(0);
+  background: #ffd60044;
+  animation: ripple-effect 0.47s cubic-bezier(.25,1.41,.84,1.01) forwards;
+  width: 58px; height: 58px;
+}
+.ripple:active:after {
+  animation-play-state: running;
+}
+@keyframes ripple-effect {
+  0% { opacity: 0.42; transform: translate(-50%,-50%) scale(0);}
+  45% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(2.3);}
 }
 
-.sidebar-link[aria-current="page"] {
-  font-weight: 700;
-  color: #2E7D32;
-  border-right: 6px solid #2E7D32;
-  background: linear-gradient(98deg, #FFD600 0%, #fffbe7 100%);
+/* ----------- Toggle/checkbox playful animation -------- */
+input[type=checkbox].playful-toggle {
+  accent-color: var(--kavia-orange);
+  transform: scale(1.25);
+  transition: accent-color 0.23s;
+}
+input[type=checkbox].playful-toggle:active {
+  filter: saturate(1.4);
+  box-shadow: 0 0 0 4px #ffd60044;
+}
+input[type=checkbox].playful-toggle:checked {
+  accent-color: var(--kavia-orange);
+  box-shadow: 0 1px 0 #ffd60044;
 }
 
-.logo {
-  font-weight: 700;
-  font-size: 28px;
-  margin-bottom: 9px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #FFD600;
+/* Subtle scale/flash on “mark as done” or feedback */
+.animate-flash {
+  animation: flashscale 0.38s cubic-bezier(.8,2.2,.1,1) both;
+}
+@keyframes flashscale {
+  0% { transform: scale(0.9); background: #fffbdb }
+  25% { transform: scale(1.07); background: #fffce5 }
+  70% { transform: scale(1.01); background: #f3fff3 }
+  100% { transform: none; background: transparent }
 }
 
-@media (max-width: 700px) {
-  .sidebar {
-    width: 56px;
-    min-width: 46px;
-    padding: 6px 0 0 0;
-  }
-}
+/* -------- Other elements kept as before --------- */
 
+/* Container */
 .container {
+  width: 100%;
   max-width: 900px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-/* Navbar refinement */
-.navbar {
-  background: #fff;
-  border-bottom: 1px solid #eee;
-  color: #2E7D32;
-  padding: 0;
-  box-shadow: 0 2px 6px rgba(44,127,67,0.03);
-  z-index: 20;
-  margin-left: 0;
-  width: 100%;
-  left: 0;
-}
-
-.tab-btn {
-  background: none;
+/* -------- BUTTONS -------- */
+.btn,
+button {
+  box-sizing: border-box;
+  border-radius: 7px;
   border: none;
-  color: #789262;
-  border-bottom: 3px solid transparent;
-  font-size: 16px;
-  font-weight: 400;
-  padding: 12px 10px 7px;
-  margin: 0 2px;
+  padding: 9px 20px;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.25s, color 0.23s;
   cursor: pointer;
   outline: none;
-  position: relative;
-  transition: color 0.12s, border-bottom-color 0.12s;
-}
-.tab-btn[aria-current="page"] {
-  color: #2E7D32;
-  font-weight: 600;
-  border-bottom: 3px solid #FFD600;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
-footer {
-  padding: 24px 0 8px;
-  color: #2E7D32;
-  background: #fafcfb;
-  border-top: 1px solid #E7F6EC;
-  text-align: center;
-  font-weight: 500;
-  font-size: 1.05rem;
-  margin-top: 32px;
-  letter-spacing: 0.1px;
-  margin-left: 0;
+.btn-large {
+  font-size: 1.21rem;
+  padding: 13px 34px;
+}
+
+.btn[disabled],
+button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
