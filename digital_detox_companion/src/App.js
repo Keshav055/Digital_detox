@@ -26,6 +26,7 @@ const COLORS = {
  * Minimal inline styles for theme and layout
  * Ensure PUBLIC_URL is accessed correctly
  */
+const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const minimalTheme = {
   "--primary": COLORS.primary,
   "--secondary": COLORS.secondary,
@@ -303,20 +304,25 @@ function DetoxPlanPage({ showToast }) {
 
   // Handler for marking steps done/incomplete
   function handleToggleDone(stepId) {
-    setSteps(prevSteps =>
-      prevSteps.map(s =>
+    // Compute the new steps array FIRST
+    setSteps(prevSteps => {
+      const updatedSteps = prevSteps.map(s =>
         s.id === stepId ? { ...s, done: !s.done } : s
-      )
-    );
-    // Show relevant toast
-    if (showToast) {
-      const step = steps.find(s => s.id === stepId);
-      if (!step.done) {
-        showToast("Great! Step marked as done.", "success");
-      } else {
-        showToast("Step marked as incomplete.", "info");
+      );
+
+      // Find the toggled step in previous state
+      const stepBefore = prevSteps.find(s => s.id === stepId); // This reflects the old state
+
+      // Show relevant toast based on new value (invert of previous)
+      if (showToast && stepBefore) {
+        if (!stepBefore.done) {
+          showToast("Great! Step marked as done.", "success");
+        } else {
+          showToast("Step marked as incomplete.", "info");
+        }
       }
-    }
+      return updatedSteps;
+    });
   }
 
   return (
