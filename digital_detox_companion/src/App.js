@@ -52,7 +52,7 @@ function App() {
     message: "",
     type: "info",
   });
-  // Onboarding overlay visibility
+  // Onboarding overlay visibility (show onboarding if "onboarded" !== "yes" in localStorage)
   const [onboardingDone, setOnboardingDone] = useState(() => {
     try {
       return localStorage.getItem("onboarded") === "yes";
@@ -60,6 +60,16 @@ function App() {
       return false;
     }
   });
+
+  // Handles completion of onboarding: update state AND localStorage for permanent skip
+  const handleOnboardingComplete = () => {
+    try {
+      localStorage.setItem("onboarded", "yes");
+    } catch {
+      /* Ignore storage errors gracefully */
+    }
+    setOnboardingDone(true);
+  };
 
   // Toast helper
   const showToast = (msg, type = "info") => {
@@ -135,7 +145,7 @@ function App() {
     >
       {/* Show playful onboarding overlay if user is new */}
       {!onboardingDone && (
-        <OnboardingSlides onComplete={() => setOnboardingDone(true)} />
+        <OnboardingSlides onComplete={handleOnboardingComplete} />
       )}
 
       {/* Persistent global sidebar on left */}
