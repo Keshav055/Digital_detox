@@ -22,13 +22,18 @@ const COLORS = {
   text: "#1A1A1A",
 };
 
-// Minimal inline styles for theme and layout
+/**
+ * Minimal inline styles for theme and layout
+ * Ensure PUBLIC_URL is accessed correctly
+ */
 const minimalTheme = {
   "--primary": COLORS.primary,
   "--secondary": COLORS.secondary,
   "--accent": COLORS.accent,
   "--bg": COLORS.bg,
   "--text": COLORS.text,
+  // Example correction for PUBLIC_URL if used:
+  // ... add more as needed
 };
 
 // PUBLIC_INTERFACE
