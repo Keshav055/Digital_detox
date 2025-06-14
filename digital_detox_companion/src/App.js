@@ -653,71 +653,19 @@ function BuddyMessagePane({ showToast }) {
  * Includes a mix of physical, experiential, personal, social, just-for-fun, and motivational digital detox rewards.
  * Confetti animation is shown when a reward is first unlocked (playful/minimal).
  */
+// Import rewards data at the top for ESLint compliance and best practice
+import { rewardsList } from "./rewardsData";
+
+/* RewardsPage now uses the new rewards data structure */
+
 // ----------- REWARDS PAGE -----------
 // PUBLIC_INTERFACE
 function RewardsPage() {
-  // Expanded digital detox motivational reward options!
-  const rewards = [
-    // Baseline rewards (existing + improved names/criteria)
-    { id: 1, name: "Coffee Voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" },
-    { id: 2, name: "Gift Card", unlocked: false, desc: "7 days offline streak", icon: "🎟️" },
-    { id: 3, name: "Outdoor Yoga Pass", unlocked: false, desc: "Try 2 off-grid activities", icon: "🧘" },
-    { id: 4, name: "Sunset Picnic Kit", unlocked: false, desc: "Complete 10 check-ins before sunset", icon: "🧺" },
-    { id: 5, name: "Bookstore Credit", unlocked: false, desc: "Finish a week of reduced screen time", icon: "📚" },
-    { id: 6, name: "Art Supply Bundle", unlocked: false, desc: "Create an offline hobby entry", icon: "🎨" },
-    { id: 7, name: "Movie Night Pass", unlocked: false, desc: "Host a device-free night", icon: "🍿" },
-    { id: 8, name: "Nature Escape Guide", unlocked: true, desc: "Check-in at 3 outdoor locations", icon: "🌲" },
-    { id: 9, name: "Spa Day At Home", unlocked: false, desc: "Log 5 journal reflections", icon: "🛁" },
-    { id: 10, name: "Buddy High-Five Badge", unlocked: true, desc: "Hit 5 days mutual streak with buddy", icon: "🖐️" },
-    { id: 11, name: "Handwritten Postcard", unlocked: false, desc: "Send a gratitude message offline", icon: "💌" },
-    { id: 12, name: "DIY Craft Kit", unlocked: false, desc: "Win a mini detox game", icon: "✂️" },
-    { id: 13, name: "Personalized Playlist", unlocked: false, desc: "Try 3 new offline activities", icon: "🎶" },
-    { id: 14, name: '"Offline Chef" Apron', unlocked: false, desc: "Cook a meal with friends", icon: "👩‍🍳" },
-    { id: 15, name: "Confetti Celebration!", unlocked: true, desc: "Complete any journey map milestone", icon: "🎊" },
-
-    // Motivational, playful and unique digital detox-themed rewards
-    { id: 16, name: "Screen-Free Sunrise", unlocked: false, desc: "Start your day device-free 5 times", icon: "🌅" },
-    { id: 17, name: "90 Minutes for Nature", unlocked: false, desc: "Spend 90 min outside, phone off", icon: "🌻" },
-    { id: 18, name: "Detox Legend Trophy", unlocked: false, desc: "Complete all plan milestones for a month", icon: "🏆" },
-    { id: 19, name: "Offline Game Night", unlocked: false, desc: "Organize a board game night", icon: "🎲" },
-    { id: 20, name: "Photo Scavenger Hunt", unlocked: false, desc: "Capture 7 real-world moments, no filters", icon: "📷" },
-    { id: 21, name: "Gratitude Shout-out", unlocked: false, desc: "Thank 3 people in person", icon: "🙏" },
-    { id: 22, name: "Zen Master Badge", unlocked: false, desc: "Meditate 5 days in a row, screen-free", icon: "🧘‍♂️" },
-    { id: 23, name: "Analog Artist", unlocked: false, desc: "Complete a painting or sketch offline", icon: "🎨" },
-    { id: 24, name: "Buddy Uplifter Award", unlocked: false, desc: "Send 3 encouragements to your buddy", icon: "🥇" },
-    { id: 25, name: "Sleep Champion", unlocked: false, desc: "No screens 1 hr before bed for a week", icon: "😴" },
-    { id: 26, name: "Backyard Explorer", unlocked: false, desc: "Try a new activity in your neighborhood", icon: "🧭" },
-    { id: 27, name: "Tech-Free Adventure", unlocked: false, desc: "Spend a full day offline!", icon: "🚴" },
-    { id: 28, name: "Thank Yourself Badge", unlocked: false, desc: "Reflect on your progress in your journal", icon: "🎖️" },
-    { id: 29, name: "Offline Socialite", unlocked: false, desc: "Host a meetup with no devices", icon: "🤗" },
-    { id: 30, name: "Streak Starter", unlocked: false, desc: "First day without social media", icon: "🌱" },
-
-    // New playful, creative, digital minimalism/healthy-habit rewards
-    { id: 31, name: "Joyful Juggler", unlocked: false, desc: "Try a new hands-on skill (juggle, sculpt, fold)", icon: "🤹" },
-    { id: 32, name: "Tea Time", unlocked: false, desc: "Host an unplugged tea (or coffee) break", icon: "🫖" },
-    { id: 33, name: "Boardwalk Walker", unlocked: false, desc: "Take a walk in silence (leave phone at home)", icon: "🚶" },
-    { id: 34, name: "Offline Explorer Patch", unlocked: false, desc: "Visit a local place for the first time", icon: "🗺️" },
-    { id: 35, name: "Stargazing Night", unlocked: false, desc: "Spend 15m outdoors after dark, phone away", icon: "🌠" },
-    { id: 36, name: "Pen Pal", unlocked: false, desc: "Write and mail a real letter", icon: "✉️" },
-    { id: 37, name: "Puzzle Pro", unlocked: false, desc: "Complete a 50+ piece puzzle, device-free", icon: "🧩" },
-    { id: 38, name: "Mindful Breather", unlocked: false, desc: "Do breathing exercise (screen-free)", icon: "🫁" },
-    { id: 39, name: "Sun Salutation", unlocked: false, desc: "Wake up & stretch, no screens first 20 min", icon: "☀️" },
-    { id: 40, name: "Detox Duo", unlocked: false, desc: "Complete a challenge with a buddy", icon: "👯" },
-    { id: 41, name: "Offline Chef Star", unlocked: false, desc: "Prepare an entire meal, recipe offline", icon: "🍜" },
-    { id: 42, name: "Kindness Champion", unlocked: false, desc: "Do 5 random acts of kindness unplugged", icon: "💝" },
-    { id: 43, name: "Detox Mentor", unlocked: false, desc: "Share your journey tips with someone", icon: "🤓" },
-    { id: 44, name: "Confetti Spark!", unlocked: true, desc: "Unlock any 10 rewards", icon: "✨" },
-    { id: 45, name: "Memory Maker", unlocked: false, desc: "Create a scrapbook or photo album offline", icon: "📔" },
-    { id: 46, name: "Cloud Watcher", unlocked: false, desc: "Spend time cloud gazing, device-free", icon: "☁️" },
-    { id: 47, name: "Urban Hiker", unlocked: false, desc: "Log 10,000+ steps in a day—offline!", icon: "🥾" },
-    { id: 48, name: "Offline Plant Parent", unlocked: false, desc: "Plant & care for something living", icon: "🪴" },
-    { id: 49, name: "Silent Observer", unlocked: false, desc: "Be in nature for 15+ min, no devices", icon: "🦋" },
-    { id: 50, name: "Celebration Parade!", unlocked: true, desc: "Reach a major milestone! 🎉", icon: "🥳" }
-  ];
+  // Rewards are imported for richer variety and easier future expansion
+  const rewards = rewardsList;
 
   // Confetti or sparkles on the Rewards page for unlocked rewards
-  // One simple confetti/sparkle animation overlay if any new reward is unlocked
-  // (Minimal: for demo, shows if any reward is unlocked.)
+  // Confetti overlay appears if any reward is unlocked (playful/minimal)
   const confetti = rewards.some(r => r.unlocked);
 
   return (
@@ -725,7 +673,7 @@ function RewardsPage() {
       <h2 style={{ color: COLORS.primary, fontSize: "2.1rem", marginBottom: 7 }}>
         Milestone Rewards
       </h2>
-      {/* Confetti/sparkle animation overlay if any unlocked reward (for playful/celebratory effect) */}
+      {/* Confetti/sparkle animation overlay if any unlocked reward */}
       {confetti && (
         <ConfettiSparkle />
       )}
