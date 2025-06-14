@@ -135,36 +135,77 @@ function App() {
           background: "#fff",
           borderBottom: "1px solid #eee",
           color: COLORS.primary,
-          padding: "0",
+          padding: 0,
           boxShadow: "0 2px 6px rgba(44,127,67,0.03)",
           zIndex: 20,
-          marginLeft: 0,
           width: "100%",
           left: 0,
+          display: "flex",
+          justifyContent: "center",
         }}
       >
-        <div className="container" style={{ maxWidth: 900, margin: "0 auto" }}>
-          <div style={{
+        <div
+          className="container"
+          style={{
+            maxWidth: 900,
+            width: "100%",
+            margin: "0 auto",
             display: "flex",
+            justifyContent: "center",
             alignItems: "center",
-            height: 56,
-            justifyContent: "space-between"
-          }}>
-            <div className="logo" style={{ fontWeight: 600, color: COLORS.primary, fontSize: 20 }}>
+            padding: "0 24px",
+            minHeight: 62,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              height: 56,
+              justifyContent: "center",
+              width: "100%",
+              gap: 0,
+            }}
+          >
+            <div
+              className="logo"
+              style={{
+                fontWeight: 600,
+                color: COLORS.primary,
+                fontSize: 20,
+                display: "flex",
+                alignItems: "center",
+                minWidth: 245,
+                justifyContent: "flex-start",
+                letterSpacing: "0.01em",
+                flexShrink: 0,
+              }}
+            >
               <span
                 className="logo-symbol"
                 style={{
                   color: COLORS.accent,
                   fontWeight: 700,
                   fontSize: 24,
-                  verticalAlign: "middle"
+                  verticalAlign: "middle",
+                  marginRight: 10,
                 }}
               >
                 💡
               </span>
               Digital Detox Companion
             </div>
-            <div style={{ display: "flex", gap: 8 }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 8,
+                marginLeft: "auto",
+                flexWrap: "wrap",
+                justifyContent: "center",
+                alignItems: "center",
+                flexShrink: 1,
+              }}
+            >
               {navTabs.map((t) => (
                 <NavTab
                   key={t.id}
