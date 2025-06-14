@@ -1,346 +1,294 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 /**
- * Accent and theme colors
+ * OnboardingSlides
+ * Playful onboarding experience shown only on first visit (localStorage 'onboarded').
+ * Features: minimal+playful slide layout, whimsical/emoji icons, accent colors, animated transitions.
+ * Accepts: onComplete (callback for "Get Started" or skip)
+ *
+ * Usage: <OnboardingSlides onComplete={...} />.
  */
-const COLORS = {
-  primary: "#2E7D32",
-  secondary: "#B2DFDB",
-  accent: "#FFD600",
-  bg: "#fff",
-  text: "#1A1A1A"
-};
-
 const SLIDES = [
   {
-    icon: (
-      <span
-        role="img"
-        aria-label="Sun"
-        style={{ fontSize: 48, color: COLORS.accent }}
-      >
-        🌞
-      </span>
-    ),
-    title: "Welcome to Digital Detox Companion!",
-    desc: "Discover the brighter side of life, away from your screen. Let’s start your journey!"
+    // Welcome
+    title: "Welcome to Your Digital Detox Companion!",
+    description: "Ready for a fun challenge? Let's help you get more out of your day—offline and on your own terms.",
+    icon: "🌱",
+    accentColor: "#FFD600",
+    bg: "#fffbe7"
   },
   {
-    icon: (
-      <span
-        role="img"
-        aria-label="Map"
-        style={{ fontSize: 44, color: COLORS.primary }}
-      >
-        🗺️
-      </span>
-    ),
-    title: "Personalized Detox Plan",
-    desc: "Get gentle, step-by-step plans to re-balance your digital world."
+    // Plan
+    title: "Personal Detox Plans",
+    description: "Set achievable screen goals, track progress, and celebrate small wins! Less scrolling, more you.",
+    icon: "📆",
+    accentColor: "#2E7D32",
+    bg: "#f2f8f3"
   },
   {
-    icon: (
-      <span
-        role="img"
-        aria-label="Buddy"
-        style={{ fontSize: 44, color: "#e87a41" }}
-      >
-        🧑‍🤝‍🧑
-      </span>
-    ),
-    title: "Accountability Buddy",
-    desc: "Pair anonymously for friendly encouragement as you make progress."
+    // Buddy
+    title: "Find a Buddy",
+    description: "Pair up anonymously for encouragement and streaks. Share the journey, share the reward!",
+    icon: "🤝",
+    accentColor: "#B2DFDB",
+    bg: "#e9faf6"
   },
   {
-    icon: (
-      <span
-        role="img"
-        aria-label="Trophy"
-        style={{ fontSize: 44, color: COLORS.accent }}
-      >
-        🏆
-      </span>
-    ),
-    title: "Milestone Rewards",
-    desc: "Earn real-life treats for milestones… from coffee to outdoor events!"
+    // Rewards
+    title: "Earn Real-World Rewards",
+    description: "Hit milestones and unlock tangible perks. Motivation, meet celebration! 🎉",
+    icon: "🎁",
+    accentColor: "#FFD600",
+    bg: "#fffbe7"
   },
   {
-    icon: (
-      <span
-        role="img"
-        aria-label="Tree"
-        style={{ fontSize: 44, color: COLORS.primary }}
-      >
-        🌳
-      </span>
-    ),
-    title: "Check In & Reflect",
-    desc: "Track your offline activities and journal your experiences for lasting change."
+    // Off-grid
+    title: "Go Off-Grid",
+    description: "Check in to real-world adventures and build journaling habits for lasting change.",
+    icon: "🌳",
+    accentColor: "#2E7D32",
+    bg: "#f2f8f3"
   },
   {
-    icon: (
-      <span
-        role="img"
-        aria-label="Rocket"
-        style={{ fontSize: 44, color: "#e87a41" }}
-      >
-        🚀
-      </span>
-    ),
-    title: "Ready?",
-    desc:
-      "Let’s playfully detox together — you’re only a tap away from a lighter, more present you!"
+    // Ready
+    title: "Ready to Begin?",
+    description: "Let’s start your digital detox journey—offline fun awaits! Click below to get started.",
+    icon: "🚀",
+    accentColor: "#FFD600",
+    bg: "#fffbe7"
   }
 ];
 
-/**
- * Slide-transition duration, ms
- */
-const TRANSITION_MS = 450;
+// Minimal transition style (fade/slide)
+// CSS is inline for self-containment.
+const slideStyles = {
+  container: {
+    position: "fixed",
+    inset: 0,
+    zIndex: 100,
+    background: "rgba(255,255,255,0.86)",
+    backdropFilter: "blur(2px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  card: {
+    borderRadius: 18,
+    maxWidth: 380,
+    width: "95vw",
+    margin: "0 12px",
+    minHeight: 410,
+    boxShadow: "0 8px 32px 0 rgba(70,116,46,0.09)",
+    overflow: "hidden",
+    border: "1px solid #FAF1C1",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    transition: "box-shadow 0.35s"
+  },
+  icon: {
+    fontSize: 64,
+    marginTop: 32,
+    marginBottom: 6
+  },
+  title: {
+    fontWeight: 700,
+    fontSize: "1.5rem",
+    margin: "14px 0 7px 0",
+    letterSpacing: "0.02em",
+    textAlign: "center",
+    color: "#2E7D32",
+    lineHeight: 1.24
+  },
+  description: {
+    color: "#475348",
+    fontWeight: 450,
+    fontSize: 18,
+    marginBottom: 15,
+    marginTop: 0,
+    textAlign: "center",
+    minHeight: 70
+  },
+  dotsWrap: {
+    display: "flex",
+    gap: 7,
+    margin: "18px 0"
+  },
+  dot: {
+    width: 13,
+    height: 13,
+    borderRadius: "50%",
+    background: "#eee",
+    transition: "background 0.22s",
+    border: "1.5px solid #B2DFDB"
+  },
+  dotActive: {
+    background: "#FFD600",
+    border: "1.5px solid #2E7D32",
+    boxShadow: "0 0 6px #FFD60099"
+  },
+  btnRow: {
+    margin: "0 0 32px 0",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    gap: 16
+  },
+  btn: {
+    minWidth: 98,
+    padding: "12px 13px",
+    borderRadius: 8,
+    border: "none",
+    fontWeight: 600,
+    fontSize: 16,
+    background: "#2E7D32",
+    color: "#fff",
+    cursor: "pointer",
+    boxShadow: "0 2px 8px 0 rgba(46,125,50,0.08)",
+    transition: "background 0.23s, color 0.25s",
+    outline: "none"
+  },
+  btnAccent: {
+    background: "#FFD600",
+    color: "#313619"
+  },
+  skip: {
+    fontSize: 15,
+    color: "#BDB76B",
+    background: "none",
+    border: "none",
+    marginTop: 3,
+    cursor: "pointer"
+  }
+};
 
-/**
- * OnboardingSlides component
- *
- * Shows whimsical, playful, minimalist onboarding slides with transitions
- * Displays only for first-time users by reading/writing localStorage
- * @param {function} onComplete callback fired when onboarding completes
- */
 // PUBLIC_INTERFACE
 function OnboardingSlides({ onComplete }) {
-  // Track slide index and animation state
   const [idx, setIdx] = useState(0);
-  const [out, setOut] = useState(false);
+  const [animSlide, setAnimSlide] = useState("in"); // "in" | "out"
+  const cardRef = useRef();
 
-  // Prevent excess localStorage reads by caching after first mount
-  useEffect(() => {
-    try {
-      if (localStorage.getItem("onboarded") === "yes") {
-        onComplete && onComplete();
-      }
-    } catch {}
-  }, [onComplete]);
-
-  // Trap focus inside overlay for accessibility
-  const overlayRef = useRef();
-
-  useEffect(() => {
-    if (overlayRef.current) {
-      overlayRef.current.focus();
-    }
-  }, []);
-
-  // Handler for next button
+  // Slide animation (slide in/out)
   function nextSlide() {
-    setOut(true); // Start transition out
-    setTimeout(() => {
-      setOut(false);
-      setIdx((prev) => Math.min(prev + 1, SLIDES.length - 1));
-    }, TRANSITION_MS);
+    if (idx < SLIDES.length - 1) {
+      setAnimSlide("out");
+      setTimeout(() => {
+        setIdx((i) => i + 1);
+        setAnimSlide("in");
+      }, 270);
+    }
   }
 
-  // Handler for "Get Started" exit (final slide)
-  function finishOnboarding() {
+  function prevSlide() {
+    if (idx > 0) {
+      setAnimSlide("out");
+      setTimeout(() => {
+        setIdx((i) => i - 1);
+        setAnimSlide("in");
+      }, 230);
+    }
+  }
+
+  function handleComplete() {
     try {
       localStorage.setItem("onboarded", "yes");
     } catch {}
     if (onComplete) onComplete();
   }
 
-  // Slide transition: simple slide in/out animation
+  // Handle left/right arrow key navigation
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "ArrowRight") nextSlide();
+      else if (e.key === "ArrowLeft") prevSlide();
+      else if (e.key === "Escape") handleComplete();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+    // eslint-disable-next-line
+  }, [idx]);
+
+  const slide = SLIDES[idx];
+
+  // Custom minimal slide/fade transition using inline style
+  const slideAnimStyle = {
+    opacity: animSlide === "in" ? 1 : 0,
+    transform:
+      animSlide === "in"
+        ? "translateX(0)"
+        : idx < SLIDES.length - 1
+        ? "translateX(-30px)"
+        : "translateX(30px)",
+    transition: "opacity 260ms cubic-bezier(.7,0,.3,1), transform 260ms cubic-bezier(.7,0,.3,1)"
+  };
+
   return (
-    <div
-      className="onboarding-overlay"
-      ref={overlayRef}
-      tabIndex={-1}
-      aria-modal="true"
-      role="dialog"
-      style={{
-        position: "fixed",
-        zIndex: 100001,
-        left: 0,
-        top: 0,
-        width: "100vw",
-        height: "100vh",
-        minHeight: "100dvh",
-        background: "rgba(236,254,245,0.90)",
-        backdropFilter: "blur(2px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        transition: "backdrop-filter 0.3s",
-      }}
-      onKeyDown={e => {
-        if (e.key === "Escape") finishOnboarding();
-        if (e.key === "ArrowRight" && idx < SLIDES.length - 1) nextSlide();
-        if (e.key === "ArrowLeft" && idx > 0) {
-          setOut(true);
-          setTimeout(() => {
-            setOut(false);
-            setIdx((prev) => Math.max(prev - 1, 0));
-          }, TRANSITION_MS);
-        }
-      }}
-    >
+    <div style={slideStyles.container} role="dialog" aria-modal="true" tabIndex={-1}>
       <div
-        className="onboarding-slide"
+        ref={cardRef}
         style={{
-          background: "#fff",
-          borderRadius: 28,
-          boxShadow: "0 8px 50px 0 rgba(44,127,67,0.12)",
-          maxWidth: 440,
-          width: "90vw",
-          minHeight: 330,
-          padding: "48px 20px 32px 20px",
-          textAlign: "center",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          transform: out
-            ? "translateX(-50vw) scale(0.93) rotate(-6deg)"
-            : "translateX(0%) scale(1)",
-          opacity: out ? 0 : 1,
-          transition:
-            `transform ${TRANSITION_MS}ms cubic-bezier(.5,0,.2,1), ` +
-            `opacity ${TRANSITION_MS}ms cubic-bezier(.5,0,.2,1)`,
-          pointerEvents: out ? "none" : "auto",
+          ...slideStyles.card,
+          background: slide.bg,
+          boxShadow: slide.accentColor
+            ? `0 8px 32px 0 ${slide.accentColor}27`
+            : slideStyles.card.boxShadow,
+          border: slide.accentColor ? `2.5px solid ${slide.accentColor}26` : slideStyles.card.border,
+          ...slideAnimStyle
         }}
-        aria-live="polite"
       >
-        <div
-          style={{
-            marginBottom: 16,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          {SLIDES[idx].icon}
-        </div>
-        <h2
-          style={{
-            margin: 0,
-            marginBottom: 10,
-            fontWeight: 700,
-            fontSize: "1.46em",
-            color: COLORS.primary,
-            letterSpacing: "0.007em"
-          }}
-        >
-          {SLIDES[idx].title}
-        </h2>
-        <div
-          style={{
-            marginBottom: 25,
-            fontSize: 18,
-            color: "#434843",
-            fontWeight: 450,
-            maxWidth: 350,
-            marginLeft: "auto",
-            marginRight: "auto",
-            lineHeight: 1.34
-          }}
-        >
-          {SLIDES[idx].desc}
-        </div>
-        <div style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          gap: 9,
-          marginBottom: 26,
-          marginTop: 10
-        }}>
-          {[...Array(SLIDES.length).keys()].map(i => (
-            <span
+        <div style={{ ...slideStyles.icon, color: slide.accentColor }}>{slide.icon}</div>
+        <div style={slideStyles.title}>{slide.title}</div>
+        <div style={slideStyles.description}>{slide.description}</div>
+        <div style={slideStyles.dotsWrap} aria-label="slide progress">
+          {SLIDES.map((_, i) => (
+            <div
               key={i}
-              aria-label={i === idx ? "Current step" : undefined}
               style={{
-                display: "inline-block",
-                width: 13,
-                height: 13,
-                borderRadius: "50%",
-                margin: "0 2px",
-                background: i === idx ? COLORS.accent : "#E7F6EC",
-                border: i === idx
-                  ? `2.5px solid ${COLORS.primary}`
-                  : `2px solid #e1efe4`,
-                transition: "background 0.35s, border 0.38s"
+                ...slideStyles.dot,
+                ...(i === idx ? slideStyles.dotActive : {})
               }}
+              aria-current={i === idx ? "step" : undefined}
             />
           ))}
         </div>
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 14
-        }}>
+        <div style={slideStyles.btnRow}>
+          {idx > 0 && (
+            <button
+              type="button"
+              style={slideStyles.btn}
+              onClick={prevSlide}
+              aria-label="Previous Slide"
+            >
+              ← Back
+            </button>
+          )}
           {idx < SLIDES.length - 1 ? (
             <button
-              className="onboarding-next"
-              aria-label="Next"
-              style={{
-                background: COLORS.accent,
-                color: "#322009",
-                border: "none",
-                borderRadius: 7,
-                fontWeight: 600,
-                fontSize: 17,
-                padding: "11px 36px",
-                cursor: "pointer",
-                outline: "none",
-                marginRight: 0,
-                transition: "background 0.25s"
-              }}
+              type="button"
+              style={{ ...slideStyles.btn, ...slideStyles.btnAccent }}
               onClick={nextSlide}
-              tabIndex={0}
+              aria-label="Next Slide"
             >
-              Next
-              <span style={{ fontSize: 20, marginLeft: 7 }}>→</span>
+              Next →
             </button>
           ) : (
             <button
-              className="onboarding-finish"
-              aria-label="Get Started"
-              style={{
-                background: COLORS.primary,
-                color: "#fff",
-                border: "none",
-                borderRadius: 7,
-                fontWeight: 600,
-                fontSize: 18,
-                padding: "11px 38px",
-                cursor: "pointer",
-                outline: "none",
-                marginRight: 0,
-                transition: "background 0.25s"
-              }}
-              onClick={finishOnboarding}
-              tabIndex={0}
-              autoFocus
+              type="button"
+              style={{ ...slideStyles.btn, ...slideStyles.btnAccent, minWidth: 148, fontSize: 18 }}
+              onClick={handleComplete}
+              aria-label="Finish Onboarding"
             >
-              Get Started&nbsp;<span role="img" aria-label="Go!">✨</span>
+              Get Started!
             </button>
           )}
         </div>
         <button
-          className="onboarding-skip"
           type="button"
-          aria-label="Skip"
-          style={{
-            marginTop: 28,
-            background: "none",
-            border: "none",
-            color: "#8AB0B2",
-            fontWeight: 500,
-            fontSize: "1.0em",
-            textDecoration: "underline dotted #8AB0B2 2px",
-            cursor: "pointer",
-            outline: "none"
-          }}
-          onClick={finishOnboarding}
-          tabIndex={0}
+          style={slideStyles.skip}
+          onClick={handleComplete}
+          aria-label="Skip Onboarding"
         >
-          Skip intro
+          Skip onboarding
         </button>
       </div>
     </div>
