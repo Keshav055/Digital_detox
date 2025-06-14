@@ -10,6 +10,7 @@ import ParentTeenMode from "./ParentTeenMode";
 import DigitalBudgetMode from "./DigitalBudgetMode";
 import CommunityCircles from "./CommunityCircles";
 import IntegrationsHub from "./IntegrationsHub";
+import HomePage from "./HomePage";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -31,10 +32,16 @@ const minimalTheme = {
 
 // PUBLIC_INTERFACE
 function App() {
-  const [tab, setTab] = useState("plan");
+  // Now defaults to "home" tab on first load
+  const [tab, setTab] = useState("home");
 
   // Navigation tabs, now including Community Circles and Digital Budget Mode
   const navTabs = [
+    {
+      id: "home",
+      label: "Home",
+      icon: "🏠"
+    },
     {
       id: "journey",
       label: "Journey Map",
@@ -110,6 +117,8 @@ function App() {
   // Renders the currently active page/component
   function renderPage() {
     switch (tab) {
+      case "home":
+        return <HomePage />;
       case "journey":
         return <DetoxJourneyMap />;
       case "plan":
@@ -139,7 +148,7 @@ function App() {
       case "journal":
         return <JournalPage />;
       default:
-        return <DetoxPlanPage />;
+        return <HomePage />;
     }
   }
 
