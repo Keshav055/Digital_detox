@@ -24,17 +24,13 @@ const COLORS = {
 
 /**
  * Minimal inline styles for theme and layout
- * Ensure PUBLIC_URL is accessed correctly
  */
-const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const minimalTheme = {
   "--primary": COLORS.primary,
   "--secondary": COLORS.secondary,
   "--accent": COLORS.accent,
   "--bg": COLORS.bg,
-  "--text": COLORS.text,
-  // Example correction for PUBLIC_URL if used:
-  // ... add more as needed
+  "--text": COLORS.text
 };
 
 // PUBLIC_INTERFACE
@@ -303,26 +299,27 @@ function DetoxPlanPage({ showToast }) {
   const progress = steps.filter(s => s.done).length / steps.length;
 
   // Handler for marking steps done/incomplete
+  // --- Explanation for change: Move toast trigger OUTSIDE setSteps, to avoid setState batching/delays,
+  //     and ensure toast always reflects the *new* value and is immediate in UI even in strict mode.
   function handleToggleDone(stepId) {
-    // Compute the new steps array FIRST
-    setSteps(prevSteps => {
-      const updatedSteps = prevSteps.map(s =>
-        s.id === stepId ? { ...s, done: !s.done } : s
-      );
-
-      // Find the toggled step in previous state
-      const stepBefore = prevSteps.find(s => s.id === stepId); // This reflects the old state
-
-      // Show relevant toast based on new value (invert of previous)
-      if (showToast && stepBefore) {
-        if (!stepBefore.done) {
-          showToast("Great! Step marked as done.", "success");
-        } else {
-          showToast("Step marked as incomplete.", "info");
-        }
+    // Find the step in current state *before* updating
+    const step = steps.find(s => s.id === stepId);
+    // Compute the next "done" value
+    const nextDone = !step?.done;
+    // Update state immutably
+    setSteps(prevSteps =>
+      prevSteps.map(s =>
+        s.id === stepId ? { ...s, done: nextDone } : s
+      )
+    );
+    // Immediately show toast with correct feedback for the next state
+    if (showToast && step) {
+      if (nextDone) {
+        showToast("Great! Step marked as done.", "success");
+      } else {
+        showToast("Step marked as incomplete.", "info");
       }
-      return updatedSteps;
-    });
+    }
   }
 
   return (
