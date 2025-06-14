@@ -637,13 +637,30 @@ function BuddyMessagePane({ showToast }) {
   );
 }
 
+/*
+ * Expanded rewards list with a wider range of playful, experiential, and milestone-themed rewards.
+ * Includes a mix of physical, experiential, personal, social, and just-for-fun varieties.
+ * Sample unlock criteria descriptions are more creative and goal-oriented.
+ */
 // ----------- REWARDS PAGE -----------
 // PUBLIC_INTERFACE
 function RewardsPage() {
   const rewards = [
-    { id: 1, name: "Coffee voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" },
-    { id: 2, name: "Gift card", unlocked: false, desc: "7 days offline streak", icon: "🎟️" },
+    { id: 1, name: "Coffee Voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" },
+    { id: 2, name: "Gift Card", unlocked: false, desc: "7 days offline streak", icon: "🎟️" },
     { id: 3, name: "Outdoor Yoga Pass", unlocked: false, desc: "Try 2 off-grid activities", icon: "🧘" },
+    { id: 4, name: "Sunset Picnic Kit", unlocked: false, desc: "Complete 10 check-ins before sunset", icon: "🧺" },
+    { id: 5, name: "Bookstore Credit", unlocked: false, desc: "Finish a week of reduced screen time", icon: "📚" },
+    { id: 6, name: "Art Supply Bundle", unlocked: false, desc: "Create an offline hobby entry", icon: "🎨" },
+    { id: 7, name: "Movie Night Pass", unlocked: false, desc: "Host a device-free night", icon: "🍿" },
+    { id: 8, name: "Nature Escape Guide", unlocked: true, desc: "Check-in at 3 outdoor locations", icon: "🌲" },
+    { id: 9, name: "Spa Day At Home", unlocked: false, desc: "Log 5 journal reflections", icon: "🛁" },
+    { id: 10, name: "Buddy High-Five Badge", unlocked: true, desc: "Hit 5 days mutual streak with buddy", icon: "🖐️" },
+    { id: 11, name: "Handwritten Postcard", unlocked: false, desc: "Send a gratitude message offline", icon: "💌" },
+    { id: 12, name: "DIY Craft Kit", unlocked: false, desc: "Win a mini detox game", icon: "✂️" },
+    { id: 13, name: "Personalized Playlist", unlocked: false, desc: "Try 3 new offline activities", icon: "🎶" },
+    { id: 14, name: '"Offline Chef" Apron', unlocked: false, desc: "Cook a meal with friends", icon: "👩‍🍳" },
+    { id: 15, name: "Confetti Celebration!", unlocked: true, desc: "Complete any journey map milestone", icon: "🎊" }
   ];
 
   return (
@@ -672,16 +689,23 @@ function RewardsPage() {
                 fontWeight: 500,
                 fontSize: 16,
                 minWidth: 180,
+                maxWidth: 230,
                 boxShadow: "0 2px 12px 0 rgba(249,241,119,0.09)",
                 opacity: r.unlocked ? 1 : 0.65,
                 color: r.unlocked ? COLORS.primary : "#888",
-                position: "relative"
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "transform 0.18s cubic-bezier(.4,0,.2,1)"
               }}
             >
               <div style={{
                 fontSize: 32,
                 marginBottom: 6,
-                filter: r.unlocked ? "none" : "grayscale(0.7)"
+                filter: r.unlocked ? "none" : "grayscale(0.7)",
+                transition: "filter 0.2s"
               }}>
                 {r.icon}
                 {r.unlocked && (
@@ -698,12 +722,14 @@ function RewardsPage() {
                   >★</span>
                 )}
               </div>
-              <div>{r.name}</div>
+              <div style={{ marginBottom: 2, textAlign: "center" }}>{r.name}</div>
               <div style={{
                 color: r.unlocked ? COLORS.accent : "#A7C5B1",
                 marginTop: 4,
                 fontWeight: 400,
-                fontSize: 14
+                fontSize: 14,
+                minHeight: 36,
+                textAlign: "center"
               }}>
                 {r.desc}
               </div>
