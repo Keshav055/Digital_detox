@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./App.css";
 import DetoxJourneyMap from "./DetoxJourneyMap";
 import TimeReallocationTracker from "./TimeReallocationTracker";
@@ -10,6 +10,8 @@ import ParentTeenMode from "./ParentTeenMode";
 import DigitalBudgetMode from "./DigitalBudgetMode";
 import CommunityCircles from "./CommunityCircles";
 import IntegrationsHub from "./IntegrationsHub";
+import HomePage from "./HomePage";
+import AIChat from "./AIChat";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -29,87 +31,72 @@ const minimalTheme = {
   "--text": COLORS.text,
 };
 
-// PUBLIC_INTERFACE
+/*
+ * PUBLIC_INTERFACE
+ * App main component with playful onboarding and global UI effects
+ */
 function App() {
-  const [tab, setTab] = useState("plan");
+  const [tab, setTab] = useState("home");
+  const [showOnboard, setShowOnboard] = useState(() => {
+    // If onboarding has not been seen before, show it
+    return window.localStorage.getItem("ddc-onboard") !== "true";
+  });
+  const [onboardStep, setOnboardStep] = useState(0);
 
-  // Navigation tabs, now including Community Circles and Digital Budget Mode
-  const navTabs = [
+  // Fun onboarding steps content
+  const onboardingSlides = [
     {
-      id: "journey",
-      label: "Journey Map",
-      icon: "🛤️"
+      title: "Welcome to Digital Detox Companion!",
+      icon: "🧘‍♂️",
+      desc: "Break the habit. Discover real-world joy! Ready for healthy digital balance?",
+      accent: true
     },
     {
-      id: "plan",
-      label: "Detox Plan",
-      icon: "🗓️"
+      title: "Get Your Personalized Detox Plan",
+      icon: "🗺️",
+      desc: "Follow practical steps each week to spend less time online — and more time living.",
     },
     {
-      id: "circles",
-      label: "Circles",
-      icon: "🫂"
+      title: "Buddy System",
+      icon: "🤝",
+      desc: "Be anonymously matched with an accountability buddy for motivation, encouragement, and streak goals.",
     },
     {
-      id: "budget",
-      label: "Budget Mode",
-      icon: "🎛️"
+      title: "Earn Real Rewards",
+      icon: "🎉",
+      desc: "Enjoy real-world perks for hitting milestones. Coffee vouchers, outdoor adventures, and more are up for grabs!",
     },
     {
-      id: "games",
-      label: "Mini Games",
-      icon: "🕹️"
-    },
-    {
-      id: "modes",
-      label: "Detox Modes",
-      icon: "🎯"
-    },
-    {
-      id: "family",
-      label: "Parent-Teen",
-      icon: "🏠"
-    },
-    {
-      id: "events",
-      label: "Events",
-      icon: "🗺️"
-    },
-    {
-      id: "reallocation",
-      label: "Reallocation",
-      icon: "⏳"
-    },
-    {
-      id: "integrations",
-      label: "Integrations",
-      icon: "🔗"
-    },
-    {
-      id: "buddy",
-      label: "Buddy System",
-      icon: "🤝"
-    },
-    {
-      id: "rewards",
-      label: "Rewards",
-      icon: "🎁"
-    },
-    {
-      id: "checkin",
-      label: "Check-In",
-      icon: "📍"
-    },
-    {
-      id: "journal",
-      label: "Journal",
-      icon: "📖"
+      title: "Reflect & Grow",
+      icon: "📝",
+      desc: "Jot down your journey, get AI-powered prompts, and celebrate your progress.",
     }
   ];
 
-  // Renders the currently active page/component
+  function handleOnboardNext() {
+    if (onboardStep < onboardingSlides.length - 1) {
+      setOnboardStep(onboardStep + 1);
+    } else {
+      setShowOnboard(false);
+      window.localStorage.setItem("ddc-onboard", "true");
+    }
+  }
+
+  // Nav Tabs (unchanged)
+  const navTabs = [
+    { id: "home", label: "Home", icon: "🏠" },
+    { id: "plan", label: "Detox Plan", icon: "🗺️" },
+    { id: "buddy", label: "Buddy System", icon: "🤝" },
+    { id: "rewards", label: "Rewards", icon: "🎉" },
+    { id: "checkin", label: "Check-In", icon: "✅" },
+    { id: "journal", label: "Journal", icon: "📝" }
+  ];
+
+  // Render main sections
   function renderPage() {
     switch (tab) {
+      case "home":
+        return <HomePage onNavigate={setTab} />;
       case "journey":
         return <DetoxJourneyMap />;
       case "plan":
@@ -139,10 +126,93 @@ function App() {
       case "journal":
         return <JournalPage />;
       default:
-        return <DetoxPlanPage />;
+        return <HomePage onNavigate={setTab} />;
     }
   }
 
+  // Onboarding overlay rendering
+  if (showOnboard) {
+    const slide = onboardingSlides[onboardStep];
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "#FAFFF6",
+          color: COLORS.primary,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+        <div
+          className={`onboard-slide-in fade-in`}
+          style={{
+            background: "#fffdfa",
+            boxShadow: "0 7px 40px 0 rgba(46,125,50,0.06)",
+            padding: "34px 40px 28px 40px",
+            borderRadius: 20,
+            maxWidth: 380,
+            width: "92%",
+            textAlign: "center",
+            position: "relative",
+            marginBottom: 24
+          }}
+        >
+          <div style={{ fontSize: 45, marginBottom: 13, color: "#FFD600" }}>
+            <span className={slide.accent ? "feature-wiggle animated-icon" : "animated-icon"}>{slide.icon}</span>
+          </div>
+          <div style={{ fontSize: "1.56rem", fontWeight: 700, marginBottom: 7 }}>
+            {slide.title}
+          </div>
+          <div
+            style={{
+              color: "#7a8875",
+              fontSize: 16,
+              fontWeight: 500,
+              marginBottom: 7,
+            }}
+          >
+            {slide.desc}
+          </div>
+          <div style={{ marginTop: 19, marginBottom: 17 }}>
+            {onboardingSlides.map((s, idx) => (
+              <span
+                key={idx}
+                className={"onboard-dot" + (idx === onboardStep ? " active" : "")}
+              />
+            ))}
+          </div>
+          <button
+            className="onboard-action-btn playful-btn"
+            style={{
+              marginTop: 7,
+              padding: "11px 2.1em",
+              borderRadius: 8,
+              background: "#FFD600",
+              color: "#313619",
+              border: "none",
+              fontWeight: 700,
+              fontSize: 17,
+              cursor: "pointer",
+              boxShadow: "0 2.5px 16px 0 #ffd60022"
+            }}
+            onClick={handleOnboardNext}
+          >
+            {onboardStep === onboardingSlides.length - 1
+              ? "Let's Go!"
+              : "Next"}
+          </button>
+        </div>
+        <div style={{ color: "#A5B97C", fontWeight: 500 }}>
+          <span style={{ fontSize: 21, marginRight: 6 }}>🌳</span>
+          Digital Detox Companion
+        </div>
+      </div>
+    );
+  }
+
+  // App main UI
   return (
     <div
       className="app"
@@ -355,6 +425,10 @@ function BuddySystemPage() {
   const paired = true;
   const buddy = { id: "anonbuddy14", status: "active", streak: 4 };
 
+  // Animated feedback after buddy action state
+  const [buddyFeedback, setBuddyFeedback] = useState(null);
+  const feedbackRef = useRef();
+
   return (
     <section style={{ marginTop: 24 }}>
       <h2 style={{ color: COLORS.primary, fontSize: '2.1rem', marginBottom: 7 }}>
@@ -362,20 +436,26 @@ function BuddySystemPage() {
       </h2>
       {paired ? (
         <>
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 18,
-            background: "#EFFBFC",
-            padding: "18px 18px 15px",
-            borderRadius: 14,
-            marginBottom: 16
-          }}>
-            <span style={{
-              fontSize: 36,
-              color: COLORS.primary,
-              marginRight: 9
+          <div
+            className="buddy-card playful-card"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 18,
+              background: "#EFFBFC",
+              padding: "18px 18px 15px",
+              borderRadius: 14,
+              marginBottom: 16,
+              position: "relative"
             }}>
+            <span
+              style={{
+                fontSize: 36,
+                color: COLORS.primary,
+                marginRight: 9
+              }}
+              className="animated-icon"
+            >
               🤝
             </span>
             <div>
@@ -383,7 +463,7 @@ function BuddySystemPage() {
                 Paired with: {buddy.id} &bull; <span style={{ fontWeight: 400, color: "#7a8875" }}>anonymous</span>
               </div>
               <div style={{ color: "#82B571", fontWeight: 500, fontSize: "1.06rem" }}>
-                Streak: {buddy.streak} days
+                Streak: <span className="animated-icon">{buddy.streak}</span> days
               </div>
             </div>
           </div>
@@ -393,14 +473,56 @@ function BuddySystemPage() {
             buddyStatus={buddy.status}
             showBuddy={true}
             onBreakReflection={(reflection) => {
-              alert("Reflection sent to buddy!\n\n" + reflection);
+              setBuddyFeedback({ type: "reflection", message: `Reflection sent to buddy!\n\n${reflection}` });
             }}
           />
-          <BuddyMessagePane />
+          {/* Inline feedback after buddy actions */}
+          {buddyFeedback && (
+            <div
+              ref={feedbackRef}
+              style={{
+                background: "#f9ffec",
+                color: "#487e41",
+                border: "1px solid #cce3c1",
+                borderRadius: 7,
+                padding: "12px 16px",
+                margin: "14px 0 0 0",
+                fontSize: 15,
+                whiteSpace: "pre-line",
+                fontWeight: 500,
+                position: "relative",
+                boxShadow: "0 4px 24px 0 rgba(150,200,122,0.05)"
+              }}
+              data-testid="buddy-feedback"
+              className="fade-in"
+            >
+              <span className="animated-icon">
+                {buddyFeedback.type === "encouragement" ? "💬" : "✨"}
+              </span>{" "}
+              {buddyFeedback.message}
+              <button
+                className="playful-btn"
+                style={{
+                  marginLeft: 14,
+                  background: "none",
+                  color: "#888",
+                  border: "none",
+                  fontSize: 13,
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+                aria-label="Dismiss notification"
+                onClick={() => setBuddyFeedback(null)}
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+          <BuddyMessagePane setBuddyFeedback={setBuddyFeedback} />
         </>
       ) : (
         <div>
-          <div style={{
+          <div className="buddy-card playful-card" style={{
             padding: 18,
             background: "#f8fbe9",
             borderRadius: 12,
@@ -409,6 +531,7 @@ function BuddySystemPage() {
           }}>
             You are currently not paired.<br />
             <button
+              className="playful-btn"
               style={{
                 marginTop: 8,
                 padding: "9px 20px",
@@ -433,36 +556,58 @@ function BuddySystemPage() {
   );
 }
 
-// Simulated buddy chat pane
-function BuddyMessagePane() {
+// Simulated buddy chat pane (now with buddy prop for display)
+function BuddyMessagePane({ setBuddyFeedback, buddy }) {
   const lastMessage = {
     fromBuddy: true,
     time: "2h ago",
-    text: "How did your check-in go today? Stay strong! 💪"
+    text: buddy?.motivationalMsg || "How did your check-in go today? Stay strong! 💪"
   };
+
+  // State to show feedback inline instead of popup for sending encouragement
+  const [showEncouragementMsg, setShowEncouragementMsg] = useState(false);
+
+  const handleSendEncouragement = () => {
+    setShowEncouragementMsg(true);
+    if (setBuddyFeedback) {
+      setBuddyFeedback({
+        type: "encouragement",
+        message: "Your encouragement was sent to your buddy! 💬",
+      });
+    }
+    setTimeout(() => setShowEncouragementMsg(false), 2200);
+  };
+
   return (
-    <div style={{
-      padding: "18px 20px",
-      background: "#fff",
-      border: "1px solid #E0EFE4",
-      borderRadius: 9,
-      marginBottom: 8,
-      minHeight: 50
-    }}>
-      <div style={{
+    <div
+      className="playful-card"
+      style={{
+        padding: "18px 22px",
+        background: "#fff",
+        border: "1.5px solid #B2DFDB",
+        borderRadius: 10,
         marginBottom: 8,
-        color: "#A1ACAE",
-        fontSize: 13
+        minHeight: 50,
+        boxShadow: "0 2.5px 6px rgba(44,127,67,0.02)",
+        maxWidth: 420
       }}>
-        Latest from your buddy:
+      <div style={{
+        marginBottom: 6,
+        color: "#4e8171",
+        fontSize: 13,
+        fontWeight: 500,
+        letterSpacing: "0.02em"
+      }}>
+        Latest from your buddy {buddy?.username ? <span style={{color:COLORS.primary}}>@{buddy.username}</span> : ""}:
       </div>
-      <div style={{ color: COLORS.primary, fontWeight: 500, fontSize: "1.04rem" }}>
-        "{lastMessage.text}"
+      <div style={{ color: COLORS.primary, fontWeight: 500, fontSize: "1.08rem", marginBottom: 3 }}>
+        “{lastMessage.text}”
       </div>
-      <div style={{ textAlign: "right", color: "#9abcb9", fontSize: 11 }}>
+      <div style={{ textAlign: "right", color: "#9abcb9", fontSize: 11, marginBottom: 2 }}>
         {lastMessage.time}
       </div>
       <button
+        className="playful-btn"
         style={{
           marginTop: 10,
           background: COLORS.accent,
@@ -474,22 +619,121 @@ function BuddyMessagePane() {
           fontSize: 15,
           cursor: "pointer"
         }}
-        onClick={() => alert("Message your buddy! (Demo only)")}
+        onClick={handleSendEncouragement}
+        data-testid="encourage-btn"
       >
         Send Encouragement
       </button>
+      {showEncouragementMsg && (
+        <div
+          className="fade-in"
+          style={{
+            background: "#f0ffe0",
+            color: "#397536",
+            borderRadius: 6,
+            marginTop: 12,
+            padding: "7px 14px",
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+          data-testid="encouragement-feedback"
+        >
+          <span className="animated-icon" style={{ marginRight: 6 }}>🎉</span>
+          Sent! Your buddy will see your encouragement.
+        </div>
+      )}
     </div>
   );
 }
 
-// ----------- REWARDS PAGE -----------
-// PUBLIC_INTERFACE
+/*
+ * ------------- REWARDS PAGE -------------
+ * PUBLIC_INTERFACE
+ * Adds: animated 'pop' when a reward is unlocked, playful hover on reward cards
+ */
 function RewardsPage() {
+  // Expanded rewards data (simulate new unlock for animation effect)
   const rewards = [
-    { id: 1, name: "Coffee voucher", unlocked: true, desc: "Earned at 3-day streak", icon: "☕" },
-    { id: 2, name: "Gift card", unlocked: false, desc: "7 days offline streak", icon: "🎟️" },
-    { id: 3, name: "Outdoor Yoga Pass", unlocked: false, desc: "Try 2 off-grid activities", icon: "🧘" },
+    {
+      id: 1,
+      name: "Coffee voucher",
+      unlocked: true,
+      desc: "Earned at 3-day streak! Redeem for any coffee or tea at a partner café.",
+      icon: "☕",
+      tier: "Bronze",
+      dateEarned: "2024-06-07",
+      level: 1,
+      status: "Unlocked",
+      code: "COFFEE-023",
+      expires: "2024-06-30",
+    },
+    {
+      id: 2,
+      name: "Gift card",
+      unlocked: false,
+      desc: "Stay offline for 7 days to earn this.",
+      icon: "🎟️",
+      tier: "Silver",
+      dateEarned: null,
+      level: 2,
+      status: "Locked",
+      code: null,
+      expires: null,
+    },
+    {
+      id: 3,
+      name: "Outdoor Yoga Pass",
+      unlocked: false,
+      desc: "Try two off-grid activities to unlock a free yoga session.",
+      icon: "🧘",
+      tier: "Silver",
+      dateEarned: null,
+      level: 2,
+      status: "Locked",
+      code: null,
+      expires: null,
+    },
+    {
+      id: 4,
+      name: "Adventure Day Trip",
+      unlocked: false,
+      desc: "Complete a 21-day streak: enjoy a guided outdoor adventure for two.",
+      icon: "🚣",
+      tier: "Gold",
+      dateEarned: null,
+      level: 3,
+      status: "Locked",
+      code: null,
+      expires: null,
+    }
   ];
+
+  // Color palette for tiers/levels
+  const tierColors = {
+    Bronze: "#A06C3B",
+    Silver: "#AEB3B2",
+    Gold: "#FFD600"
+  };
+
+  // Helper to show status
+  function rewardStatus(r) {
+    if (r.unlocked) {
+      return <span style={{
+        color: COLORS.accent,
+        fontWeight: 700,
+      }}>Unlocked!</span>;
+    }
+    return <span style={{ color: "#aaa" }}>Locked</span>;
+  }
+
+  // Animate the most recently unlocked reward with a pop
+  const [justUnlocked, setJustUnlocked] = React.useState(null);
+  React.useEffect(() => {
+    // For demo: Animate first unlocked card on load
+    setJustUnlocked(1);
+    const timeout = setTimeout(() => setJustUnlocked(null), 1100);
+    return () => clearTimeout(timeout);
+  }, []);
 
   return (
     <section style={{ marginTop: 24 }}>
@@ -499,63 +743,125 @@ function RewardsPage() {
       <div style={{
         display: "flex",
         flexWrap: "wrap",
-        gap: 18,
+        gap: 22,
         marginTop: 12
       }}>
         {rewards.map((r, idx) => (
           <div
             key={r.id}
+            className={
+              "reward-card playful-card" +
+              (r.unlocked ? " reward-card-unlocked" : "") +
+              (justUnlocked === r.id && r.unlocked ? " reward-unlocked-pop" : "")
+            }
             style={{
-              background: r.unlocked ? "#fafbe4" : "#F2F6F5",
-              border: r.unlocked ? `2px solid ${COLORS.accent}` : "1px solid #e2efe6",
-              borderRadius: 14,
-              padding: "22px 26px",
+              background: r.unlocked ? "#fafbe4" : "#f2f6f5",
+              border: r.unlocked
+                ? `2.5px solid ${COLORS.accent}`
+                : `1.2px solid #e2efe6`,
+              borderRadius: 16,
+              padding: "24px 28px 17px 28px",
               fontWeight: 500,
               fontSize: 16,
-              minWidth: 180,
-              boxShadow: "0 2px 4px 0 rgba(46,125,50,0.02)",
-              opacity: r.unlocked ? 1 : 0.65,
-              color: r.unlocked ? COLORS.primary : "#888"
+              minWidth: 220,
+              maxWidth: 290,
+              boxShadow: r.unlocked ? "0 3px 12px 0 rgba(255,214,0,0.06)" : "0 2px 4px 0 rgba(46,125,50,0.02)",
+              opacity: r.unlocked ? 1 : 0.73,
+              color: r.unlocked ? COLORS.primary : "#6d757a",
+              display: "flex",
+              flexDirection: "column",
+              position: "relative"
             }}
           >
             <div style={{
-              fontSize: 32,
-              marginBottom: 6,
-              filter: r.unlocked ? "none" : "grayscale(0.7)"
+              fontSize: 42,
+              marginBottom: 10,
+              filter: r.unlocked ? "none" : "grayscale(0.5)"
             }}>
               {r.icon}
             </div>
-            <div>{r.name}</div>
             <div style={{
-              color: r.unlocked ? COLORS.accent : "#A7C5B1",
-              marginTop: 4,
-              fontWeight: 400,
-              fontSize: 14
+              fontWeight: 700,
+              fontSize: "1.13rem",
+              color: r.unlocked ? COLORS.primary : "#aaa"
+            }}>{r.name}</div>
+            <div style={{
+              marginTop: 3,
+              marginBottom: 6,
+              color: "#82B571",
+              fontWeight: 500,
+              fontSize: 12.7,
+              letterSpacing: "0.03em"
+            }}>
+              Tier: <span style={{ color: tierColors[r.tier], fontWeight: 700 }}>{r.tier}</span>{" "}
+              &bull; Level {r.level}
+            </div>
+            <div style={{
+              color: "#849478",
+              fontWeight: 500,
+              fontSize: 13.5,
+              marginBottom: 6
             }}>
               {r.desc}
             </div>
-            {r.unlocked && (
-              <span style={{
-                color: COLORS.accent,
-                background: "#fcfded",
-                borderRadius: 6,
+            <div style={{
+              color: "#B4BAAD",
+              fontWeight: 400,
+              fontSize: 12.6
+            }}>
+              {r.unlocked && r.dateEarned ? (
+                <>
+                  <span role="img" aria-label="calendar">📅</span> Earned: {r.dateEarned}
+                  {r.expires && (
+                    <> &bull; <span style={{ color: "#C49000" }}>Use by {r.expires}</span></>
+                  )}
+                </>
+              ) : (
+                "Complete requirements to unlock."
+              )}
+            </div>
+            <div style={{
+              marginTop: 8,
+              color: r.unlocked ? COLORS.primary : "#A7C5B1",
+              fontWeight: 600,
+              fontSize: 13.5
+            }}>
+              Status: {rewardStatus(r)}
+            </div>
+            {r.code && (
+              <div style={{
+                marginTop: 7,
+                fontSize: 12.3,
+                color: "#d18a0b",
                 fontWeight: 700,
-                padding: "2px 9px",
-                marginTop: 5,
-                fontSize: 12,
-                display: "inline-block"
+                letterSpacing: "0.02em"
               }}>
-                Unlocked!
-              </span>
+                Voucher Code: {r.code}
+              </div>
+            )}
+            {r.unlocked && (
+              <div style={{
+                position: "absolute",
+                top: 11,
+                right: 14,
+                color: COLORS.accent,
+                fontWeight: 700,
+                fontSize: 12,
+                background: "#fcfded",
+                borderRadius: 8,
+                padding: "2.5px 11px"
+              }}>
+                Unlocked
+              </div>
             )}
           </div>
         ))}
       </div>
       <div style={{
-        marginTop: 30,
+        marginTop: 34,
         textAlign: "center",
         color: "#999D86",
-        fontSize: 15
+        fontSize: 15.5
       }}>
         <span>
           Rewards promote real-life experiences. <br />
@@ -569,10 +875,29 @@ function RewardsPage() {
 // ----------- CHECK IN PAGE -----------
 // PUBLIC_INTERFACE
 function CheckInPage() {
-  const checkinHistory = [
+  const [checkinHistory, setCheckinHistory] = useState([
     { id: 1, text: "Nature walk (Central Park)", date: "Yesterday", icon: "🌳" },
     { id: 2, text: "Offline dinner with friends", date: "2 days ago", icon: "🍽️" }
-  ];
+  ]);
+  const [showCheckinFeedback, setShowCheckinFeedback] = useState(false);
+
+  // For demo, auto-generate new check-in
+  function handleNewCheckIn() {
+    setTimeout(() => {
+      setCheckinHistory(prev =>
+        [
+          {
+            id: prev.length + 1,
+            text: "Quiet reading break at coffee shop",
+            date: "Today",
+            icon: "📚"
+          },
+          ...prev,
+        ]
+      );
+      setShowCheckinFeedback(true);
+    }, 200);
+  }
 
   return (
     <section style={{ marginTop: 24 }}>
@@ -600,12 +925,41 @@ function CheckInPage() {
           marginBottom: 18,
           cursor: "pointer"
         }}
-        onClick={() =>
-          alert("Demo: Check-in! In a full app, log activities here.")
-        }
+        onClick={handleNewCheckIn}
       >
         New Check-In
       </button>
+      {showCheckinFeedback && (
+        <div
+          style={{
+            margin: "0 0 15px 0",
+            background: "#eaffea",
+            color: "#2A631B",
+            padding: "10px 18px",
+            borderRadius: 7,
+            fontWeight: 500,
+            fontSize: 15,
+          }}
+          data-testid="checkin-feedback"
+        >
+          🎉 Activity checked in successfully!
+          <button
+            onClick={() => setShowCheckinFeedback(false)}
+            style={{
+              marginLeft: 16,
+              background: "none",
+              color: "#79a55d",
+              border: "none",
+              fontSize: 13,
+              cursor: "pointer",
+              textDecoration: "underline",
+            }}
+            aria-label="Dismiss"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <div style={{ marginTop: 8 }}>
         <div style={{
           color: COLORS.primary,
@@ -652,7 +1006,7 @@ function CheckInPage() {
 // ----------- JOURNAL PAGE -----------
 // PUBLIC_INTERFACE
 function JournalPage() {
-  const entries = [
+  const [entries, setEntries] = useState([
     {
       id: 2,
       text: "Felt refreshed after spending two hours reading in the park.",
@@ -663,15 +1017,26 @@ function JournalPage() {
       text: "Managed to reduce screen time. Noticed feeling less distracted.",
       date: "2024-06-07"
     }
-  ];
+  ]);
 
   const aiPrompt = "Reflect on your experience: How did going offline today impact your mood or focus?";
 
   const [draft, setDraft] = useState("");
+  const [saveFeedback, setSaveFeedback] = useState(false);
 
   function handleSave() {
-    alert("Entry saved! (Demo)");
+    // Add entry to the top, fake current date
+    setEntries(prev => [
+      {
+        id: prev[0]?.id ? prev[0].id + 1 : 1,
+        text: draft,
+        date: (new Date()).toISOString().split('T')[0]
+      },
+      ...prev
+    ]);
     setDraft("");
+    setSaveFeedback(true);
+    setTimeout(() => setSaveFeedback(false), 2000);
   }
 
   return (
@@ -727,7 +1092,29 @@ function JournalPage() {
         >
           Save Entry
         </button>
+        {saveFeedback && (
+          <span
+            style={{
+              marginLeft: 16,
+              background: "#f3ffe3",
+              color: "#799E25",
+              borderRadius: 6,
+              fontWeight: 500,
+              padding: "7px 12px",
+              fontSize: 15,
+            }}
+            data-testid="journal-save-feedback"
+          >
+            Entry saved!
+          </span>
+        )}
       </div>
+      {/* AI Live Chat UI */}
+      <AIChat theme={{
+        primary: COLORS.primary,
+        secondary: COLORS.secondary,
+        accent: COLORS.accent
+      }} />
       <div style={{
         marginTop: 25,
         color: COLORS.primary,
