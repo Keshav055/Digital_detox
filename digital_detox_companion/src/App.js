@@ -656,24 +656,52 @@ function BuddyMessagePane({ showToast }) {
  */
 /* RewardsPage now uses the new rewards data structure */
 
+import AnimationOverlay from "./AnimationOverlay";
+
 // ----------- REWARDS PAGE -----------
 // PUBLIC_INTERFACE
 function RewardsPage() {
   // Rewards are imported for richer variety and easier future expansion
   const rewards = rewardsList;
 
-  // Confetti or sparkles on the Rewards page for unlocked rewards
-  // Confetti overlay appears if any reward is unlocked (playful/minimal)
-  const confetti = rewards.some(r => r.unlocked);
+  // Manage local animation states
+  const [confettiActive, setConfettiActive] = React.useState(false);
+  const [sparkleIdx, setSparkleIdx] = React.useState(null);
+  const [bounceIdx, setBounceIdx] = React.useState(null);
+
+  // Find if there is any new unlock (for demo: simply check any unlocked, or track with a key in localStorage in real usage)
+  React.useEffect(() => {
+    if (rewards.some(r => r.unlocked)) {
+      setConfettiActive(true);
+      // Auto-clear confetti after visible
+      setTimeout(() => setConfettiActive(false), 2300);
+    }
+  }, [rewards.map(r => r.unlocked).join(",")]); // Change effect if reward(s) get unlocked
 
   return (
-    <section style={{ marginTop: 24, position: "relative" }}>
+    <section style={{ marginTop: 24, position: "relative", minHeight: 222 }}>
       <h2 style={{ color: COLORS.primary, fontSize: "2.1rem", marginBottom: 7 }}>
         Milestone Rewards
       </h2>
-      {/* Confetti/sparkle animation overlay if any unlocked reward */}
-      {confetti && (
-        <ConfettiSparkle />
+      {/* Main Animation overlays, non-intrusive */}
+      <AnimationOverlay
+        visible={confettiActive}
+        type="confetti"
+        onEnd={() => setConfettiActive(false)}
+      />
+      {(sparkleIdx !== null) && (
+        <AnimationOverlay
+          visible={true}
+          type="sparkle"
+          onEnd={() => setSparkleIdx(null)}
+        />
+      )}
+      {(bounceIdx !== null) && (
+        <AnimationOverlay
+          visible={true}
+          type="bounce"
+          onEnd={() => setBounceIdx(null)}
+        />
       )}
       <div
         style={{
@@ -710,6 +738,15 @@ function RewardsPage() {
               }}
               tabIndex={0}
               aria-label={r.name + (r.unlocked ? " (unlocked)" : " (locked)")}
+              onClick={() => {
+                if (r.unlocked) setBounceIdx(idx);
+              }}
+              onMouseEnter={() => {
+                if (r.unlocked) setSparkleIdx(idx);
+              }}
+              onMouseLeave={() => {
+                if (sparkleIdx === idx) setSparkleIdx(null);
+              }}
             >
               <div style={{
                 fontSize: 32,
@@ -773,72 +810,6 @@ function RewardsPage() {
         </span>
       </div>
     </section>
-  );
-}
-
-// Minimal celebratory confetti/sparkle overlay for RewardsPage
-function ConfettiSparkle() {
-  // Simple playful/confetti particles, light/minimal so as not to disrupt minimal UI
-  // Position: absolute, covers top area of section
-  // Animates sparkles/confetti for a few seconds
-  return (
-    <div style={{
-      pointerEvents: "none",
-      position: "absolute",
-      top: -9,
-      left: 0,
-      width: "100%",
-      height: 0,
-      zIndex: 3,
-      display: "flex",
-      justifyContent: "center"
-    }}>
-      {/* Example sparkles and confetti shapes */}
-      <svg width="330" height="48" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", pointerEvents: "none" }}>
-        {/* Playful shapes: stars, circles, lines, for a subtle animated feel */}
-        <g>
-          <circle cx="31" cy="29" r="4" fill="#FFD600" opacity="0.68">
-            <animate attributeName="cy" values="29;7;29" dur="2.2s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.7;1;0.7" dur="1.2s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="62" cy="10" r="3" fill="#B2DFDB" opacity="0.78">
-            <animate attributeName="cy" values="10;32;10" dur="2.3s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="1;0.5;1" dur="2.1s" repeatCount="indefinite" />
-          </circle>
-          <rect x="98" y="14" width="3" height="12" fill="#E87A41" opacity="0.73" rx="2">
-            <animate attributeName="y" values="14;33;14" dur="1.5s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.7;1;0.7" dur="1.2s" repeatCount="indefinite" />
-          </rect>
-          <polygon points="136,18 140,26 144,18" fill="#FFD600" opacity="0.6">
-            <animate attributeName="points" values="136,18 140,34 144,18;136,18 140,26 144,18" dur="2.5s" repeatCount="indefinite" />
-          </polygon>
-          <rect x="173" y="6" width="2.3" height="13" fill="#2E7D32" opacity="0.78" rx="1.2">
-            <animate attributeName="y" values="6;19;6" dur="1.6s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.5;1;0.5" dur="1.4s" repeatCount="indefinite" />
-          </rect>
-          <circle cx="184" cy="19" r="2.7" fill="#fc3" opacity="0.75">
-            <animate attributeName="cy" values="19;33;19" dur="2.9s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="205" cy="11" r="4" fill="#E87A41" opacity="0.74">
-            <animate attributeName="cy" values="11;35;11" dur="2.0s" repeatCount="indefinite" />
-          </circle>
-          <rect x="230" y="20" width="2.5" height="11" fill="#FFD600" opacity="0.73" rx="1.2">
-            <animate attributeName="y" values="20;37;20" dur="1.9s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.7;1;0.7" dur="2.3s" repeatCount="indefinite" />
-          </rect>
-          <circle cx="260" cy="11" r="2.5" fill="#2E7D32" opacity="0.7">
-            <animate attributeName="cy" values="11;31;11" dur="2.6s" repeatCount="indefinite" />
-          </circle>
-          <rect x="286" y="22" width="2" height="10" fill="#B2DFDB" opacity="0.75" rx="1">
-            <animate attributeName="y" values="22;38;22" dur="2.05s" repeatCount="indefinite" />
-          </rect>
-          <circle cx="299" cy="12" r="4" fill="#FFD600" opacity="0.65">
-            <animate attributeName="cy" values="12;33;12" dur="1.7s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.6;1;0.6" dur="1.2s" repeatCount="indefinite" />
-          </circle>
-        </g>
-      </svg>
-    </div>
   );
 }
 
