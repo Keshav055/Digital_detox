@@ -12,8 +12,8 @@ asset index.html 1.92 KiB [emitted]
 runtime modules 27.5 KiB 14 modules
 cacheable modules 1.5 MiB
   modules by path ./node_modules/ 1.24 MiB 31 modules
-  modules by path ./src/ 250 KiB
-    modules by path ./src/*.js 234 KiB 17 modules
+  modules by path ./src/ 251 KiB
+    modules by path ./src/*.js 235 KiB 18 modules
     modules by path ./src/*.css 16.1 KiB
       ./src/index.css 2.23 KiB [built] [code generated]
       + 3 modules
@@ -23,26 +23,4 @@ cacheable modules 1.5 MiB
       ./.ve/EditorOverlay.css 2.25 KiB [built] [code generated]
       ./node_modules/css-loader/dist/cjs.js!./.ve/EditorOverlay.css 697 bytes [built] [code generated]
     ./.ve/EditorOverlay.jsx 1.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 2160 ms
-assets by status 1.92 KiB [cached] 1 asset
-assets by path *.js 1.76 MiB
-  asset bundle.js 1.69 MiB [emitted] (name: main)
-  asset main.1fa487eee4e6bfad6b19.hot-update.js 68.2 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.1fa487eee4e6bfad6b19.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.76 MiB = bundle.js 1.69 MiB main.1fa487eee4e6bfad6b19.hot-update.js 68.2 KiB
-cached modules 1.45 MiB [cached] 56 modules
-runtime modules 27.5 KiB 14 modules
-javascript modules 52.6 KiB
-  ./src/App.js 44.8 KiB [built] [code generated]
-  ./src/rewardsData.js 7.76 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 312 ms
-assets by status 1.92 KiB [cached] 1 asset
-assets by path *.js 1.75 MiB
-  asset bundle.js 1.69 MiB [emitted] (name: main)
-  asset main.082a9be709ddb556ff32.hot-update.js 59.3 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.082a9be709ddb556ff32.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.75 MiB = bundle.js 1.69 MiB main.082a9be709ddb556ff32.hot-update.js 59.3 KiB
-cached modules 1.46 MiB [cached] 57 modules
-runtime modules 27.5 KiB 14 modules
-./src/App.js 44.9 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 178 ms
+webpack 5.99.9 compiled successfully in 2099 ms
