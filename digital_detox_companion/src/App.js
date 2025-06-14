@@ -13,6 +13,7 @@ import IntegrationsHub from "./IntegrationsHub";
 import HomePage from "./HomePage";
 import Toast from "./Toast";
 import Sidebar from "./Sidebar";
+import OnboardingSlides from "./OnboardingSlides";
 
 /* 
  * NOTE: All feedback and responses are implemented inline or with toasts only;
@@ -38,6 +39,9 @@ const minimalTheme = {
   "--text": COLORS.text
 };
 
+/**
+ * App root component - main site shell
+ */
 // PUBLIC_INTERFACE
 function App() {
   // Now defaults to "home" tab on first load
@@ -48,6 +52,15 @@ function App() {
     message: "",
     type: "info",
   });
+  // Onboarding overlay visibility
+  const [onboardingDone, setOnboardingDone] = useState(() => {
+    try {
+      return localStorage.getItem("onboarded") === "yes";
+    } catch {
+      return false;
+    }
+  });
+
   // Toast helper
   const showToast = (msg, type = "info") => {
     setToast({ open: true, message: msg, type });
@@ -120,6 +133,11 @@ function App() {
         boxSizing: "border-box",
       }}
     >
+      {/* Show playful onboarding overlay if user is new */}
+      {!onboardingDone && (
+        <OnboardingSlides onComplete={() => setOnboardingDone(true)} />
+      )}
+
       {/* Persistent global sidebar on left */}
       <Sidebar
         activeTab={tab}
