@@ -12,6 +12,7 @@ import CommunityCircles from "./CommunityCircles";
 import IntegrationsHub from "./IntegrationsHub";
 import HomePage from "./HomePage";
 import Toast from "./Toast";
+import Sidebar from "./Sidebar";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -50,83 +51,18 @@ function App() {
       ({ ...prev, open: false })), 3300);
   };
 
-  // Navigation tabs, now including Community Circles and Digital Budget Mode
+  // Main navigation tabs: REMOVE Detox Plan, Parent Teen, Events, Rewards, Check-In (now in sidebar)
   const navTabs = [
-    {
-      id: "home",
-      label: "Home",
-      icon: "🏠"
-    },
-    {
-      id: "journey",
-      label: "Journey Map",
-      icon: "🛤️"
-    },
-    {
-      id: "plan",
-      label: "Detox Plan",
-      icon: "🗓️"
-    },
-    {
-      id: "circles",
-      label: "Circles",
-      icon: "🫂"
-    },
-    {
-      id: "budget",
-      label: "Budget Mode",
-      icon: "🎛️"
-    },
-    {
-      id: "games",
-      label: "Mini Games",
-      icon: "🕹️"
-    },
-    {
-      id: "modes",
-      label: "Detox Modes",
-      icon: "🎯"
-    },
-    {
-      id: "family",
-      label: "Parent-Teen",
-      icon: "🏠"
-    },
-    {
-      id: "events",
-      label: "Events",
-      icon: "🗺️"
-    },
-    {
-      id: "reallocation",
-      label: "Reallocation",
-      icon: "⏳"
-    },
-    {
-      id: "integrations",
-      label: "Integrations",
-      icon: "🔗"
-    },
-    {
-      id: "buddy",
-      label: "Buddy System",
-      icon: "🤝"
-    },
-    {
-      id: "rewards",
-      label: "Rewards",
-      icon: "🎁"
-    },
-    {
-      id: "checkin",
-      label: "Check-In",
-      icon: "📍"
-    },
-    {
-      id: "journal",
-      label: "Journal",
-      icon: "📖"
-    }
+    { id: "home", label: "Home", icon: "🏠" },
+    { id: "journey", label: "Journey Map", icon: "🛤️" },
+    { id: "circles", label: "Circles", icon: "🫂" },
+    { id: "budget", label: "Budget Mode", icon: "🎛️" },
+    { id: "games", label: "Mini Games", icon: "🕹️" },
+    { id: "modes", label: "Detox Modes", icon: "🎯" },
+    { id: "reallocation", label: "Reallocation", icon: "⏳" },
+    { id: "integrations", label: "Integrations", icon: "🔗" },
+    { id: "buddy", label: "Buddy System", icon: "🤝" },
+    { id: "journal", label: "Journal", icon: "📖" }
   ];
 
   // Renders the currently active page/component
@@ -175,9 +111,20 @@ function App() {
         background: minimalTheme["--bg"],
         color: minimalTheme["--text"],
         minHeight: "100vh",
-        fontFamily: "Inter, Roboto, Arial, sans-serif"
+        fontFamily: "Inter, Roboto, Arial, sans-serif",
+        paddingLeft: 94, // Reserve sidebar width
+        boxSizing: "border-box",
       }}
     >
+      {/* Persistent global sidebar on left */}
+      <Sidebar
+        activeTab={tab}
+        onTabChange={setTab}
+        accentColor={COLORS.accent}
+        primaryColor={COLORS.primary}
+      />
+
+      {/* Navbar (now without Detox Plan, Parent Teen, Events, Rewards, Check-In) */}
       <nav
         className="navbar"
         style={{
@@ -186,7 +133,10 @@ function App() {
           color: COLORS.primary,
           padding: "0",
           boxShadow: "0 2px 6px rgba(44,127,67,0.03)",
-          zIndex: 20
+          zIndex: 20,
+          marginLeft: 0,
+          width: "100%",
+          left: 0,
         }}
       >
         <div className="container" style={{ maxWidth: 900, margin: "0 auto" }}>
@@ -227,7 +177,8 @@ function App() {
         </div>
       </nav>
 
-      <main style={{ marginTop: 76 }}>
+      {/* Main: extra left margin to avoid sidebar overlap, remove excess top margin */}
+      <main style={{ marginTop: 64, marginLeft: 0 }}>
         {/* Toast at App root for cross-page notifications */}
         <Toast
           message={toast.message}
@@ -249,7 +200,8 @@ function App() {
           fontWeight: 500,
           fontSize: "1.05rem",
           marginTop: 32,
-          letterSpacing: 0.1
+          letterSpacing: 0.1,
+          marginLeft: 0,
         }}
       >
         Enjoy the world beyond the screen. 🌳 
