@@ -14,6 +14,7 @@ import HomePage from "./HomePage";
 import Toast from "./Toast";
 import Sidebar from "./Sidebar";
 import OnboardingSlides from "./OnboardingSlides";
+import { rewardsList } from "./rewardsData";
 
 /* 
  * NOTE: All feedback and responses are implemented inline or with toasts only;
@@ -653,9 +654,6 @@ function BuddyMessagePane({ showToast }) {
  * Includes a mix of physical, experiential, personal, social, just-for-fun, and motivational digital detox rewards.
  * Confetti animation is shown when a reward is first unlocked (playful/minimal).
  */
-// Import rewards data at the top for ESLint compliance and best practice
-import { rewardsList } from "./rewardsData";
-
 /* RewardsPage now uses the new rewards data structure */
 
 // ----------- REWARDS PAGE -----------
