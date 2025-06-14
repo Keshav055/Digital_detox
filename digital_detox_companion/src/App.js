@@ -131,6 +131,25 @@ function App() {
     }
   }
 
+  // If onboarding is not complete, show only the onboarding slides until finished
+  if (!onboardingDone) {
+    return (
+      <div
+        className="app"
+        style={{
+          background: minimalTheme["--bg"],
+          color: minimalTheme["--text"],
+          minHeight: "100vh",
+          fontFamily: "Inter, Roboto, Arial, sans-serif",
+          boxSizing: "border-box",
+        }}
+      >
+        <OnboardingSlides onComplete={handleOnboardingComplete} />
+      </div>
+    );
+  }
+
+  // Otherwise, show the main app
   return (
     <div
       className="app"
@@ -143,11 +162,6 @@ function App() {
         boxSizing: "border-box",
       }}
     >
-      {/* Show playful onboarding overlay if user is new */}
-      {!onboardingDone && (
-        <OnboardingSlides onComplete={handleOnboardingComplete} />
-      )}
-
       {/* Persistent global sidebar on left */}
       <Sidebar
         activeTab={tab}

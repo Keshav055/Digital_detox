@@ -10,7 +10,7 @@ Injecting EditorRootWrapper import: ../.ve/EditorRootWrapper
 asset bundle.js 1.66 MiB [emitted] (name: main)
 asset index.html 1.92 KiB [emitted]
 runtime modules 27.5 KiB 14 modules
-cacheable modules 1.47 MiB
+cacheable modules 1.48 MiB
   modules by path ./node_modules/ 1.24 MiB 31 modules
   modules by path ./src/ 226 KiB
     modules by path ./src/*.js 218 KiB 17 modules
@@ -23,24 +23,15 @@ cacheable modules 1.47 MiB
       ./.ve/EditorOverlay.css 2.25 KiB [built] [code generated]
       ./node_modules/css-loader/dist/cjs.js!./.ve/EditorOverlay.css 697 bytes [built] [code generated]
     ./.ve/EditorOverlay.jsx 1.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 2088 ms
+webpack 5.99.9 compiled successfully in 2018 ms
 assets by status 1.92 KiB [cached] 1 asset
 assets by path *.js 1.71 MiB
   asset bundle.js 1.66 MiB [emitted] (name: main)
-  asset main.f047f0b4a1fec663fb43.hot-update.js 44.4 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.f047f0b4a1fec663fb43.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.71 MiB = bundle.js 1.66 MiB main.f047f0b4a1fec663fb43.hot-update.js 44.4 KiB
+  asset main.4143be28f4f7fafcc9ac.hot-update.js 44.9 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.4143be28f4f7fafcc9ac.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.71 MiB = bundle.js 1.66 MiB main.4143be28f4f7fafcc9ac.hot-update.js 44.9 KiB
 cached modules 1.44 MiB [cached] 56 modules
 runtime modules 27.5 KiB 14 modules
-./src/App.js 32.8 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 111 ms
-assets by status 1.92 KiB [cached] 1 asset
-assets by path *.js 1.71 MiB
-  asset bundle.js 1.66 MiB [emitted] (name: main)
-  asset main.54a4f2c4c1ddb908c6c4.hot-update.js 44.4 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.54a4f2c4c1ddb908c6c4.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.71 MiB = bundle.js 1.66 MiB main.54a4f2c4c1ddb908c6c4.hot-update.js 44.4 KiB
-cached modules 1.44 MiB [cached] 56 modules
-runtime modules 27.5 KiB 14 modules
-./src/App.js 32.8 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 101 ms
+./src/App.js 33.3 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 236 ms
+<i> [webpack-dev-server] Gracefully shutting down. To force exit, press ^C again. Please wait...
