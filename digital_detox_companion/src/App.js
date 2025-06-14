@@ -14,6 +14,10 @@ import HomePage from "./HomePage";
 import Toast from "./Toast";
 import Sidebar from "./Sidebar";
 
+/* 
+ * NOTE: All feedback and responses are implemented inline or with toasts only;
+ * All pop-ups, alerts, window.alert, confirm, overlays, and modal feedback removed per requirements.
+ */
 // Color variables (from requirements)
 const COLORS = {
   primary: "#2E7D32",
