@@ -10,10 +10,10 @@ Injecting EditorRootWrapper import: ../.ve/EditorRootWrapper
 asset bundle.js 1.67 MiB [emitted] (name: main)
 asset index.html 1.92 KiB [emitted]
 runtime modules 27.5 KiB 14 modules
-cacheable modules 1.48 MiB
+cacheable modules 1.49 MiB
   modules by path ./node_modules/ 1.24 MiB 31 modules
-  modules by path ./src/ 234 KiB
-    modules by path ./src/*.js 218 KiB 17 modules
+  modules by path ./src/ 237 KiB
+    modules by path ./src/*.js 221 KiB 17 modules
     modules by path ./src/*.css 16.1 KiB
       ./src/index.css 2.23 KiB [built] [code generated]
       + 3 modules
@@ -23,92 +23,14 @@ cacheable modules 1.48 MiB
       ./.ve/EditorOverlay.css 2.25 KiB [built] [code generated]
       ./node_modules/css-loader/dist/cjs.js!./.ve/EditorOverlay.css 697 bytes [built] [code generated]
     ./.ve/EditorOverlay.jsx 1.58 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 2424 ms
+webpack 5.99.9 compiled successfully in 2323 ms
 assets by status 1.92 KiB [cached] 1 asset
-assets by path *.js 1.4 MiB
-  asset bundle.js 1.39 MiB [emitted] (name: main)
-  asset main.a136d9daf4b6f09d98d2.hot-update.js 11.2 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.a136d9daf4b6f09d98d2.hot-update.json 495 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.4 MiB = bundle.js 1.39 MiB main.a136d9daf4b6f09d98d2.hot-update.js 11.2 KiB
-cached modules 1.26 MiB [cached] 38 modules
+assets by path *.js 1.73 MiB
+  asset bundle.js 1.68 MiB [emitted] (name: main)
+  asset main.7b11ba02bf3703257321.hot-update.js 53.1 KiB [emitted] [immutable] [hmr] (name: main)
+asset main.7b11ba02bf3703257321.hot-update.json 28 bytes [emitted] [immutable] [hmr]
+Entrypoint main 1.73 MiB = bundle.js 1.68 MiB main.7b11ba02bf3703257321.hot-update.js 53.1 KiB
+cached modules 1.45 MiB [cached] 56 modules
 runtime modules 27.5 KiB 14 modules
-javascript modules 655 bytes
-  ./src/index.js 616 bytes [code generated]
-  ./src/App.js 39 bytes [built] [code generated] [1 error]
-
-ERROR in ./src/App.js
-Module build failed (from ./node_modules/babel-loader/lib/index.js):
-SyntaxError: /home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/src/App.js: Unexpected token, expected "," (662:22)
-
-  660 |     { id: 12, name: "DIY Craft Kit", unlocked: false, desc: "Win a mini detox game", icon: "✂️" },
-  661 |     { id: 13, name: "Personalized Playlist", unlocked: false, desc: "Try 3 new offline activities", icon: "🎶" },
-> 662 |     { id: 14, name: ""Offline Chef" Apron", unlocked: false, desc: "Cook a meal with friends", icon: "👩‍🍳" },
-      |                       ^
-  663 |     { id: 15, name: "Confetti Celebration!", unlocked: true, desc: "Complete any journey map milestone", icon: "🎊" }
-  664 |   ];
-  665 |
-    at constructor (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:363:19)
-    at JSXParserMixin.raise (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:6609:19)
-    at JSXParserMixin.unexpected (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:6629:16)
-    at JSXParserMixin.expect (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:6910:12)
-    at JSXParserMixin.parseObjectLike (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:11755:14)
-    at JSXParserMixin.parseExprAtom (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:11270:23)
-    at JSXParserMixin.parseExprAtom (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:4776:20)
-    at JSXParserMixin.parseExprSubscripts (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:11012:23)
-    at JSXParserMixin.parseUpdate (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10997:21)
-    at JSXParserMixin.parseMaybeUnary (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10977:23)
-    at JSXParserMixin.parseMaybeUnaryOrPrivate (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10830:61)
-    at JSXParserMixin.parseExprOps (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10835:23)
-    at JSXParserMixin.parseMaybeConditional (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10812:23)
-    at JSXParserMixin.parseMaybeAssign (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10765:21)
-    at /home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10734:39
-    at JSXParserMixin.allowInAnd (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12361:12)
-    at JSXParserMixin.parseMaybeAssignAllowIn (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10734:17)
-    at JSXParserMixin.parseExprListItem (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12110:18)
-    at JSXParserMixin.parseExprList (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12085:22)
-    at JSXParserMixin.parseArrayLike (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:11992:26)
-    at JSXParserMixin.parseExprAtom (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:11266:23)
-    at JSXParserMixin.parseExprAtom (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:4776:20)
-    at JSXParserMixin.parseExprSubscripts (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:11012:23)
-    at JSXParserMixin.parseUpdate (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10997:21)
-    at JSXParserMixin.parseMaybeUnary (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10977:23)
-    at JSXParserMixin.parseMaybeUnaryOrPrivate (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10830:61)
-    at JSXParserMixin.parseExprOps (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10835:23)
-    at JSXParserMixin.parseMaybeConditional (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10812:23)
-    at JSXParserMixin.parseMaybeAssign (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10765:21)
-    at /home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10734:39
-    at JSXParserMixin.allowInAnd (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12356:16)
-    at JSXParserMixin.parseMaybeAssignAllowIn (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:10734:17)
-    at JSXParserMixin.parseVar (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13303:91)
-    at JSXParserMixin.parseVarStatement (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13149:10)
-    at JSXParserMixin.parseStatementContent (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12770:23)
-    at JSXParserMixin.parseStatementLike (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12685:17)
-    at JSXParserMixin.parseStatementListItem (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12665:17)
-    at JSXParserMixin.parseBlockOrModuleBlockBody (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13235:61)
-    at JSXParserMixin.parseBlockBody (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13228:10)
-    at JSXParserMixin.parseBlock (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13216:10)
-    at JSXParserMixin.parseFunctionBody (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12035:24)
-    at JSXParserMixin.parseFunctionBodyAndFinish (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12021:10)
-    at /home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13360:12
-    at JSXParserMixin.withSmartMixTopicForbiddingContext (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12338:14)
-    at JSXParserMixin.parseFunction (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13359:10)
-    at JSXParserMixin.parseFunctionStatement (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13044:17)
-    at JSXParserMixin.parseStatementContent (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12709:21)
-    at JSXParserMixin.parseStatementLike (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12685:17)
-    at JSXParserMixin.parseModuleItem (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:12662:17)
-    at JSXParserMixin.parseBlockOrModuleBlockBody (/home/kavia/workspace/code-generation/digital-detox-companion-38961-cbc97790/digital_detox_companion/node_modules/@babel/parser/lib/index.js:13235:36)
- @ ./src/index.js 5:0-24 14:32-35
-
-webpack 5.99.9 compiled with 1 error in 92 ms
-assets by status 1.92 KiB [cached] 1 asset
-assets by path *.js 1.97 MiB
-  asset bundle.js 1.67 MiB [emitted] (name: main)
-  asset main.0abf54c8a6c8133f7b90.hot-update.js 303 KiB [emitted] [immutable] [hmr] (name: main)
-asset main.0abf54c8a6c8133f7b90.hot-update.json 28 bytes [emitted] [immutable] [hmr]
-Entrypoint main 1.97 MiB = bundle.js 1.67 MiB main.0abf54c8a6c8133f7b90.hot-update.js 303 KiB
-cached modules 1.45 MiB [cached] 55 modules
-runtime modules 27.5 KiB 14 modules
-javascript modules 38.9 KiB
-  ./src/index.js 616 bytes [code generated]
-  ./src/App.js 38.3 KiB [built] [code generated]
-webpack 5.99.9 compiled successfully in 273 ms
+./src/App.js 40.7 KiB [built] [code generated]
+webpack 5.99.9 compiled successfully in 140 ms
