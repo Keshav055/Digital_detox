@@ -140,7 +140,7 @@ function App() {
       case "journey":
         return <DetoxJourneyMap />;
       case "plan":
-        return <DetoxPlanPage />;
+        return <DetoxPlanPage showToast={showToast} />;
       case "circles":
         return <CommunityCircles />;
       case "budget":
@@ -290,17 +290,34 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
 }
 
 // ----------- DETOX PLAN PAGE -----------
-function DetoxPlanPage() {
-  const plan = {
-    steps: [
-      { id: 1, text: "Limit social media to 90 min/day (Week 1)", done: true },
-      { id: 2, text: "Add 30-min offline activity daily (Week 1)", done: true },
-      { id: 3, text: "Reduce social media to 60 min/day (Week 2)", done: false },
-      { id: 4, text: "Try 1 'off-grid' block (2 hrs online-free) (Week 2)", done: false },
-    ],
-    currentGoal: "60 minutes/day • Week 2",
-    progress: 0.5,
-  };
+function DetoxPlanPage({ showToast }) {
+  // State to maintain plan steps
+  const [steps, setSteps] = React.useState([
+    { id: 1, text: "Limit social media to 90 min/day (Week 1)", done: true },
+    { id: 2, text: "Add 30-min offline activity daily (Week 1)", done: true },
+    { id: 3, text: "Reduce social media to 60 min/day (Week 2)", done: false },
+    { id: 4, text: "Try 1 'off-grid' block (2 hrs online-free) (Week 2)", done: false },
+  ]);
+  const currentGoal = "60 minutes/day • Week 2";
+  const progress = steps.filter(s => s.done).length / steps.length;
+
+  // Handler for marking steps done/incomplete
+  function handleToggleDone(stepId) {
+    setSteps(prevSteps =>
+      prevSteps.map(s =>
+        s.id === stepId ? { ...s, done: !s.done } : s
+      )
+    );
+    // Show relevant toast
+    if (showToast) {
+      const step = steps.find(s => s.id === stepId);
+      if (!step.done) {
+        showToast("Great! Step marked as done.", "success");
+      } else {
+        showToast("Step marked as incomplete.", "info");
+      }
+    }
+  }
 
   return (
     <section style={{ marginTop: 24 }}>
@@ -312,11 +329,11 @@ function DetoxPlanPage() {
         fontWeight: 500,
         fontSize: "1.1rem"
       }}>
-        Current goal: <span style={{ color: COLORS.primary }}>{plan.currentGoal}</span>
+        Current goal: <span style={{ color: COLORS.primary }}>{currentGoal}</span>
       </p>
-      <ProgressBar progress={plan.progress} />
+      <ProgressBar progress={progress} />
       <ul style={{ listStyle: "none", padding: 0, marginTop: 24 }}>
-        {plan.steps.map((step) => (
+        {steps.map((step) => (
           <li key={step.id} style={{
             marginBottom: 12,
             padding: "12px 18px",
@@ -334,9 +351,24 @@ function DetoxPlanPage() {
             }}>
               {step.done ? "✔️" : "⏳"}
             </span>
-            <span style={{ textDecoration: step.done ? "line-through" : "none" }}>
+            <span style={{ textDecoration: step.done ? "line-through" : "none", flex: 1 }}>
               {step.text}
             </span>
+            <button
+              style={{
+                background: step.done ? "#FFD600" : COLORS.primary,
+                color: step.done ? "#1A1A1A" : "#fff",
+                border: "none",
+                borderRadius: 6,
+                fontWeight: 500,
+                fontSize: 14,
+                padding: "6px 14px",
+                cursor: "pointer"
+              }}
+              onClick={() => handleToggleDone(step.id)}
+            >
+              {step.done ? "Mark Incomplete" : "Mark as Done"}
+            </button>
           </li>
         ))}
       </ul>
