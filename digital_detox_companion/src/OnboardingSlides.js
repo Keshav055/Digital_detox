@@ -1,315 +1,350 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 /**
- * Playful Onboarding Slides for Digital Detox Companion
- *
- * Minimalist, light-themed, whimsical onboarding with slide-in/out animations,
- * brand accent color, emoji icons, and a localStorage 'onboarded' flag.
- *
- * Usage: Show on first visit, hide after "Get Started".
+ * Accent and theme colors
  */
-
-// Color matches app brand vars
 const COLORS = {
   primary: "#2E7D32",
   secondary: "#B2DFDB",
   accent: "#FFD600",
-  text: "#1A1A1A",
-  bg: "#fff"
+  bg: "#fff",
+  text: "#1A1A1A"
 };
 
 const SLIDES = [
   {
+    icon: (
+      <span
+        role="img"
+        aria-label="Sun"
+        style={{ fontSize: 48, color: COLORS.accent }}
+      >
+        🌞
+      </span>
+    ),
     title: "Welcome to Digital Detox Companion!",
-    icon: "🌱",
-    desc: "Grow better habits for a brighter, more present you."
+    desc: "Discover the brighter side of life, away from your screen. Let’s start your journey!"
   },
   {
-    title: "Tiny Steps, Big Wins",
-    icon: "🎯",
-    desc: "Personal plans, playful rewards, and positive progress."
+    icon: (
+      <span
+        role="img"
+        aria-label="Map"
+        style={{ fontSize: 44, color: COLORS.primary }}
+      >
+        🗺️
+      </span>
+    ),
+    title: "Personalized Detox Plan",
+    desc: "Get gentle, step-by-step plans to re-balance your digital world."
   },
   {
-    title: "Go Offline, Thrive IRL",
-    icon: "🌳",
-    desc: "Log real-world moments, pair with a buddy, and celebrate your wins!"
+    icon: (
+      <span
+        role="img"
+        aria-label="Buddy"
+        style={{ fontSize: 44, color: "#e87a41" }}
+      >
+        🧑‍🤝‍🧑
+      </span>
+    ),
+    title: "Accountability Buddy",
+    desc: "Pair anonymously for friendly encouragement as you make progress."
   },
   {
-    title: "Ready for your journey?",
-    icon: "✨",
-    desc: "Let’s start! Your buddy and rewards await."
+    icon: (
+      <span
+        role="img"
+        aria-label="Trophy"
+        style={{ fontSize: 44, color: COLORS.accent }}
+      >
+        🏆
+      </span>
+    ),
+    title: "Milestone Rewards",
+    desc: "Earn real-life treats for milestones… from coffee to outdoor events!"
+  },
+  {
+    icon: (
+      <span
+        role="img"
+        aria-label="Tree"
+        style={{ fontSize: 44, color: COLORS.primary }}
+      >
+        🌳
+      </span>
+    ),
+    title: "Check In & Reflect",
+    desc: "Track your offline activities and journal your experiences for lasting change."
+  },
+  {
+    icon: (
+      <span
+        role="img"
+        aria-label="Rocket"
+        style={{ fontSize: 44, color: "#e87a41" }}
+      >
+        🚀
+      </span>
+    ),
+    title: "Ready?",
+    desc:
+      "Let’s playfully detox together — you’re only a tap away from a lighter, more present you!"
   }
 ];
 
+/**
+ * Slide-transition duration, ms
+ */
+const TRANSITION_MS = 450;
+
+/**
+ * OnboardingSlides component
+ *
+ * Shows whimsical, playful, minimalist onboarding slides with transitions
+ * Displays only for first-time users by reading/writing localStorage
+ * @param {function} onComplete callback fired when onboarding completes
+ */
 // PUBLIC_INTERFACE
 function OnboardingSlides({ onComplete }) {
-  /**
-   * Controls slide index, animation state, and only shows if "onboarded" is not set.
-   */
-  const [show, setShow] = useState(() => {
-    // Only show if onboarded flag is not set
+  // Track slide index and animation state
+  const [idx, setIdx] = useState(0);
+  const [out, setOut] = useState(false);
+
+  // Prevent excess localStorage reads by caching after first mount
+  useEffect(() => {
     try {
-      return localStorage.getItem("onboarded") !== "yes";
-    } catch {
-      return true;
-    }
-  });
-  const [index, setIndex] = useState(0);
-  const [animDir, setAnimDir] = useState(null); // 'left' | 'right' for slide transition
-  const slideCount = SLIDES.length;
+      if (localStorage.getItem("onboarded") === "yes") {
+        onComplete && onComplete();
+      }
+    } catch {}
+  }, [onComplete]);
+
+  // Trap focus inside overlay for accessibility
+  const overlayRef = useRef();
 
   useEffect(() => {
-    if (!show) return;
-    // Lock body scroll behind the onboarding overlay for accessibility
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [show]);
-
-  // Advance slide with playful slide-right animation
-  function next() {
-    if (index < slideCount - 1) {
-      setAnimDir("right");
-      setTimeout(() => {
-        setIndex((i) => i + 1);
-        setAnimDir(null);
-      }, 300);
-    } else {
-      finish();
+    if (overlayRef.current) {
+      overlayRef.current.focus();
     }
+  }, []);
+
+  // Handler for next button
+  function nextSlide() {
+    setOut(true); // Start transition out
+    setTimeout(() => {
+      setOut(false);
+      setIdx((prev) => Math.min(prev + 1, SLIDES.length - 1));
+    }, TRANSITION_MS);
   }
 
-  function prev() {
-    if (index > 0) {
-      setAnimDir("left");
-      setTimeout(() => {
-        setIndex((i) => i - 1);
-        setAnimDir(null);
-      }, 300);
-    }
-  }
-
-  // Dismiss and set localStorage flag
-  function finish() {
-    setShow(false);
+  // Handler for "Get Started" exit (final slide)
+  function finishOnboarding() {
     try {
       localStorage.setItem("onboarded", "yes");
-    } catch { /* Ignore for privacy-blocked browsers */ }
-    // Notify parent if desired
-    if (typeof onComplete === "function") onComplete();
+    } catch {}
+    if (onComplete) onComplete();
   }
 
-  if (!show) return null;
-
-  // Animation: slide-in/out from right or left, fade in. (Minimal, performant)
+  // Slide transition: simple slide in/out animation
   return (
-    <div style={styles.overlay}>
-      <div style={styles.card}>
+    <div
+      className="onboarding-overlay"
+      ref={overlayRef}
+      tabIndex={-1}
+      aria-modal="true"
+      role="dialog"
+      style={{
+        position: "fixed",
+        zIndex: 100001,
+        left: 0,
+        top: 0,
+        width: "100vw",
+        height: "100vh",
+        minHeight: "100dvh",
+        background: "rgba(236,254,245,0.90)",
+        backdropFilter: "blur(2px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "backdrop-filter 0.3s",
+      }}
+      onKeyDown={e => {
+        if (e.key === "Escape") finishOnboarding();
+        if (e.key === "ArrowRight" && idx < SLIDES.length - 1) nextSlide();
+        if (e.key === "ArrowLeft" && idx > 0) {
+          setOut(true);
+          setTimeout(() => {
+            setOut(false);
+            setIdx((prev) => Math.max(prev - 1, 0));
+          }, TRANSITION_MS);
+        }
+      }}
+    >
+      <div
+        className="onboarding-slide"
+        style={{
+          background: "#fff",
+          borderRadius: 28,
+          boxShadow: "0 8px 50px 0 rgba(44,127,67,0.12)",
+          maxWidth: 440,
+          width: "90vw",
+          minHeight: 330,
+          padding: "48px 20px 32px 20px",
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          transform: out
+            ? "translateX(-50vw) scale(0.93) rotate(-6deg)"
+            : "translateX(0%) scale(1)",
+          opacity: out ? 0 : 1,
+          transition:
+            `transform ${TRANSITION_MS}ms cubic-bezier(.5,0,.2,1), ` +
+            `opacity ${TRANSITION_MS}ms cubic-bezier(.5,0,.2,1)`,
+          pointerEvents: out ? "none" : "auto",
+        }}
+        aria-live="polite"
+      >
         <div
           style={{
-            ...styles.slide,
-            ...(animDir === "right"
-              ? styles.slideOutLeft
-              : animDir === "left"
-              ? styles.slideOutRight
-              : styles.slideIn
-            ),
-            // Add a whimsical floating accent icon
+            marginBottom: 16,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
         >
-          <div style={styles.icon} aria-hidden>{SLIDES[index].icon}</div>
-          <h2 style={styles.title}>{SLIDES[index].title}</h2>
-          <p style={styles.desc}>{SLIDES[index].desc}</p>
-          <div style={styles.dots}>
-            {SLIDES.map((_, i) => (
-              <span
-                key={i}
-                style={{
-                  ...styles.dot,
-                  background: i === index ? COLORS.accent : "#E7F6EC",
-                  transform: i === index ? "scale(1.2)" : "scale(1)"
-                }}
-              />
-            ))}
-          </div>
-          <div style={styles.controls}>
-            <button
-              style={{
-                ...styles.btn,
-                ...styles.prev,
-                visibility: index === 0 ? "hidden" : "visible"
-              }}
-              onClick={prev}
-              tabIndex={index === 0 ? -1 : 0}
-              aria-label="Previous"
-            >
-              ←
-            </button>
-            {index < slideCount - 1 ? (
-              <button style={styles.btn} onClick={next} aria-label="Next">
-                Next →
-              </button>
-            ) : (
-              <button
-                style={{
-                  ...styles.btn,
-                  background: COLORS.primary,
-                  color: "#fff"
-                }}
-                onClick={finish}
-                aria-label="Get Started"
-              >
-                Get Started
-              </button>
-            )}
-          </div>
+          {SLIDES[idx].icon}
         </div>
-        {/* playful floating accent, for subtle animation */}
-        <div style={styles.cornerAccent} aria-hidden>💡</div>
+        <h2
+          style={{
+            margin: 0,
+            marginBottom: 10,
+            fontWeight: 700,
+            fontSize: "1.46em",
+            color: COLORS.primary,
+            letterSpacing: "0.007em"
+          }}
+        >
+          {SLIDES[idx].title}
+        </h2>
+        <div
+          style={{
+            marginBottom: 25,
+            fontSize: 18,
+            color: "#434843",
+            fontWeight: 450,
+            maxWidth: 350,
+            marginLeft: "auto",
+            marginRight: "auto",
+            lineHeight: 1.34
+          }}
+        >
+          {SLIDES[idx].desc}
+        </div>
+        <div style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          gap: 9,
+          marginBottom: 26,
+          marginTop: 10
+        }}>
+          {[...Array(SLIDES.length).keys()].map(i => (
+            <span
+              key={i}
+              aria-label={i === idx ? "Current step" : undefined}
+              style={{
+                display: "inline-block",
+                width: 13,
+                height: 13,
+                borderRadius: "50%",
+                margin: "0 2px",
+                background: i === idx ? COLORS.accent : "#E7F6EC",
+                border: i === idx
+                  ? `2.5px solid ${COLORS.primary}`
+                  : `2px solid #e1efe4`,
+                transition: "background 0.35s, border 0.38s"
+              }}
+            />
+          ))}
+        </div>
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 14
+        }}>
+          {idx < SLIDES.length - 1 ? (
+            <button
+              className="onboarding-next"
+              aria-label="Next"
+              style={{
+                background: COLORS.accent,
+                color: "#322009",
+                border: "none",
+                borderRadius: 7,
+                fontWeight: 600,
+                fontSize: 17,
+                padding: "11px 36px",
+                cursor: "pointer",
+                outline: "none",
+                marginRight: 0,
+                transition: "background 0.25s"
+              }}
+              onClick={nextSlide}
+              tabIndex={0}
+            >
+              Next
+              <span style={{ fontSize: 20, marginLeft: 7 }}>→</span>
+            </button>
+          ) : (
+            <button
+              className="onboarding-finish"
+              aria-label="Get Started"
+              style={{
+                background: COLORS.primary,
+                color: "#fff",
+                border: "none",
+                borderRadius: 7,
+                fontWeight: 600,
+                fontSize: 18,
+                padding: "11px 38px",
+                cursor: "pointer",
+                outline: "none",
+                marginRight: 0,
+                transition: "background 0.25s"
+              }}
+              onClick={finishOnboarding}
+              tabIndex={0}
+              autoFocus
+            >
+              Get Started&nbsp;<span role="img" aria-label="Go!">✨</span>
+            </button>
+          )}
+        </div>
+        <button
+          className="onboarding-skip"
+          type="button"
+          aria-label="Skip"
+          style={{
+            marginTop: 28,
+            background: "none",
+            border: "none",
+            color: "#8AB0B2",
+            fontWeight: 500,
+            fontSize: "1.0em",
+            textDecoration: "underline dotted #8AB0B2 2px",
+            cursor: "pointer",
+            outline: "none"
+          }}
+          onClick={finishOnboarding}
+          tabIndex={0}
+        >
+          Skip intro
+        </button>
       </div>
     </div>
   );
 }
-
-const styles = {
-  overlay: {
-    zIndex: 2009,
-    background: "rgba(255,255,255,0.97)",
-    position: "fixed",
-    top: 0, left: 0, right: 0, bottom: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  card: {
-    position: "relative",
-    width: 350, maxWidth: "90vw",
-    minHeight: 395,
-    borderRadius: 22,
-    background: "#fff",
-    boxShadow: "0 4px 54px 0 rgba(46,125,50,0.08), 0 2px 8px 0 #DFEDDE",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    overflow: "visible",
-    transition: "box-shadow 0.18s"
-  },
-  slide: {
-    padding: "38px 26px 30px",
-    textAlign: "center",
-    minHeight: 335,
-    transition: "transform 0.33s cubic-bezier(.61,1.1,.23,1), opacity 0.33s",
-    background: "#fff",
-    borderRadius: 18,
-    position: "relative",
-    width: 298, // visually pleasing on phones/desktops
-    margin: "0 auto"
-  },
-  slideIn: {
-    opacity: 1,
-    transform: "translateX(0%)"
-  },
-  slideOutLeft: {
-    opacity: 0.15,
-    transform: "translateX(-120%)"
-  },
-  slideOutRight: {
-    opacity: 0.15,
-    transform: "translateX(120%)"
-  },
-  icon: {
-    fontSize: 48,
-    marginBottom: 4,
-    animation: "icon-bounce 1.15s cubic-bezier(.59,1.4,.44,1.14) 1"
-  },
-  title: {
-    color: COLORS.primary,
-    fontWeight: 700,
-    fontSize: 24,
-    margin: "15px 0 10px"
-  },
-  desc: {
-    color: "#789262",
-    fontSize: 16,
-    fontWeight: 400,
-    lineHeight: 1.42,
-    margin: "0 0 32px"
-  },
-  dots: {
-    display: "flex",
-    justifyContent: "center",
-    gap: 10,
-    margin: "28px 0 18px"
-  },
-  dot: {
-    width: 13,
-    height: 13,
-    borderRadius: "50%",
-    display: "inline-block",
-    background: COLORS.accent,
-    transition: "background 0.18s, transform 0.24s"
-  },
-  controls: {
-    display: "flex",
-    width: "100%",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 5
-  },
-  btn: {
-    border: "none",
-    borderRadius: 12,
-    background: COLORS.accent,
-    color: COLORS.text,
-    fontSize: 16,
-    fontWeight: 600,
-    padding: "8px 22px",
-    minWidth: 70,
-    outline: "none",
-    cursor: "pointer",
-    boxShadow: "0 2px 8px 0 #DCEBC7",
-    transition: "background 0.16s",
-  },
-  prev: {
-    background: "#E7F6EC",
-    color: COLORS.primary
-  },
-  cornerAccent: {
-    position: "absolute",
-    top: -27, right: 24,
-    fontSize: 30,
-    opacity: 0.22,
-    userSelect: "none",
-    pointerEvents: "none",
-    animation: "spin 5.5s linear infinite"
-  }
-};
-
-/* Extra keyframes in JS-injected CSS, since inline style can't do keyframes or global selectors */
-const injectedKeyframes = `
-@keyframes icon-bounce {
-  0%{transform:translateY(-12px) scale(1.03);}
-  18%{transform:translateY(-9px) scale(1.07);}
-  32%{transform:translateY(-5px) scale(1.13);}
-  55%{transform:translateY(0px) scale(1);}
-  100%{transform:translateY(0px) scale(1);}
-}
-@keyframes spin {
-  0%{transform:rotate(0deg);}
-  100%{transform:rotate(360deg);}
-}
-`;
-
-// Inject extra keyframes on first usage of component if not already present
-(function injectCSS() {
-  if (!document.getElementById("onboarding-slides-keyframes")) {
-    const style = document.createElement("style");
-    style.id = "onboarding-slides-keyframes";
-    style.textContent = injectedKeyframes;
-    document.head.appendChild(style);
-  }
-})();
 
 export default OnboardingSlides;
