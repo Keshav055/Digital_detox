@@ -42,6 +42,7 @@ const minimalTheme = {
 /**
  * App root component - main site shell
  */
+/* eslint-disable no-undef */
 // PUBLIC_INTERFACE
 function App() {
   // Now defaults to "home" tab on first load
@@ -78,19 +79,24 @@ function App() {
       ({ ...prev, open: false })), 3300);
   };
 
-  // Main navigation tabs - Detox Plan, Parent Teen, Events, Rewards, Check-In moved to sidebar (removed here)
+  // Seven main features for Digital Detox Companion (for nav):
+  // 1. Personalized Digital Detox Plans      → Detox Plan
+  // 2. Accountability Buddy System            → Buddy System
+  // 3. Real-World Milestone Rewards           → Rewards
+  // 4. Off-Grid Check-In System               → Check-In
+  // 5. AI-Powered Reflection & Habit Journal  → Journal
+  // 6. Journey Map                            → Journey Map
+  // 7. Community Circles                      → Circles
+
+  // Adjust navTabs to ensure all SEVEN key features are present in navigation.
   const navTabs = [
-    { id: "home", label: "Home", icon: "🏠" },
-    { id: "journey", label: "Journey Map", icon: "🛤️" },
-    { id: "circles", label: "Circles", icon: "🫂" },
-    { id: "budget", label: "Budget Mode", icon: "🎛️" },
-    { id: "games", label: "Mini Games", icon: "🕹️" },
-    { id: "modes", label: "Detox Modes", icon: "🎯" },
-    { id: "reallocation", label: "Reallocation", icon: "⏳" },
-    { id: "integrations", label: "Integrations", icon: "🔗" },
-    { id: "buddy", label: "Buddy System", icon: "🤝" },
-    { id: "journal", label: "Journal", icon: "📖" }
-    // No Detox Plan, Parent Teen, Events, Rewards, Check-in here
+    { id: "plan", label: "Detox Plan", icon: "🗺️" },          // Digital Detox Plan
+    { id: "buddy", label: "Buddy", icon: "🤝" },               // Buddy System
+    { id: "rewards", label: "Rewards", icon: "🎁" },           // Milestone Rewards
+    { id: "checkin", label: "Check-In", icon: "✅" },          // Off-Grid Check-In
+    { id: "journal", label: "Journal", icon: "📖" },           // Reflection Journal
+    { id: "journey", label: "Journey", icon: "🛤️" },          // Journey Map
+    { id: "circles", label: "Circles", icon: "🫂" }            // Community Circles
   ];
 
   // Renders the currently active page/component
@@ -184,68 +190,76 @@ function App() {
           left: 0,
           display: "flex",
           justifyContent: "center",
+          position: "sticky",
+          top: 0,
         }}
       >
         <div
           className="container"
           style={{
-            maxWidth: 900,
+            maxWidth: 950,
             width: "100%",
             margin: "0 auto",
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
-            padding: "0 24px",
-            minHeight: 62,
+            padding: "0 10px",
+            minHeight: 60,
+            position: "relative"
           }}
         >
           <div
+            className="logo"
             style={{
+              fontWeight: 600,
+              color: COLORS.primary,
+              fontSize: 20,
               display: "flex",
               alignItems: "center",
-              height: 56,
-              justifyContent: "center",
-              width: "100%",
-              gap: 0,
+              minWidth: 220,
+              justifyContent: "flex-start",
+              letterSpacing: "0.01em",
+              flexShrink: 0,
+              paddingRight: 12,
+            }}
+          >
+            <span
+              className="logo-symbol"
+              style={{
+                color: COLORS.accent,
+                fontWeight: 700,
+                fontSize: 24,
+                verticalAlign: "middle",
+                marginRight: 10,
+              }}
+            >
+              💡
+            </span>
+            Digital Detox Companion
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flex: 1,
+              overflowX: "auto",
+              marginLeft: "auto",
+              gap: 2,
+              justifyContent: "flex-end",
+              alignItems: "center",
+              padding: "0 0 0 4px",
+              scrollbarWidth: "thin",
+              WebkitOverflowScrolling: "touch",
+              msOverflowStyle: "none"
             }}
           >
             <div
-              className="logo"
-              style={{
-                fontWeight: 600,
-                color: COLORS.primary,
-                fontSize: 20,
-                display: "flex",
-                alignItems: "center",
-                minWidth: 245,
-                justifyContent: "flex-start",
-                letterSpacing: "0.01em",
-                flexShrink: 0,
-              }}
-            >
-              <span
-                className="logo-symbol"
-                style={{
-                  color: COLORS.accent,
-                  fontWeight: 700,
-                  fontSize: 24,
-                  verticalAlign: "middle",
-                  marginRight: 10,
-                }}
-              >
-                💡
-              </span>
-              Digital Detox Companion
-            </div>
-            <div
+              className="navtab-scroll"
               style={{
                 display: "flex",
-                gap: 8,
-                marginLeft: "auto",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                alignItems: "center",
-                flexShrink: 1,
+                gap: 2,
+                flexWrap: "nowrap",
+                minWidth: 0,
+                width: "100%",
+                overflowX: "auto"
               }}
             >
               {navTabs.map((t) => (
@@ -309,18 +323,28 @@ function NavTab({ label, icon, active, onClick, accentColor, primaryColor }) {
         border: "none",
         color: active ? primaryColor : "#789262",
         borderBottom: active ? `3px solid ${accentColor}` : "3px solid transparent",
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: active ? 600 : 400,
-        padding: "12px 10px 7px",
+        padding: "10px 7px 6px",
         margin: "0 2px",
+        minWidth: 80,
+        maxWidth: 124,
+        whiteSpace: "nowrap",
+        textOverflow: "ellipsis",
+        overflow: "hidden",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
         cursor: "pointer",
         outline: "none",
-        position: "relative"
+        position: "relative",
+        transition: "border-bottom 0.22s"
       }}
       onClick={onClick}
+      tabIndex={0}
     >
-      <span style={{ fontSize: 18, marginRight: 5 }}>{icon}</span>
-      {label}
+      <span style={{ fontSize: 17, marginRight: 6, minWidth: 15 }}>{icon}</span>
+      <span style={{ fontSize: 14, overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
     </button>
   );
 }
