@@ -396,20 +396,6 @@ function DetoxPlanPage({ showToast }) {
             <span style={{ textDecoration: step.done ? "line-through" : "none", flex: 1 }}>
               {step.text}
             </span>
-// ADD: utility hook for flash animation on feedback
-function useFlash(on=true, ms=390) {
-  const [flash, setFlash] = React.useState(false);
-  React.useEffect(() => {
-    if (on) {
-      setFlash(true);
-      const timer = setTimeout(()=>setFlash(false), ms);
-      return ()=>clearTimeout(timer);
-    }
-  }, [on, ms]);
-  return flash ? "animate-flash" : "";
-}
-
-...
             <button
               className={`btn ripple`}
               style={{
@@ -435,8 +421,7 @@ function useFlash(on=true, ms=390) {
               </span>
             </button>
           </li>
-        ))}
-      </ul>
+        ))}      </ul>
       <div style={{
         marginTop: 28,
         background: COLORS.secondary,
