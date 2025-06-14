@@ -11,6 +11,7 @@ import DigitalBudgetMode from "./DigitalBudgetMode";
 import CommunityCircles from "./CommunityCircles";
 import IntegrationsHub from "./IntegrationsHub";
 import HomePage from "./HomePage";
+import Toast from "./Toast";
 
 // Color variables (from requirements)
 const COLORS = {
@@ -34,6 +35,18 @@ const minimalTheme = {
 function App() {
   // Now defaults to "home" tab on first load
   const [tab, setTab] = useState("home");
+  // Toast management for visible non-modal feedback
+  const [toast, setToast] = useState({
+    open: false,
+    message: "",
+    type: "info",
+  });
+  // Toast helper
+  const showToast = (msg, type = "info") => {
+    setToast({ open: true, message: msg, type });
+    setTimeout(() => setToast((prev) =>
+      ({ ...prev, open: false })), 3300);
+  };
 
   // Navigation tabs, now including Community Circles and Digital Budget Mode
   const navTabs = [
@@ -140,13 +153,14 @@ function App() {
       case "integrations":
         return <IntegrationsHub />;
       case "buddy":
-        return <BuddySystemPage />;
+        // Pass showToast down for all required feedback actions
+        return <BuddySystemPage showToast={showToast} />;
       case "rewards":
         return <RewardsPage />;
       case "checkin":
-        return <CheckInPage />;
+        return <CheckInPage showToast={showToast} />;
       case "journal":
-        return <JournalPage />;
+        return <JournalPage showToast={showToast} />;
       default:
         return <HomePage />;
     }
@@ -212,6 +226,13 @@ function App() {
       </nav>
 
       <main style={{ marginTop: 76 }}>
+        {/* Toast at App root for cross-page notifications */}
+        <Toast
+          message={toast.message}
+          visible={toast.open}
+          onClose={() => setToast((prev) => ({ ...prev, open: false }))}
+          type={toast.type}
+        />
         <div className="container" style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px" }}>
           {renderPage()}
         </div>
@@ -358,9 +379,12 @@ function ProgressBar({ progress }) {
   );
 }
 
-// ----------- ACCOUNTABILITY BUDDY PAGE -----------
+/**
+ * Accountability Buddy Page
+ * Accepts: showToast for in-app feedback
+ */
 // PUBLIC_INTERFACE
-function BuddySystemPage() {
+function BuddySystemPage({ showToast }) {
   const paired = true;
   const buddy = { id: "anonbuddy14", status: "active", streak: 4 };
 
@@ -402,10 +426,11 @@ function BuddySystemPage() {
             buddyStatus={buddy.status}
             showBuddy={true}
             onBreakReflection={(reflection) => {
-              alert("Reflection sent to buddy!\n\n" + reflection);
+              // Show toast for reflection sent
+              showToast("Reflection sent to buddy! 🎉", "success");
             }}
           />
-          <BuddyMessagePane />
+          <BuddyMessagePane showToast={showToast} />
         </>
       ) : (
         <div>
@@ -442,8 +467,11 @@ function BuddySystemPage() {
   );
 }
 
-// Simulated buddy chat pane
-function BuddyMessagePane() {
+/**
+ * Buddy Chat Pane
+ * Accepts: showToast for in-app feedback
+ */
+function BuddyMessagePane({ showToast }) {
   const lastMessage = {
     fromBuddy: true,
     time: "2h ago",
@@ -483,7 +511,11 @@ function BuddyMessagePane() {
           fontSize: 15,
           cursor: "pointer"
         }}
-        onClick={() => alert("Message your buddy! (Demo only)")}
+        onClick={() => {
+          if (showToast) {
+            showToast("Message sent to buddy! 👍", "success");
+          }
+        }}
       >
         Send Encouragement
       </button>
@@ -575,9 +607,12 @@ function RewardsPage() {
   );
 }
 
-// ----------- CHECK IN PAGE -----------
+/**
+ * Check In Page
+ * Accepts: showToast for in-app feedback
+ */
 // PUBLIC_INTERFACE
-function CheckInPage() {
+function CheckInPage({ showToast }) {
   const checkinHistory = [
     { id: 1, text: "Nature walk (Central Park)", date: "Yesterday", icon: "🌳" },
     { id: 2, text: "Offline dinner with friends", date: "2 days ago", icon: "🍽️" }
@@ -609,9 +644,11 @@ function CheckInPage() {
           marginBottom: 18,
           cursor: "pointer"
         }}
-        onClick={() =>
-          alert("Demo: Check-in! In a full app, log activities here.")
-        }
+        onClick={() => {
+          if (showToast) {
+            showToast("Check-in logged! Nice job focusing offline. 🌳", "success");
+          }
+        }}
       >
         New Check-In
       </button>
@@ -658,9 +695,12 @@ function CheckInPage() {
   );
 }
 
-// ----------- JOURNAL PAGE -----------
+/**
+ * Journal Page
+ * Accepts: showToast for in-app feedback
+ */
 // PUBLIC_INTERFACE
-function JournalPage() {
+function JournalPage({ showToast }) {
   const entries = [
     {
       id: 2,
@@ -679,7 +719,9 @@ function JournalPage() {
   const [draft, setDraft] = useState("");
 
   function handleSave() {
-    alert("Entry saved! (Demo)");
+    if (showToast) {
+      showToast("Journal entry saved! 📝", "success");
+    }
     setDraft("");
   }
 
